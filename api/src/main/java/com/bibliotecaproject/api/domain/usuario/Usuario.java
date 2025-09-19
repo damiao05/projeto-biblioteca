@@ -8,6 +8,7 @@
     import lombok.NoArgsConstructor;
     import lombok.Setter;
 
+    import com.bibliotecaproject.api.domain.usuario.Role;
     import java.time.LocalDate;
     import java.util.UUID;
 
@@ -29,6 +30,9 @@
         @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
         @JsonManagedReference
         private Login login;
+
+        @Enumerated(EnumType.STRING)
+        private Role role;
 
         public void setLogin(Login login) {
             this.login = login;

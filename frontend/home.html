@@ -1,0 +1,51 @@
+<style>
+
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: #2c3e50;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 79rem;
+        padding: 0 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
+
+</style>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Home - Biblioteca</title>
+</head>
+<body>
+    <header>
+        <h2>Biblioteca</h2>
+        <nav>
+            <button id="btn-cadastro">Cadastro</button>
+            <button id="btn-login">Login</button>
+        </nav>
+    </header>
+    <h1>Seja bem-vindo ao sistema da biblioteca</h1>
+
+    <script src="./js/jquery.min.js"></script>
+    <script>
+        $("#btn-cadastro").on("click", function() {
+            window.location.href = "cadastro.html";
+        });
+
+        $("#btn-login").on("click", function() {
+            window.location.href = "login.html";
+        });
+        // document.getElementById("btn-cadastro").addEventListener("click", function(){
+        //     window.location.href = "index.html";
+        // });
+    </script>
+</body>

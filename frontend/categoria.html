@@ -26,6 +26,19 @@
       margin: 0;
     }
 
+    .container {
+        display: grid;
+        grid-template-columns: 200px 200px 200px;
+        text-align: center;
+    }
+
+    .container > div {
+        border-radius: 5px;
+        padding: 3rem 2rem;
+        background-color: rgb(227, 230, 228);
+        border: 2px solid rgba(48, 48, 48, 0.781);
+    }
+
 </style>
 
 <!DOCTYPE html>
@@ -39,5 +52,25 @@
     <header>
         <h2>Biblioteca</h2>
     </header>
+
+    <div class="container">
+        <div class="categorias" id="ficcao-cientifica">Ficção Científica</div>
+        <div class="categorias" id="romance">Romance</div>
+        <div class="categorias" id="terror">Terror</div>
+        <div class="categorias" id="fantasia">Fantasia</div>
+        <div class="categorias" id="biografia">Biografia</div>
+        <div class="categorias" id="aventura">Aventura</div>
+    </div>
 </body>
 </html>
+
+<script src="./js/jquery.min.js"></script>
+<script>
+
+    $(document).ready(function() {
+        $(".categorias").on("click", function() {
+            window.location.href = `${$(this)[0].id}.html`;
+        })
+    })
+    
+</script>

@@ -1,0 +1,35 @@
+<!-- upload-capa.html -->
+<form id="formCapa">
+  <input type="file" id="file" name="file" accept="image/*" required />
+  <input type="text" id="livroId" placeholder="ID do Livro (UUID)" required />
+  <button type="submit">Enviar capa</button>
+</form>
+
+<script>
+  const API_BASE = "http://localhost:8080";
+
+  document.getElementById("formCapa").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fileInput = document.getElementById("file");
+    const livroId = document.getElementById("livroId").value.trim();
+    if (!fileInput.files.length) return alert("Escolha um arquivo");
+    let fd = new FormData();
+    // fd.append("file", fileInput.files[0]);
+    fd['file'] = fileInput.files[0];
+
+    const resp = await fetch(`${API_BASE}/livros/${livroId}/capa`, {
+      method: "POST",
+      body: fd
+    });
+
+    if (resp.ok) {
+      const imageUrl = await resp.text(); // aqui o controller retornou a url
+      alert("Capa enviada! URL: " + imageUrl);
+      // atualizar <img id="capa"> se quiser:
+      // document.getElementById("capa").src = API_BASE + imageUrl;
+    } else {
+      const text = await resp.text();
+      alert("Erro: " + text);
+    }
+  });
+</script>

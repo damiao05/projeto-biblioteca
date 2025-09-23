@@ -14,8 +14,8 @@
     const livroId = document.getElementById("livroId").value.trim();
     if (!fileInput.files.length) return alert("Escolha um arquivo");
     let fd = new FormData();
-    // fd.append("file", fileInput.files[0]);
-    fd['file'] = fileInput.files[0];
+    fd.append("file", fileInput.files[0]);
+    // fd['file'] = fileInput.files[0];
 
     const resp = await fetch(`${API_BASE}/livros/${livroId}/capa`, {
       method: "POST",

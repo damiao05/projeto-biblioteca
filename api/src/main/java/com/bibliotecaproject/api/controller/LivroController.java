@@ -19,7 +19,7 @@ import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/livros")
-//@CrossOrigin(origins = )
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class LivroController {
 
     private final LivroService livroService;
@@ -30,7 +30,7 @@ public class LivroController {
         this.livroRepository = livroRepository;
     }
 
-    @PostMapping("/{id}/capa")
+    @PostMapping("/{isbn}/capa")
     public ResponseEntity<?> uploadCapa(@PathVariable String isbn, @RequestParam("file") MultipartFile file) {
         try {
             Livro atualizado = livroService.salvarCapa(isbn, file);
@@ -43,7 +43,7 @@ public class LivroController {
         }
     }
 
-    @GetMapping("/{id}/capa")
+    @GetMapping("/{isbn}/capa")
     public ResponseEntity<Resource> serveCapa(@PathVariable String isbn) {
         Livro livro = livroRepository.findById(isbn).orElse(null);
         if(livro == null || livro.getCapaFilename() == null) {

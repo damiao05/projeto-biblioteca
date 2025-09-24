@@ -35,6 +35,10 @@ public class LivroService {
         Files.createDirectories(this.uploadDir);
     }
 
+    public Livro salvarLivro(Livro livro){
+        return livroRepository.save(livro);
+    }
+
     public Livro salvarCapa(String isbn, MultipartFile file)  throws IOException {
         // buscar livro
         Livro livro = livroRepository.findById(isbn)

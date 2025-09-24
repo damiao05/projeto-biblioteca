@@ -30,6 +30,12 @@ public class LivroController {
         this.livroRepository = livroRepository;
     }
 
+    @PostMapping
+    public ResponseEntity<Livro> adicionar(@RequestBody Livro livro) {
+        Livro salvo = livroService.salvarLivro(livro);
+        return new ResponseEntity<>(salvo, HttpStatus.CREATED);
+    }
+
     @PostMapping("/{isbn}/capa")
     public ResponseEntity<?> uploadCapa(@PathVariable String isbn, @RequestParam("file") MultipartFile file) {
         try {

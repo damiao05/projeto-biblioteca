@@ -1,0 +1,122 @@
+<style>
+
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background-color: #2c3e50;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 1rem;
+        padding: 0 2px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
+
+    body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #f7f5e9;
+        margin: 0;
+    }
+
+    #formCadastroLivro {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 300px;
+    }
+
+    #formCadastroLivro label {
+        font-weight: bold;
+        text-align: center;
+    }
+
+    #formCadastroLivro input,
+    #formCadastroLivro button {
+        padding: 6px;
+    }
+
+</style>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Livro</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <button id="btn-home">Voltar</button>
+        </nav>
+        <h2>Biblioteca</h2>
+    </header>
+
+    <form id="formCadastroLivro">
+        <label for="capa">Capa do Livro</label>
+        <input type="file" name="file" id="file" accept="image/*" required>
+        <label for="isbn">ISBN</label>
+        <input type="text" name="isbn" id="isbn" required>
+        <label for="titulo">Título</label>
+        <input type="text" name="titulo" id="titulo">
+        <label for="autor">Autor</label>
+        <input type="text" name="autor" id="autor">
+        <label for="categoria">Categoria</label>
+        <input type="text" name="categoria" id="categoria">
+        <label for="editora">Editora</label>
+        <input type="text" name="editora" id="editora">
+        <button type="submit">Salvar</button>
+    </form>
+</body>
+</html>
+
+<script src="./js/jquery.min.js"></script>
+<script>
+
+    const API_URL = "http://localhost:8080/livros";
+    const API_BASE = "http://localhost:8080";
+
+    $("#formCadastroLivro").on("submit", async (e) => {
+        e.preventDefault();
+        const fileInput = $("#file")[0];
+        const livroIsbn = $("#isbn").val().trim();
+
+        if(!fileInput.files.length) return alert("Adicione uma capa");
+
+        const livro = {
+            isbn: $("#isbn").val().trim(),
+            titulo: $("#titulo").val(),
+            autor: $("#autor").val(),
+            categoria: $("#categoria").val(),
+            editora: $("#editora").val()
+        }
+
+        await fetch(API_URL, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(livro)
+        });
+
+        let fd = new FormData();
+        fd.append("file", fileInput.files[0]);
+
+        const resp = await fetch(`${API_BASE}/livros/${livroIsbn}/capa`, {
+            method: "POST",
+            body: fd
+        });
+
+        alert("Livro cadastrado!");
+
+    });
+
+    $("#btn-home").on("click", function() {
+      window.location.href = "home.html";
+    });
+
+</script>

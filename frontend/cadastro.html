@@ -10,7 +10,7 @@
       left: 0;
       width: 100%;
       height: 60px;
-      background: #2c3e50;
+      background: #986c4a;
       color: white;
       display: flex;
       align-items: center;
@@ -61,7 +61,7 @@
       <button id="btn-home">Voltar</button>
     </nav>
     <h2>Biblioteca</h2>
-  </header>  
+  </header>
 
   <!-- <h1>Lista de Usuários</h1>
   <button id="btn-carregar-usuarios" onclick="carregarUsuarios()">Carregar Usuários</button>
@@ -130,8 +130,7 @@
         body: JSON.stringify(usuario)
       });
 
-      alert("Usuário cadastrado!");
-      carregarUsuarios();
+      window.location.href = "categoria.html";
     });
 
     $("#btn-home").on("click", function() {

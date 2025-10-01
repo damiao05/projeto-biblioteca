@@ -1,6 +1,5 @@
     package com.bibliotecaproject.api.domain.usuario;
 
-    import com.fasterxml.jackson.annotation.JsonBackReference;
     import com.fasterxml.jackson.annotation.JsonManagedReference;
     import jakarta.persistence.*;
     import lombok.AllArgsConstructor;
@@ -8,7 +7,6 @@
     import lombok.NoArgsConstructor;
     import lombok.Setter;
 
-    import com.bibliotecaproject.api.domain.usuario.Role;
     import java.time.LocalDate;
     import java.util.UUID;
 

@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/livros")
@@ -31,9 +34,32 @@ public class LivroController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('FUNCIONARIO','GERENTE')")
     public ResponseEntity<Livro> adicionar(@RequestBody Livro livro) {
         Livro salvo = livroService.salvarLivro(livro);
         return new ResponseEntity<>(salvo, HttpStatus.CREATED);
+    }
+    
+    @GetMapping("/{isbn}")
+    public ResponseEntity<Livro> exibir(@PathVariable String isbn){
+        Optional<Livro> livroOpt = livroService.mostrarLivro(isbn);
+
+        if(livroOpt.isPresent()){
+            return ResponseEntity.ok(livroOpt.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Livro>> exibirLivros(@RequestParam("categoria") String categoria){
+        List<Livro> livros = livroService.exibirLivros(categoria);
+
+        if(livros.isEmpty()){
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(livros);
+        }
     }
 
     @PostMapping("/{isbn}/capa")

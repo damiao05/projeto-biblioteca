@@ -2,8 +2,10 @@ package com.bibliotecaproject.api.controller;
 
 import com.bibliotecaproject.api.domain.usuario.Usuario;
 import com.bibliotecaproject.api.service.UsuarioService;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +25,13 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<Usuario> criar(@RequestBody Usuario usuario) {
         Usuario salvo = usuarioService.salvar(usuario);
+        return new ResponseEntity<>(salvo, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/funcionario")
+    //@PreAuthorize("hasRole('GERENTE')")
+    public ResponseEntity<Usuario> criarFuncionario(@RequestBody Usuario usuario) {
+        Usuario salvo = usuarioService.criarFuncionario(usuario);
         return new ResponseEntity<>(salvo, HttpStatus.CREATED);
     }
 

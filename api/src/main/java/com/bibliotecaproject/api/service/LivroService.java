@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 //Regras de negócio de Livro
@@ -33,6 +35,14 @@ public class LivroService {
 
         // cria diretório se não existir
         Files.createDirectories(this.uploadDir);
+    }
+
+    public Optional<Livro> mostrarLivro(String isbn){
+        return livroRepository.findById(isbn);
+    }
+
+    public List<Livro> exibirLivros(String categoria) {
+        return livroRepository.findByCategoria(categoria);
     }
 
     public Livro salvarLivro(Livro livro){

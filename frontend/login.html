@@ -74,7 +74,7 @@
 </html>
 
 <script src="./js/jquery.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
 <script>
 
     const API_URL = "http://localhost:8080/auth/login";
@@ -87,26 +87,41 @@
             senha: $("#senha").val()
         };
 
-        const response = await fetch(API_URL, {
+        fetch(API_URL, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(loginData)
-        });
+        }).then(response => {
 
-        if(response.ok) {
-            const usuario = await response.json();
+            if(!response.ok) {
+                alert('E-mail ou senha inválidos!')
+                $("#email").focus();
+                
+            }
 
-            // alert(`Login realizado com sucesso! Bem vindo ${usuario.nome}`);
-            if(usuario.role == 'CLIENTE') {
+            return response.json();
+
+        }).then(data => {
+            const token = data.Token;
+
+            const decodedPayload = jwt_decode(token);
+
+            const usuario = decodedPayload.role;
+
+            localStorage.setItem('jwtToken', token);
+            localStorage.setItem('userEmail', decodedPayload.sub);
+            localStorage.setItem('usuarioRole', usuario);
+
+            if(usuario == 'CLIENTE') {
                 window.location.href = "categoria.html";
-            } else if(usuario.role == 'GERENTE' || usuario.role == 'FUNCIONARIO') {
+            } else if(usuario == 'GERENTE' || usuario == 'FUNCIONARIO') {
                 window.location.href = "menuControle.html";
             }
-            
-        } else {
-            alert('E-mail ou senha inválidos!')
-            $("#email").focus();
-        }
+
+        }).catch(error => {
+            console.log("erro no login: ", error);
+            alert(error.message);
+        })
     })
 
     $("#btn-home").on("click", function() {

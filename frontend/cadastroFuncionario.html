@@ -83,12 +83,20 @@
 </html>
 
 <script src="./js/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
 <script>
 
     const API_URL = "http://localhost:8080/usuarios/funcionario";
 
     $("#formFuncionario").on("submit", async function(e) {
         e.preventDefault();
+
+        const token = localStorage.getItem("jwtToken");
+
+        if (!token) {
+            alert('Você não está logado! Redirecionando para o login.');
+            window.location.href = '/login.html';
+        }
 
         const usuario = {
             nome: $("#nome").val(),
@@ -103,8 +111,10 @@
 
         await fetch(API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(usuario)
+            headers: { "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+             },
+            body: JSON.stringify(usuario),
         });
 
         alert(`Funcionario ${$("#nome").val()} cadastrado com sucesso!`)

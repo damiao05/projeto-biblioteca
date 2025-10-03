@@ -1,5 +1,6 @@
 package com.bibliotecaproject.api.service;
 
+import com.bibliotecaproject.api.domain.dto.AtualizarSenhaDTO;
 import com.bibliotecaproject.api.domain.usuario.Login;
 import com.bibliotecaproject.api.domain.usuario.Role;
 import com.bibliotecaproject.api.domain.usuario.Usuario;
@@ -111,6 +112,23 @@ public class UsuarioService {
         }
 
         return senha.toString();
+    }
+
+    @Transactional
+    public void alterarSenha(Usuario usuarioLogado, AtualizarSenhaDTO dados) {
+        if(!passwordEncoder.matches(dados.senhaAtual(), usuarioLogado.getPassword())) {
+            throw new SecurityException("Senha atual incorreta!");
+        }
+
+        if(!dados.senhaNova().equals(dados.confirmacaoNovaSenha())) {
+            throw new IllegalArgumentException("As senhas estão divergentes!");
+        }
+
+        String novoHash = passwordEncoder.encode(dados.senhaNova());
+
+        usuarioLogado.getLogin().setSenha(novoHash);
+
+        usuarioRepository.save(usuarioLogado);
     }
 }
 

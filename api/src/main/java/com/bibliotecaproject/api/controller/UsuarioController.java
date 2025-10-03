@@ -1,11 +1,14 @@
 package com.bibliotecaproject.api.controller;
 
+import com.bibliotecaproject.api.domain.dto.AtualizarSenhaDTO;
 import com.bibliotecaproject.api.domain.usuario.Usuario;
 import com.bibliotecaproject.api.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +32,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/funcionario")
-    //@PreAuthorize("hasRole('GERENTE')")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Usuario> criarFuncionario(@RequestBody Usuario usuario) {
         Usuario salvo = usuarioService.criarFuncionario(usuario);
         return new ResponseEntity<>(salvo, HttpStatus.CREATED);
@@ -54,5 +57,19 @@ public class UsuarioController {
     public ResponseEntity<Void> deletar(@PathVariable UUID id) {
         usuarioService.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/atualizar-senha")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<String> atualizarSenha(
+            @AuthenticationPrincipal Usuario usuarioLogado,
+            @RequestParam @Valid AtualizarSenhaDTO dados
+            ) {
+        try {
+            usuarioService.alterarSenha(usuarioLogado, dados);
+            return ResponseEntity.ok("Senha atualizada com sucesso!");
+        } catch (SecurityException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

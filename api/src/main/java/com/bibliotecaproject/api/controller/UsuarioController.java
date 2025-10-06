@@ -25,7 +25,7 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    @PostMapping
+    @PostMapping("/cadastro")
     public ResponseEntity<Usuario> criar(@RequestBody Usuario usuario) {
         Usuario salvo = usuarioService.salvar(usuario);
         return new ResponseEntity<>(salvo, HttpStatus.CREATED);
@@ -63,7 +63,7 @@ public class UsuarioController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> atualizarSenha(
             @AuthenticationPrincipal Usuario usuarioLogado,
-            @RequestParam @Valid AtualizarSenhaDTO dados
+            @RequestBody @Valid AtualizarSenhaDTO dados
             ) {
         try {
             usuarioService.alterarSenha(usuarioLogado, dados);

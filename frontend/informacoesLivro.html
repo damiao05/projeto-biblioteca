@@ -1,0 +1,80 @@
+<style>
+
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background-color: #986c4a;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 1rem;
+        padding: 0 2px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
+
+    body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #f7f5e9;
+        margin: 0;
+    }
+
+</style>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <header>
+        <h2>Biblioteca</h2>
+    </header>
+    
+</body>
+</html>
+
+<script src="./js/jquery.min.js"></script>
+<script>
+    
+    $(document).ready(function() {
+        const token = localStorage.getItem("jwtToken");
+
+        if (!token) {
+            alert('Você não está logado! Redirecionando para o login.');
+            window.location.href = '/login.html';
+        }
+
+        const queryString = window.location.search;
+
+        const urlParams = new URLSearchParams(queryString);
+
+        const API_BASE = 'http://localhost:8080/livros';
+        const isbn = urlParams.get('isbn');
+
+        const API_LIVRO = `${API_BASE}/${isbn}`;
+
+        fetch(API_LIVRO, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(response => {
+            
+            return response.json()
+
+        }).then(data => {
+            console.log(data);
+        }) 
+
+    })
+
+</script>

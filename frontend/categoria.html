@@ -51,6 +51,10 @@
 <body>
     <header>
         <h2>Biblioteca</h2>
+        <nav>
+            <input type="text" name="barra-pesquisa" id="barra-pesquisa">
+        </nav>
+        <div class="livros-pesquisados"></div>
     </header>
 
     <div class="container">
@@ -68,9 +72,39 @@
 <script>
 
     $(document).ready(function() {
+
         $(".categorias").on("click", function() {
             window.location.href = `exibeLivros.html?categoria=${this.textContent}`;
         })
+
+        $("#barra-pesquisa").on("input", function() {
+            const token = localStorage.getItem("jwtToken");
+
+            $(".livros-pesquisados").empty();
+
+            const input = $(this).val();
+            if(!input) {
+                return;
+            }
+
+            const API_PESQUISA = `http://localhost:8080/livros/pesquisa?input=${input}`;
+
+            fetch(API_PESQUISA, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+                
+            }).then(async response => {
+                const livrosPesquisados = await response.json();
+
+                livrosPesquisados.forEach(livro => {
+                    let divLivro = `<div class="livro-filtro" id="$livro-${livro.isbn}">${livro.titulo}</div>`
+                    $(".livros-pesquisados").append(divLivro);
+
+                });
+
+            })
+        });
     })
     
 </script>

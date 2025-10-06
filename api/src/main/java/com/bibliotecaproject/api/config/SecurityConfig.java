@@ -1,7 +1,9 @@
 package com.bibliotecaproject.api.config;
 
 import com.bibliotecaproject.api.config.SecurityFilter;
+import com.bibliotecaproject.api.repository.UsuarioRepository;
 import com.bibliotecaproject.api.service.AuthenticationService;
+import com.bibliotecaproject.api.service.TokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,6 +26,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -34,11 +38,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityFilter securityFilter) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(withDefaults()) // <-- GARANTE QUE A CONFIGURAÇÃO CORS SEJA APLICADA
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios/cadastro").permitAll()
+                        // Adicionar permissão para GET em /livros para qualquer um autenticado
+                        .requestMatchers(HttpMethod.GET, "/livros").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
@@ -82,6 +88,11 @@ public class SecurityConfig {
         // Aplica essas regras para todas as rotas da sua API
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public SecurityFilter securityFilter(TokenService tokenService, UsuarioRepository usuarioRepository) {
+        return new SecurityFilter(tokenService, usuarioRepository);
     }
 
 }

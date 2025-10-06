@@ -86,28 +86,7 @@
 
   <script src="./js/jquery.min.js"></script>
   <script>
-    const API_URL = "http://localhost:8080/usuarios"; 
-
-    // Buscar usuários
-    // function carregarUsuarios() {   
-    //   fetch(API_URL).then(async response => {
-    //     const usuarios = await response.json();
-
-    //     const lista = document.getElementById("lista-usuarios");
-    //     lista.innerHTML = "";
-
-    //     usuarios.forEach(u => {
-    //         const li = document.createElement("li");
-    //         li.textContent = `${u.nome} - CPF: ${u.cpf} - Nascimento: ${u.dataNascimento}`;
-    //         lista.appendChild(li);
-    //     });
-      
-    //   });
-    // }
-
-    // $("#btn-carregar-usuarios").on("click", function() {
-    //     $("#lista-usuarios").hide();
-    // });
+    const API_URL = "http://localhost:8080/usuarios/cadastro"; 
 
     // Salvar novo usuário
     document.getElementById("formUsuario").addEventListener("submit", async (e) => {
@@ -128,9 +107,23 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuario)
+      }).then(async response => {
+          if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(errorText || "Falha no cadastro.");
+          }
+          return response.json();
+      })
+      .then(data => {
+          // ESTA É A MUDANÇA
+          alert("Cadastro realizado com sucesso! Por favor, faça o login.");
+          window.location.href = 'login.html'; // Redireciona para a página de login
+      })
+      .catch(error => {
+          console.error("Erro:", error);
+          alert(`Erro no cadastro: ${error.message}`);
       });
 
-      window.location.href = "categoria.html";
     });
 
     $("#btn-home").on("click", function() {

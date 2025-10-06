@@ -49,6 +49,8 @@ public class LivroService {
         return livroRepository.save(livro);
     }
 
+    public List<Livro> pesquisarLivros(String input) {return livroRepository.findByInput(input);}
+
     public Livro salvarCapa(String isbn, MultipartFile file)  throws IOException {
         // buscar livro
         Livro livro = livroRepository.findById(isbn)

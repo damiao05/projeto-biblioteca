@@ -71,7 +71,7 @@
 
 </style>
 
-<html lang="ptBR">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -93,7 +93,43 @@
 <script src="./js/jquery.min.js"></script>
 <script>
 
+    function carregarCapas(token) {
+        $(".capa-livro").each(function() {
+            const card = $(this);
+            const isbn = card.data("isbn");
+
+            const urlCapa = `http://localhost:8080/livros/${isbn}/capa`;
+
+            fetch(urlCapa, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(response => {
+                if(!response.ok) {
+                    throw new Error('Não foi possível carregar a capa.');
+                }
+
+                return response.blob();
+            }).then(blob => {   
+                const objectURL = URL.createObjectURL(blob);
+
+                card.attr('src', objectURL)
+            }).catch(error => {
+                console.error(`Erro ao carregar capa para o ISBN ${isbn}:`, error);
+                
+                card.attr('src', 'caminho/para/imagem_padrao.png');
+            });
+        })
+    }
+
     $(document).ready(function() {
+        const token = localStorage.getItem("jwtToken");
+
+        if (!token) {
+            alert('Você não está logado! Redirecionando para o login.');
+            window.location.href = '/login.html';
+        }
+
         const queryString = window.location.search;
 
         const urlParams = new URLSearchParams(queryString);
@@ -104,14 +140,25 @@
             const API_BASE = "http://localhost:8080/livros";
             const API_CATEGORIA = `${API_BASE}?categoria=${categoria}`;
 
-            fetch(API_CATEGORIA).then(async response => {
+            fetch(API_CATEGORIA, {
+                method: 'GET',
+                headers: { "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            }).then(async response => {
                 const livros = await response.json();
 
                 livros.forEach(livro => {
                     let urlCapa = `${API_BASE}/${livro.isbn}/capa`;
 
-                    $("#container-livros").append(`<div class="book-card"><img class="capa-livro" src="${urlCapa}" alt="Capa do Livro ${livro.titulo}"><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><p id="autor-livro" style="margin: 0">${livro.autor}</p></div></div>`)
+                    $("#container-livros").append(`<div class="book-card" data-isbn="${livro.isbn}"><img class="capa-livro" data-isbn="${livro.isbn}" src="" alt="Capa do Livro ${livro.titulo}"><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><p id="autor-livro" style="margin: 0">${livro.autor}</p></div></div>`)
+
+                    $(".book-card").on("click", function() {
+                        window.location.href = `informacoesLivro.html?isbn=${$(this).data("isbn")}`;
+                    });
                 });
+
+                carregarCapas(token);
 
             });
 

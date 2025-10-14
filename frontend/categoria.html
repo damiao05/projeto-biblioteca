@@ -1,20 +1,67 @@
 <style>
 
-     header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background: #986c4a;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 1rem;
-      padding: 0 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      z-index: 1000;
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        box-sizing: border-box;
+        width: 100%;
+        height: 60px;
+        background-color: #986c4a;
+        color: white;
+        
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 25px;
+        
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
+
+    .right-group {
+        display: flex;
+        align-items: center;
+    }
+
+    header h2 {
+        margin: 0;
+    }
+
+    .search-container {
+        position: relative;
+        width: 40%;
+        /* margin-left: 43% */
+    }
+
+    #barra-pesquisa {
+        width: 100%;
+        padding: 8px 12px;
+        border-radius: 20px;
+        border: none;
+    }
+
+    .livros-pesquisados {
+        display: grid;
+        align-items: center;
+        justify-content: center;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        position: absolute;
+        top: 110%;
+        left: 0;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        background-color: white;
+        color: black;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .livro-filtro {
+        display: flex;
+        align-items: center;
+        margin: 0.5rem;
     }
 
     body {
@@ -27,9 +74,12 @@
     }
 
     .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
         display: grid;
-        grid-template-columns: 200px 200px 200px;
-        text-align: center;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 25px;
     }
 
     .container > div {
@@ -37,7 +87,47 @@
         padding: 3rem 2rem;
         background-color: rgb(227, 230, 228);
         border: 2px solid rgba(48, 48, 48, 0.781);
+        text-align: center;
     }
+
+    .user-menu i {
+        font-size: 1.5rem;
+        margin-left: 1.5rem;
+    }
+
+    .options-menu i {
+        font-size: 1.5rem;
+        margin-left: 1.5rem;
+    }
+
+    .menu {
+        background-color: #986c4a;
+        width: 15%;
+        position: fixed;
+        top: 60px;
+        right: 0;
+        height: calc(100vh - 60);
+        opacity: 0;
+        transform: translateX(100%);
+        pointer-events: none;
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    }
+
+    .menu.visible {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: all;
+    }
+
+    .capa-livro {
+        display: block;
+        width: 20%;
+        aspect-ratio: 2/3;
+        object-fit: cover;
+        background-color: #eee;
+        align-items: center;
+    }
+    
 
 </style>
 
@@ -47,14 +137,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Categorias</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 </head>
 <body>
     <header>
         <h2>Biblioteca</h2>
-        <nav>
-            <input type="text" name="barra-pesquisa" id="barra-pesquisa">
-        </nav>
-        <div class="livros-pesquisados"></div>
+
+        <div class="search-container">
+            <input type="text" name="barra-pesquisa" id="barra-pesquisa" placeholder="Buscar livro.." autocomplete="off">
+            <div class="livros-pesquisados d-none"></div>
+        </div>
+        
+        <div class="right-group">
+            <div class="options-menu">
+                <i class="fa fa-bars"></i>
+            </div>
+
+            <div class="user-menu">
+                <i class="fa fa-user-circle"></i>
+            </div>
+        </div>
     </header>
 
     <div class="container">
@@ -65,13 +168,51 @@
         <div class="categorias" id="biografia">Biografia</div>
         <div class="categorias" id="aventura">Aventura</div>
     </div>
+
+    <div class="menu"></div>
+
 </body>
 </html>
 
 <script src="./js/jquery.min.js"></script>
 <script>
 
+    function carregarCapas(token) {
+        $(".capa-livro").each(function() {
+            const card = $(this);
+            const isbn = card.data("isbn");
+
+            const urlCapa = `http://localhost:8080/livros/${isbn}/capa`;
+
+            fetch(urlCapa, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(response => {
+                if(!response.ok) {
+                    throw new Error('Não foi possível carregar a capa.');
+                }
+
+                return response.blob();
+            }).then(blob => {   
+                const objectURL = URL.createObjectURL(blob);
+
+                card.attr('src', objectURL)
+            }).catch(error => {
+                console.error(`Erro ao carregar capa para o ISBN ${isbn}:`, error);
+                
+                card.attr('src', 'caminho/para/imagem_padrao.png');
+            });
+        })
+    }
+
     $(document).ready(function() {
+
+        $(".menu")[0].style.height = (parseInt(window.innerHeight) - 60);
+
+        $(".options-menu").on("click", function() {
+            $(".menu").toggleClass("visible");
+        });
 
         $(".categorias").on("click", function() {
             window.location.href = `exibeLivros.html?categoria=${this.textContent}`;
@@ -84,10 +225,12 @@
 
             const input = $(this).val();
             if(!input) {
+                $(".livros-pesquisados").addClass("d-none");
                 return;
             }
 
-            const API_PESQUISA = `http://localhost:8080/livros/pesquisa?input=${input}`;
+            const API_BASE = "http://localhost:8080/livros";
+            const API_PESQUISA = `${API_BASE}/pesquisa?input=${input}`;
 
             fetch(API_PESQUISA, {
                 headers: {
@@ -97,13 +240,22 @@
             }).then(async response => {
                 const livrosPesquisados = await response.json();
 
+                $(".livros-pesquisados").removeClass("d-none");
                 livrosPesquisados.forEach(livro => {
-                    let divLivro = `<div class="livro-filtro" id="$livro-${livro.isbn}">${livro.titulo}</div>`
+                    let urlCapa = `${API_BASE}/${livro.isbn}/capa`;
+
+                    let divLivro = `<div class="livro-filtro" id="$livro-${livro.isbn}"><img class="capa-livro" data-isbn="${livro.isbn}">${livro.titulo} - ${livro.autor} - ${livro.editora}</div>`
                     $(".livros-pesquisados").append(divLivro);
 
                 });
 
+                carregarCapas(token);
+
             })
+        });
+
+        $(".livros-pesquisados").on("click", function() {
+            window.location.href = `informacoesLivro.html?isbn=${event.target.children[0].dataset.isbn}`;
         });
     })
     

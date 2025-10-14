@@ -75,6 +75,8 @@
         <input type="text" name="categoria" id="categoria">
         <label for="editora">Editora</label>
         <input type="text" name="editora" id="editora">
+        <label for="sinopse">Sinopse</label>
+        <textarea name="sinopse" id="sinopse"></textarea>
         <button type="submit">Salvar</button>
     </form>
 </body>
@@ -82,6 +84,13 @@
 
 <script src="./js/jquery.min.js"></script>
 <script>
+
+    const token = localStorage.getItem("jwtToken");
+
+    if (!token) {
+        alert('Você não está logado! Redirecionando para o login.');
+        window.location.href = '/login.html';
+    }
 
     const API_URL = "http://localhost:8080/livros";
     const API_BASE = "http://localhost:8080";
@@ -98,12 +107,15 @@
             titulo: $("#titulo").val(),
             autor: $("#autor").val(),
             categoria: $("#categoria").val(),
-            editora: $("#editora").val()
+            editora: $("#editora").val(),
+            sinopse: $("#sinopse").val()
         }
 
         await fetch(API_URL, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {"Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
             body: JSON.stringify(livro)
         });
 
@@ -112,6 +124,9 @@
 
         const resp = await fetch(`${API_BASE}/livros/${livroIsbn}/capa`, {
             method: "POST",
+            headers: {
+                    'Authorization': `Bearer ${token}`
+                },
             body: fd
         });
 

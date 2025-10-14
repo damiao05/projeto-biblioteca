@@ -19,11 +19,24 @@
 
     body {
         height: 100vh;
+        background: #f7f5e9;
+        margin: 0;
+    }
+
+    .conteudo-body {
+        opacity: 0;
+        transition: opacity 0.5s ease-out;
+    }
+
+    .mostrar {
+        opacity: 1;
+    }
+
+    .conteudo {
         display: flex;
         justify-content: center;
         align-items: center;
-        background: #f7f5e9;
-        margin: 0;
+        /* margin-top: 60px; */
     }
 
     .container {
@@ -69,6 +82,18 @@
         margin: 0;
     }
 
+    .container-categoria {
+        margin-top: 60px;
+        width: 100%;
+        padding: 0.1rem;
+        background-color: lightgray;
+    }
+
+    .categoria {
+        margin-left: 3%;
+        color: brown;
+    }
+
 </style>
 
 <html lang="pt-BR">
@@ -85,7 +110,15 @@
         <h2>Biblioteca</h2>
     </header>
 
-    <div class="container" id="container-livros"></div>
+    <div class="conteudo-body">
+        <div class="container-categoria">
+            <p class="categoria"></p>
+        </div>
+
+        <div class="conteudo">
+            <div class="container" id="container-livros"></div>
+        </div>
+    </div>
     
 </body>
 </html>
@@ -94,32 +127,37 @@
 <script>
 
     function carregarCapas(token) {
+        const promises = [];
+
         $(".capa-livro").each(function() {
             const card = $(this);
             const isbn = card.data("isbn");
 
+            if(!isbn) return;
+
             const urlCapa = `http://localhost:8080/livros/${isbn}/capa`;
 
-            fetch(urlCapa, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then(response => {
-                if(!response.ok) {
-                    throw new Error('Não foi possível carregar a capa.');
-                }
-
+            const promise = fetch(urlCapa, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(response => {
+                if(!response.ok) { throw new Error('Capa não encontrada.'); }
                 return response.blob();
-            }).then(blob => {   
+            })
+            .then(blob => {
                 const objectURL = URL.createObjectURL(blob);
-
-                card.attr('src', objectURL)
-            }).catch(error => {
+                card.attr('src', objectURL);
+            })
+            .catch(error => {
                 console.error(`Erro ao carregar capa para o ISBN ${isbn}:`, error);
-                
                 card.attr('src', 'caminho/para/imagem_padrao.png');
             });
-        })
+            
+            promises.push(promise);
+        });
+
+
+        return Promise.all(promises);
     }
 
     $(document).ready(function() {
@@ -135,6 +173,8 @@
         const urlParams = new URLSearchParams(queryString);
 
         const categoria = urlParams.get('categoria');
+
+        $(".categoria").text(categoria);
 
         if(categoria) {
             const API_BASE = "http://localhost:8080/livros";
@@ -153,19 +193,22 @@
 
                     $("#container-livros").append(`<div class="book-card" data-isbn="${livro.isbn}"><img class="capa-livro" data-isbn="${livro.isbn}" src="" alt="Capa do Livro ${livro.titulo}"><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><p id="autor-livro" style="margin: 0">${livro.autor}</p></div></div>`)
 
-                    $(".book-card").on("click", function() {
-                        window.location.href = `informacoesLivro.html?isbn=${$(this).data("isbn")}`;
-                    });
                 });
 
-                carregarCapas(token);
-
-            });
+                return carregarCapas(token);    
+            }).then(() => {
+                $(".conteudo-body").addClass("mostrar"); 
+            });  
 
         }
 
         $("#btn-home").on("click", function() {
             window.location.href = "categoria.html";
+        });
+
+        $("#container-livros").on("click", ".book-card", function() {
+            const isbn = $(this).data("isbn");
+            window.location.href = `informacoesLivro.html?isbn=${isbn}`;
         });
 
     });

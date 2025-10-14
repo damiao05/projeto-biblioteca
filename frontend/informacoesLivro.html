@@ -18,12 +18,133 @@
     }
 
     body {
-        height: 100vh;
+        height: auto;
+        background: #f7f5e9;
+        margin: 0;
+    }
+
+    .capa-livro {
+        display: block;
+        width: 100%;
+        aspect-ratio: 2/3;
+        object-fit: cover;
+        background-color: #eee;
+    }
+
+    .div-capa {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        overflow: hidden;
+        width: 23rem;
+        margin-left: 10%;
         display: flex;
         justify-content: center;
         align-items: center;
-        background: #f7f5e9;
-        margin: 0;
+    }
+
+    .capa-livro {
+        width: 15rem;
+        margin: 1.5rem;
+        /* margin-left: 5rem; */
+    }
+
+    .livro {
+        display: flex;
+        /* justify-content: space-between; */
+        gap: 20px;
+        margin-top: 60px;
+        width: 100%;
+    }
+
+    .descricao-livro {
+        display: flex;
+        gap: 20px;
+        font-size: 1rem;
+        /* width: 100%; */
+    }
+
+    .titulo {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .titulo-livro {
+        font-size: 3rem;
+        margin: 0;    
+    }
+
+    .montserrat {
+        font-family: "Montserrat", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 600;
+        font-style: normal;
+    }
+
+    .infos-livro {
+        width: 40%;
+    }
+
+    .container-categoria {
+        margin-top: 60px;
+        width: 100%;
+        padding: 0.1rem;
+        background-color: lightgray;
+    }
+
+    .categoria {
+        margin-left: 3%;
+        color: brown;
+    }
+
+    .container-estrelas-avaliacao {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.2rem;
+    }
+
+    #estrelas-avaliacao .fa-star,
+    #estrelas-avaliacao .fa-star-half-alt {
+        color: #f8ce0b;
+    }
+
+    #estrelas-avaliacao .far.fa-star {
+        color: #ddd;
+    }
+
+    .botoes {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 20rem;
+    }
+
+    .botoes button{
+        border-radius: 20px;
+        background-color: brown;
+        color: white;
+        padding: 0.2rem 2rem;
+    }
+
+    .btn-favorito {
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #ccc;
+    }
+
+    .btn-favorito .fas.fa-heart {
+        color: #e74c3c;
+    }
+
+    .conteudo-body {
+        opacity: 0;
+        transition: opacity 0.5s ease-out;
+    }
+
+    .mostrar {
+        opacity: 1;
     }
 
 </style>
@@ -33,12 +154,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 </head>
 <body>
 
     <header>
+        <nav>
+            <button id="btn-home">Voltar</button>
+        </nav>
         <h2>Biblioteca</h2>
     </header>
+
+    <div class="conteudo-body">
+        <div class="container-categoria">
+            <p class="categoria"></p>
+        </div>
+
+        <div class="livro">
+            <div class="div-capa">
+                <div class="bg-capa">
+                    <img id="capa-livro" class="capa-livro" src="" alt="">
+                </div>
+            </div>
+            <div class="infos-livro">
+                <div class="titulo">
+                    <h3 class="titulo-livro montserrat"></h3>
+                    <span class="btn-favorito"><i id="i-favorito" class="far fa-heart"></i></span>
+                </div>
+                <div class="container-estrelas-avaliacao">
+                    <div id="estrelas-avaliacao"></div>
+                    <div class="descricao-livro">
+                        <a href="" id="editora-livro"></a>
+                        <a href="" id="autor-livro"></a>
+                    </div>
+                </div>
+            
+                <p id="sinopse-livro"></p>
+            </div>
+            <div class="botoes">
+                <button type="button" class="botao-reserva">Reservar</button>
+            </div>
+        </div>
+    </div>
     
 </body>
 </html>
@@ -63,6 +224,10 @@
 
         const API_LIVRO = `${API_BASE}/${isbn}`;
 
+        const card = $("#capa-livro");
+
+        let categoria;
+
         fetch(API_LIVRO, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -72,8 +237,75 @@
             return response.json()
 
         }).then(data => {
-            console.log(data);
-        }) 
+            categoria = data.categoria;
+            $(".categoria").text(categoria);
+
+            const promises = [];
+
+            const urlCapa = `http://localhost:8080/livros/${isbn}/capa`;
+
+            const promise = fetch(urlCapa, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(response => {
+                if(!response.ok) {
+                    throw new Error('Não foi possível carregar a capa.');
+                }
+
+                return response.blob();
+            }).then(blob => {   
+                const objectURL = URL.createObjectURL(blob);
+
+                card.attr('src', objectURL)
+
+                $(".titulo-livro").text(data.titulo);
+                $("#editora-livro").text(data.editora);
+                $("#autor-livro").text(data.autor);
+                $("#sinopse-livro").text(data.sinopse);
+            }).catch(error => {
+                console.error(`Erro ao carregar capa para o ISBN ${isbn}:`, error);
+                
+                card.attr('src', 'caminho/para/imagem_padrao.png');
+            });
+
+            promises.push(promise);
+
+            return Promise.all(promises);
+
+        }).then(() => {
+            $(".conteudo-body").addClass("mostrar");
+        })
+
+        $("#btn-home").on("click", function() {
+            window.location.href = `exibeLivros.html?categoria=${categoria}`;
+        });
+
+        $(".botao-reserva").on("click", function() {
+            alert('boa garoto')
+        });
+
+        function renderizarEstrelas() {
+            for(let i=1; i<= 5; i++) {
+                const starIcon = document.createElement('i');
+
+                starIcon.className = 'far fa-star'
+
+                $("#estrelas-avaliacao").append(starIcon);
+            }
+        }
+
+        $(".btn-favorito").on("click", function() {
+            let classeFavorito = $(".btn-favorito")[0].children[0].className;
+
+            if(classeFavorito.includes("far")) {
+                $("#i-favorito").addClass("fas").removeClass("far");
+            } else if(classeFavorito.includes("fas")) {
+                $("#i-favorito").addClass("far").removeClass("fas");
+            }
+        })
+
+        renderizarEstrelas();
 
     })
 

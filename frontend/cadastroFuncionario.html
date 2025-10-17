@@ -73,7 +73,7 @@
         <input type="email" name="email" id="email" required>
         <label for="cargo">Cargo:</label>
         <select name="cargo" id="cargo">
-            <option value="FUNCIONARIO">Funcionário</option>
+            <option value="BIBLIOTECARIO">Bibliotecário</option>
             <option value="GERENTE">Gerente</option>
         </select>
         <button type="submit">Salvar</button>
@@ -103,10 +103,8 @@
             cpf: $("#cpf").val(),
             dataNascimento: $("#dataNascimento").val(),
             role: $("#cargo").val(),
-            login: {
-                telefone: $("#telefone").val(),
-                email: $("#email").val()
-            }
+            telefone: $("#telefone").val(),
+            email: $("#email").val()
         }
 
         await fetch(API_URL, {

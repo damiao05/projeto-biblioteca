@@ -32,7 +32,7 @@
     }
 
     .div-capa {
-        background-color: #fff;
+        background-color: #FBF2C0;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         overflow: hidden;
@@ -95,7 +95,7 @@
 
     .categoria {
         margin-left: 3%;
-        color: brown;
+        color: #C06E52;
     }
 
     .container-estrelas-avaliacao {
@@ -118,13 +118,18 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
         width: 20rem;
+    }
+
+    .botoes p{
+        margin: 0;
     }
 
     .botoes button{
         border-radius: 20px;
-        background-color: brown;
-        color: white;
+        background-color: #C06E52;
+        color: #FBF2C0;
         padding: 0.2rem 2rem;
     }
 
@@ -196,6 +201,7 @@
                 <p id="sinopse-livro"></p>
             </div>
             <div class="botoes">
+                <p class="disponivel"></p>
                 <button type="button" class="botao-reserva">Reservar</button>
             </div>
         </div>
@@ -263,6 +269,11 @@
                 $("#editora-livro").text(data.editora);
                 $("#autor-livro").text(data.autor);
                 $("#sinopse-livro").text(data.sinopse);
+
+                if(data.qtd_disponivel) {
+                    $(".disponivel").text(`Na prateleira: ${data.qtd_disponivel}`);
+                }
+ 
             }).catch(error => {
                 console.error(`Erro ao carregar capa para o ISBN ${isbn}:`, error);
                 

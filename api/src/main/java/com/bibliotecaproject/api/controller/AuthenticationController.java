@@ -2,18 +2,14 @@ package com.bibliotecaproject.api.controller;
 
 import com.bibliotecaproject.api.domain.dto.AuthenticationDTO;
 import com.bibliotecaproject.api.domain.dto.TokenDTO;
-import com.bibliotecaproject.api.domain.usuario.Login;
 import com.bibliotecaproject.api.domain.usuario.Usuario;
 import com.bibliotecaproject.api.service.AuthenticationService;
-import com.bibliotecaproject.api.service.LoginService;
 import com.bibliotecaproject.api.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")

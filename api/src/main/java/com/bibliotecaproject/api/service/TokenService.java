@@ -29,7 +29,7 @@ public class TokenService {
 
         return Jwts.builder()
                 .setIssuer("API LitHub")
-                .setSubject(usuario.getLogin().getEmail())
+                .setSubject(usuario.getEmail())
                 .claim("role", usuario.getRole().name())
                 .setIssuedAt(agora)
                 .setExpiration(dataExpiracao)

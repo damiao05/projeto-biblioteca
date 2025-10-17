@@ -1,0 +1,94 @@
+<style>
+
+    .disabled {
+        pointer-events: none;
+        background-color: lightgray;
+    }
+
+</style>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - Usuário</title>
+</head>
+<body>
+
+    <header>
+        <h2>LitHub</h2>
+    </header>
+
+    <div class="user-infos">
+        <label for="perfil-nome">Nome</label>
+        <input type="text" name="perfil-nome" id="perfil-nome" class="disabled">
+        <label for="perfil-cpf">CPF</label>
+        <input type="text" name="perfil-cpf" id="perfil-cpf" class="disabled">
+        <label for="perfil-dt-nascimento">Data de Nascimento</label>
+        <input type="text" name="perfil-dt-nascimento" id="perfil-dt-nascimento" placeholder="__/__/____" class="disabled">
+        <label for="perfil-telefone">Telefone</label>
+        <input type="text" name="perfil-telefone" id="perfil-telefone" class="disabled">
+        <label for="perfil-email">Email</label>
+        <input type="email" name="perfil-email" id="perfil-email" class="disabled">
+    </div>
+
+    <button class="editar-infos">Editar</button>
+
+
+    <script src="./js/jquery.min.js"></script>
+    <script src="https://unpkg.com/jwt-decode/build/jwt-decode.js"></script> 
+    <script src="./js/seu-script.js"></script>
+</body>
+</html>
+
+<script>
+
+    $(document).ready(function() {
+        const token = localStorage.getItem("jwtToken");
+
+        if (!token) {
+            alert('Acesso negado. Por favor, faça login.');
+            window.location.href = '/login.html';
+            return;
+        }
+
+        const API_URL = 'http://localhost:8080/usuarios/meu-perfil';
+
+        fetch(API_URL, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(response => {
+            if (response.status === 403) {
+                localStorage.clear();
+                window.location.href = '/login.html';
+                throw new Error('Sessão inválida.');
+            }
+            if (!response.ok) {
+                throw new Error('Não foi possível carregar os dados do perfil.');
+            }
+            return response.json();
+        }).then(usuario => {
+            $("#perfil-nome").val(usuario.nome);
+            $("#perfil-cpf").val(usuario.cpf);
+            $("#perfil-dt-nascimento").val(usuario.dataNascimento);
+            $("#perfil-telefone").val(usuario.telefone);
+            $("#perfil-email").val(usuario.email);
+
+        }).catch(error => {
+            console.error('Erro ao buscar perfil:', error);
+            alert(error.message);
+        });
+
+        $(".editar-infos").on("click", function() {
+            $("#perfil-nome").removeClass("disabled");
+            $("#perfil-cpf").removeClass("disabled");
+            $("#perfil-dt-nascimento").removeClass("disabled");
+            $("#perfil-telefone").removeClass("disabled");
+            $("#perfil-email").removeClass("disabled");
+        });
+
+    });
+
+</script>

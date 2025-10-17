@@ -1,10 +1,8 @@
 package com.bibliotecaproject.api.service;
 
 import com.bibliotecaproject.api.domain.dto.AtualizarSenhaDTO;
-import com.bibliotecaproject.api.domain.usuario.Login;
 import com.bibliotecaproject.api.domain.usuario.Role;
 import com.bibliotecaproject.api.domain.usuario.Usuario;
-import com.bibliotecaproject.api.repository.LoginRepository;
 import com.bibliotecaproject.api.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,30 +16,24 @@ import java.util.UUID;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-    private final LoginRepository loginRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, LoginRepository loginRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.usuarioRepository = usuarioRepository;
-        this.loginRepository = loginRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
     }
 
     @Transactional
     public Usuario salvar(Usuario usuario) {
-
         if (usuario.getRole() == null) {
             usuario.setRole(Role.CLIENTE);
         }
 
-        if (usuario.getLogin() != null) {
-            String senhaComHash = passwordEncoder.encode(usuario.getLogin().getSenha());
-            usuario.getLogin().setSenha(senhaComHash);
+        String senhaComHash = passwordEncoder.encode(usuario.getSenha());
+        usuario.setSenha(senhaComHash);
 
-            usuario.setLogin(usuario.getLogin());
-        }
         return usuarioRepository.save(usuario);
 
     }
@@ -51,20 +43,18 @@ public class UsuarioService {
 
         String senhaTemporaria = gerarSenhaAleatoria(10);
 
-        if(novoFuncionario.getLogin() == null || novoFuncionario.getLogin().getEmail() == null) {
+        if(novoFuncionario.getEmail() == null || novoFuncionario.getEmail().isBlank()) {
             throw new IllegalArgumentException("Dados de login (e-mail) obrigatórios");
         }
 
         String senhaCriptografada = passwordEncoder.encode(senhaTemporaria);
-        novoFuncionario.getLogin().setSenha(senhaCriptografada);
-
-        novoFuncionario.setLogin(novoFuncionario.getLogin());
+        novoFuncionario.setSenha(senhaCriptografada);
 
         Usuario usuarioSalvo = usuarioRepository.save(novoFuncionario);
 
         try {
             emailService.enviarSenhaTemporaria(
-                    usuarioSalvo.getLogin().getEmail(),
+                    usuarioSalvo.getEmail(),
                     senhaTemporaria
             );
         } catch (Exception e) {
@@ -126,7 +116,7 @@ public class UsuarioService {
 
         String novoHash = passwordEncoder.encode(dados.senhaNova());
 
-        usuarioLogado.getLogin().setSenha(novoHash);
+        usuarioLogado.setSenha(novoHash);
 
         usuarioRepository.save(usuarioLogado);
     }

@@ -92,7 +92,6 @@
         window.location.href = '/login.html';
     }
 
-    const API_URL = "http://localhost:8080/livros";
     const API_BASE = "http://localhost:8080";
 
     $("#formCadastroLivro").on("submit", async (e) => {
@@ -111,26 +110,23 @@
             sinopse: $("#sinopse").val()
         }
 
-        await fetch(API_URL, {
-            method: "POST",
-            headers: {"Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(livro)
-        });
+        const formData = new FormData();
 
-        let fd = new FormData();
-        fd.append("file", fileInput.files[0]);
+        formData.append("file", fileInput.files[0]);
+        formData.append('livro', new Blob([JSON.stringify(livro)], {
+            type: "application/json"
+        }));
 
-        const resp = await fetch(`${API_BASE}/livros/${livroIsbn}/capa`, {
-            method: "POST",
+        fetch('http://localhost:8080/livros', {
+            method: 'POST',
             headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-            body: fd
+                'Authorization': `Bearer ${token}`
+            },
+            body: formData
+        }).then(() => {
+            alert("Livro cadastrado!");
         });
 
-        alert("Livro cadastrado!");
 
     });
 

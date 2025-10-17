@@ -189,6 +189,7 @@
                 const livros = await response.json();
 
                 livros.forEach(livro => {
+                    console.log(livro);
                     let urlCapa = `${API_BASE}/${livro.isbn}/capa`;
 
                     $("#container-livros").append(`<div class="book-card" data-isbn="${livro.isbn}"><img class="capa-livro" data-isbn="${livro.isbn}" src="" alt="Capa do Livro ${livro.titulo}"><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><p id="autor-livro" style="margin: 0">${livro.autor}</p></div></div>`)

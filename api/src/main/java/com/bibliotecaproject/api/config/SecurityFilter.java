@@ -37,7 +37,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                 var subject = tokenService.getSubject(tokenJWT);
                 System.out.println("--- [SECURITY FILTER] Token válido. Subject (email): " + subject);
 
-                var optionalUsuario = usuarioRepository.findByLoginEmail(subject);
+                var optionalUsuario = usuarioRepository.findByEmail(subject);
 
                 if (optionalUsuario.isPresent()) {
                     var usuario = optionalUsuario.get();

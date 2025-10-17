@@ -114,8 +114,10 @@
 
             if(usuario == 'CLIENTE') {
                 window.location.href = "categoria.html";
-            } else if(usuario == 'GERENTE' || usuario == 'FUNCIONARIO') {
+            } else if(usuario == 'GERENTE') {
                 window.location.href = "menuControle.html";
+            } else if(usuario == 'BIBLIOTECARIO') {
+                window.location.href = "menu-principal-bibliotecario.html";
             }
 
         }).catch(error => {

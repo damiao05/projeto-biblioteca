@@ -1,6 +1,7 @@
 package com.bibliotecaproject.api.controller;
 
 import com.bibliotecaproject.api.domain.usuario.Livro;
+import com.bibliotecaproject.api.service.FuncionarioService;
 import com.bibliotecaproject.api.service.LivroService;
 import com.bibliotecaproject.api.repository.LivroRepository;
 import org.springframework.core.io.Resource;
@@ -27,17 +28,28 @@ public class LivroController {
 
     private final LivroService livroService;
     private final LivroRepository livroRepository;
+    private final FuncionarioService funcionarioService;
 
-    public LivroController(LivroService livroService, LivroRepository livroRepository) {
+    public LivroController(LivroService livroService, LivroRepository livroRepository, FuncionarioService funcionarioService) {
         this.livroService = livroService;
         this.livroRepository = livroRepository;
+        this.funcionarioService = funcionarioService;
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('FUNCIONARIO','GERENTE')")
-    public ResponseEntity<Livro> adicionar(@RequestBody Livro livro) {
-        Livro salvo = livroService.salvarLivro(livro);
-        return new ResponseEntity<>(salvo, HttpStatus.CREATED);
+    @PreAuthorize("hasAnyRole('BIBLIOTECARIO', 'GERENTE')")
+    public ResponseEntity<?> cadastrarLivro(
+            @RequestPart("livro") Livro livro,
+            @RequestPart("file") MultipartFile file) {
+
+        try {
+            Livro livroSalvo = funcionarioService.cadastrarLivro(livro, file);
+            return new ResponseEntity<>(livroSalvo, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar o arquivo da capa.");
+        }
     }
     
     @GetMapping("/{isbn}")
@@ -63,7 +75,8 @@ public class LivroController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Livro>> exibirLivros(@RequestParam("categoria") String categoria){
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Livro>> exibirLivros(@RequestParam(name = "categoria", required = false) String categoria){
         List<Livro> livros = livroService.exibirLivros(categoria);
 
         if(livros.isEmpty()){

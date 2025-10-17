@@ -142,7 +142,7 @@
 </head>
 <body>
     <header>
-        <h2>Biblioteca</h2>
+        <h2>LitHub</h2>
 
         <div class="search-container">
             <input type="text" name="barra-pesquisa" id="barra-pesquisa" placeholder="Buscar livro.." autocomplete="off">
@@ -216,7 +216,11 @@
 
         $(".categorias").on("click", function() {
             window.location.href = `exibeLivros.html?categoria=${this.textContent}`;
-        })
+        });
+
+        $(document).on("click", function() {
+
+        });
 
         $("#barra-pesquisa").on("input", function() {
             const token = localStorage.getItem("jwtToken");
@@ -244,7 +248,7 @@
                 livrosPesquisados.forEach(livro => {
                     let urlCapa = `${API_BASE}/${livro.isbn}/capa`;
 
-                    let divLivro = `<div class="livro-filtro" id="$livro-${livro.isbn}"><img class="capa-livro" data-isbn="${livro.isbn}">${livro.titulo} - ${livro.autor} - ${livro.editora}</div>`
+                    let divLivro = `<div class="livro-filtro" id="$livro-${livro.isbn}" data-isbn="${livro.isbn}"><img class="capa-livro" data-isbn="${livro.isbn}">${livro.titulo} - ${livro.autor} - ${livro.editora}</div>`
                     $(".livros-pesquisados").append(divLivro);
 
                 });
@@ -255,7 +259,11 @@
         });
 
         $(".livros-pesquisados").on("click", function() {
-            window.location.href = `informacoesLivro.html?isbn=${event.target.children[0].dataset.isbn}`;
+            window.location.href = `informacoesLivro.html?isbn=${event.target.dataset.isbn}`;
+        });
+
+        $(".user-menu").on("click", function() {
+            window.location.href = 'user-menu.html';
         });
     })
     

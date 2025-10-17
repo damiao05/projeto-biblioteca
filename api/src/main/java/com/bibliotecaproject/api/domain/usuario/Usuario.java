@@ -1,88 +1,98 @@
-    package com.bibliotecaproject.api.domain.usuario;
+package com.bibliotecaproject.api.domain.usuario;
 
-    import com.fasterxml.jackson.annotation.JsonManagedReference;
-    import jakarta.persistence.*;
-    import lombok.AllArgsConstructor;
-    import lombok.Getter;
-    import lombok.NoArgsConstructor;
-    import lombok.Setter;
-    import org.hibernate.annotations.CreationTimestamp;
-    import org.springframework.format.annotation.DateTimeFormat;
-    import org.springframework.security.core.GrantedAuthority;
-    import org.springframework.security.core.authority.SimpleGrantedAuthority;
-    import org.springframework.security.core.userdetails.UserDetails;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-    import java.time.LocalDate;
-    import java.time.LocalDateTime;
-    import java.util.Collection;
-    import java.util.List;
-    import java.util.UUID;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
-    @Table(name = "usuario")
-    @Entity
-    @Setter
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class Usuario implements UserDetails {
-        @Id
-        @GeneratedValue
-        private UUID id;
+@Table(name = "usuario")
+@Entity
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Usuario implements UserDetails {
+    @Id
+    @GeneratedValue
+    private UUID id;
 
-        private String nome;
-        private String cpf;
-        private LocalDate dataNascimento;
+    @NotBlank
+    @Column(nullable = false)
+    private String nome;
 
-        @CreationTimestamp
-        @Column(name = "data_hora_cadastro", updatable = false)
-        private LocalDateTime dataHoraCadastro;
+    @NotBlank
+    @Column(nullable = false, unique = true)
+    private String cpf;
 
-        @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-        @JsonManagedReference
-        private Login login;
+    private LocalDate dataNascimento;
 
-        @Enumerated(EnumType.STRING)
-        private Role role;
+    @CreationTimestamp
+    @Column(name = "data_hora_cadastro", updatable = false, nullable = false)
+    private LocalDateTime dataHoraCadastro;
 
-        public void setLogin(Login login) {
-            this.login = login;
-            if (login != null) {
-                login.setUsuario(this);
-            }
-        }
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
-        }
+    @NotBlank
+    @Email
+    @Column(nullable = false, unique = true)
+    private String email;
 
-        @Override
-        public String getPassword() {
-            return this.login.getSenha();
-        }
+    @NotBlank
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false)
+    private String senha;
 
-        @Override
-        public String getUsername() {
-            return this.login.getEmail();
-        }
+    private Boolean inativo = false;
 
-        @Override
-        public boolean isAccountNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isAccountNonLocked() {
-            return true;
-        }
-
-        @Override
-        public boolean isCredentialsNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return true;
-        }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
+
+    @Override
+    public String getPassword() {
+        return this.senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+}

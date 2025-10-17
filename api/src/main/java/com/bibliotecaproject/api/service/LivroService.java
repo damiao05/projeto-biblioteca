@@ -3,6 +3,7 @@ package com.bibliotecaproject.api.service;
 import com.bibliotecaproject.api.domain.usuario.Livro;
 import com.bibliotecaproject.api.repository.LivroRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,12 +43,18 @@ public class LivroService {
     }
 
     public List<Livro> exibirLivros(String categoria) {
-        return livroRepository.findByCategoria(categoria);
+        Sort sort = Sort.by(Sort.Direction.ASC, "titulo");
+
+        if(categoria != null && !categoria.isBlank()) {
+            return livroRepository.findByCategoria(categoria, sort);
+        } else {
+            return livroRepository.findAll(sort);
+        }
     }
 
-    public Livro salvarLivro(Livro livro){
-        return livroRepository.save(livro);
-    }
+    //public Livro salvarLivro(Livro livro){
+       // return livroRepository.save(livro);
+    //}
 
     public List<Livro> pesquisarLivros(String input) {return livroRepository.findByInput(input);}
 

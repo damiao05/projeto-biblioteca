@@ -1,7 +1,9 @@
 package com.bibliotecaproject.api.controller;
 
 import com.bibliotecaproject.api.domain.dto.AtualizarSenhaDTO;
+import com.bibliotecaproject.api.domain.usuario.Livro;
 import com.bibliotecaproject.api.domain.usuario.Usuario;
+import com.bibliotecaproject.api.service.FuncionarioService;
 import com.bibliotecaproject.api.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
@@ -10,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,9 +24,11 @@ import java.util.UUID;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final FuncionarioService funcionarioService;
 
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(UsuarioService usuarioService, FuncionarioService funcionarioService) {
         this.usuarioService = usuarioService;
+        this.funcionarioService = funcionarioService;
     }
 
     @PostMapping("/cadastro")
@@ -36,6 +42,12 @@ public class UsuarioController {
     public ResponseEntity<Usuario> criarFuncionario(@RequestBody Usuario usuario) {
         Usuario salvo = usuarioService.criarFuncionario(usuario);
         return new ResponseEntity<>(salvo, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/meu-perfil")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Usuario> getPerfil(@AuthenticationPrincipal Usuario usuarioLogado) {
+        return ResponseEntity.ok(usuarioLogado);
     }
 
     @GetMapping

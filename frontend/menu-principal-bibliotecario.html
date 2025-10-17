@@ -1,0 +1,69 @@
+<style>
+
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background-color: #986c4a;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 1rem;
+        padding: 0 2px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
+
+    body {
+        height: auto;
+        background: #f7f5e9;
+        margin: 0;
+    }
+
+</style>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <h2>LitHub</h2>
+    </header>
+
+    <div class="container-livros"></div>
+    
+</body>
+</html>
+
+<script src="./js/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+<script>
+
+    $(document).ready(function() {
+        const token = localStorage.getItem('jwtToken');
+
+        const API_BASE = 'http://localhost:8080/livros';
+
+        fetch(API_BASE, {
+            method: 'GET',
+            headers:{ "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        }).then(async response => {
+            const livros = await response.json();
+
+            livros.forEach(livro => {
+                console.log(livro);
+
+                $(".container-livros").append(`<div class="book-card"><div class="book-info">${livro.titulo}</div></div>`)
+            });
+        })
+    });
+
+</script>

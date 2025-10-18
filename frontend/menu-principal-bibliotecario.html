@@ -21,6 +21,158 @@
         height: auto;
         background: #f7f5e9;
         margin: 0;
+        margin-top: 60px;
+    }
+
+    .conteudo-body {
+        opacity: 0;
+        transition: opacity 0.5s ease-out;
+    }
+
+    .mostrar {
+        opacity: 1;
+    }
+
+    .container-livros {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 25px;
+    }
+
+    .capa-livro {
+        display: block;
+        width: 100%;
+        aspect-ratio: 2/3;
+        object-fit: cover;
+        background-color: #eee;
+    }
+
+    .book-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        overflow: hidden
+    }
+
+    .book-info {
+        padding: 15px;
+    }
+
+    .book-info h3 {
+        font-size: 1em;
+        margin: 0 0 5px 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .book-info p {
+        font-size: 0.9em;
+        color: #666;
+        margin: 0;
+    }
+
+    .capa-livro {
+        display: block;
+        width: 100%;
+        aspect-ratio: 2/3;
+        object-fit: cover;
+        background-color: #eee;
+    }
+
+    .container-infos {
+        display: flex;
+        background-color: white;
+        border-radius: 15px;
+        width: 50rem;
+        height: 35rem;
+        margin-top: 2rem;
+
+        transform: translateX(0);
+        transition: transform 1s ease-out;
+    }
+
+    .modal-info-livro {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0,0,0,0.5);
+        backdrop-filter: blur(2px);
+        transition: opacity 0.4s ease;
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .clone-capa {
+        position: fixed;
+        z-index: 2001;
+        object-fit: cover;
+
+        transition: top 1s ease-in-out, left 1s ease-in-out, width 1s ease-in-out, height 1s ease-in-out;
+    }
+
+    .clone-info {
+        position: fixed;
+        margin: 0;
+        z-index: 1500;
+        object-fit: cover;
+
+        transition: top 0.4s ease-in-out, left 0.4s ease-in-out, width 0.4s ease-in-out, height 0.4s ease-in-out;
+    }
+
+    .info-capa-livro {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .container-capa-info {
+        width: 50%;
+        margin: 2rem;
+        overflow: hidden;
+    }
+
+    .visible {
+        opacity: 1;
+        pointer-events: all;
+
+    }
+
+    .book-card:hover {
+        transform: scale(1.1); 
+    }
+
+    .infos-livro {
+        width: 50%;
+        margin-top: 5rem;
+        margin-right: 2rem;
+    }
+
+    .infos-livro h2, p {
+        margin: 1rem;
+    }
+
+    .d-none {
+        display: none;
+    }
+
+    .fechar-modal {
+        color: white;
+        font-size: 1.5rem;
+        position: fixed;
     }
 
 </style>
@@ -30,22 +182,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 </head>
 <body>
     <header>
         <h2>LitHub</h2>
     </header>
 
-    <div class="container-livros"></div>
+    <div class="conteudo-body">
+        <div class="container-livros"></div>
+    </div>
     
 </body>
 </html>
+
+<div class="modal-info-livro">
+    <span class="fechar-modal"><i class="fa fa-times"></i></span>
+    <div class="container-infos">
+        <div class="container-capa-info">
+            <img src="" alt="" class="info-capa-livro">
+        </div>
+        <div class="infos-livro">
+            <h2 class="titulo-h2"></h2>
+            <p class="autor"></p>
+            <p class="editora"></p>
+        </div>
+    </div>
+</div>
 
 <script src="./js/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
 <script>
 
     $(document).ready(function() {
+        let medidasTitulo;
+        let medidasAutor;
+        let medidasEditora;
+        let medidasCapa;
+        let medidasLivroEscolhido;
+        let sourceImage;
+        let livroEscolhido;
+
+        let informacoesLivros = {};
+
+        function carregarCapas(token) {
+            const promises = [];
+
+            $(".capa-livro").each(function() {
+                const card = $(this);
+                const isbn = card.data("isbn");
+
+                if(!isbn) return;
+
+                const urlCapa = `http://localhost:8080/livros/${isbn}/capa`;
+
+                const promise = fetch(urlCapa, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+                .then(response => {
+                    if(!response.ok) { throw new Error('Capa não encontrada.'); }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const objectURL = URL.createObjectURL(blob);
+                    card.attr('src', objectURL);
+
+                    informacoesLivros[`book-${isbn}`]["urlCapa"] = objectURL;
+                })
+                .catch(error => {
+                    console.error(`Erro ao carregar capa para o ISBN ${isbn}:`, error);
+                    card.attr('src', 'caminho/para/imagem_padrao.png');
+                });
+                
+                promises.push(promise);
+            });
+
+
+            return Promise.all(promises);
+        }
+
         const token = localStorage.getItem('jwtToken');
 
         const API_BASE = 'http://localhost:8080/livros';
@@ -59,11 +275,179 @@
             const livros = await response.json();
 
             livros.forEach(livro => {
-                console.log(livro);
+                // console.log(livro);
 
-                $(".container-livros").append(`<div class="book-card"><div class="book-info">${livro.titulo}</div></div>`)
+                let urlCapa = `${API_BASE}/${livro.isbn}/capa`;
+
+                informacoesLivros[`book-${livro.isbn}`] = {
+                    'isbn': livro.isbn,
+                    'titulo': livro.titulo,
+                    'autor': livro.autor,
+                    'editora': livro.editora
+                }
+
+                $(".container-livros").append(`<div class="book-card" id="book-${livro.isbn}""><img class="capa-livro" data-isbn="${livro.isbn}" src="" alt="Capa do Livro ${livro.titulo}"><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><p id="autor-livro" style="margin: 0">${livro.autor}</p></div></div>`);
             });
-        })
+
+            return carregarCapas(token); 
+        }).then(() => {
+            $(".conteudo-body").addClass("mostrar");
+        });
+
+        $(".container-livros").on("click", function() {
+            livroEscolhido = $(event.target)[0].parentElement.id;
+            console.log(livroEscolhido);
+            medidasLivroEscolhido = $(event.target)[0].getBoundingClientRect();
+
+            sourceImage = event.target;
+
+            const infoLivroEscolhido = informacoesLivros[livroEscolhido];
+
+            $(".titulo-h2")[0].style.opacity = 0;
+            $(".titulo-h2").text(infoLivroEscolhido.titulo);
+            $(".titulo-h2")[0].style.fontSize = '2rem';
+            $(".autor")[0].style.opacity = 0;
+            $(".autor").text(infoLivroEscolhido.autor);
+            $(".editora")[0].style.opacity = 0;
+            $(".editora").text(infoLivroEscolhido.editora);
+
+            const cloneCapa = sourceImage.cloneNode();
+            cloneCapa.classList.add('clone-capa');
+            cloneCapa.style.top = `${medidasLivroEscolhido.top}px`;
+            cloneCapa.style.left = `${medidasLivroEscolhido.left}px`;
+            cloneCapa.style.width = `${medidasLivroEscolhido.width}px`;
+            cloneCapa.style.height = `${medidasLivroEscolhido.height}px`;
+
+            document.body.appendChild(cloneCapa);
+
+            $(".info-capa-livro")[0].src = infoLivroEscolhido.urlCapa;
+            $(".info-capa-livro")[0].onload = () => {
+                medidasCapa = $(".info-capa-livro")[0].getBoundingClientRect();
+                
+                cloneCapa.style.top = `${medidasCapa.top}px`;
+                cloneCapa.style.left = `${medidasCapa.left}px`;
+                cloneCapa.style.width = `${medidasCapa.width}px`;
+                cloneCapa.style.height = `${medidasCapa.height}px`;
+
+                medidasTitulo = $(".titulo-h2")[0].getBoundingClientRect();
+                medidasAutor = $(".autor")[0].getBoundingClientRect();
+                medidasEditora = $(".editora")[0].getBoundingClientRect();
+
+                const cloneTitulo = document.createElement('h2');
+                cloneTitulo.appendChild(document.createTextNode(infoLivroEscolhido.titulo));
+                cloneTitulo.classList.add('clone-info');
+                cloneTitulo.id = 'clone-titulo';
+                cloneTitulo.style.top = `${((medidasCapa.bottom - medidasCapa.top) / 2) + medidasCapa.top}px`;
+                cloneTitulo.style.left = `${((medidasCapa.right - medidasCapa.left) / 2) + medidasCapa.left}px`;
+                cloneTitulo.style.fontSize = `${$(".titulo-h2")[0].style.fontSize}`; 
+                cloneTitulo.style.width = `${medidasTitulo.width}`;
+                cloneTitulo.style.opacity = 0;
+
+                const cloneAutor = document.createElement('p');
+                cloneAutor.appendChild(document.createTextNode(infoLivroEscolhido.autor));
+                cloneAutor.classList.add('clone-info');
+                cloneAutor.style.top = `${((medidasCapa.bottom - medidasCapa.top) / 2) + medidasCapa.top}px`;
+                cloneAutor.style.left = `${((medidasCapa.right - medidasCapa.left) / 2) + medidasCapa.left}px`;
+                cloneAutor.style.fontSize = `${$(".autor")[0].style.fontSize}`; 
+                cloneAutor.style.width = `${medidasAutor.width}`;
+                cloneAutor.style.opacity = 0;
+
+                const cloneEditora = document.createElement('p');
+                cloneEditora.appendChild(document.createTextNode(infoLivroEscolhido.editora));
+                cloneEditora.classList.add('clone-info');
+                cloneEditora.style.top = `${((medidasCapa.bottom - medidasCapa.top) / 2) + medidasCapa.top}px`;
+                cloneEditora.style.left = `${((medidasCapa.right - medidasCapa.left) / 2) + medidasCapa.left}px`;
+                cloneEditora.style.fontSize = `${$(".editora")[0].style.fontSize}`; 
+                cloneEditora.style.width = `${medidasEditora.width}`;
+                cloneEditora.style.opacity = 0;
+
+                document.body.appendChild(cloneTitulo);
+                document.body.appendChild(cloneAutor);
+                document.body.appendChild(cloneEditora);
+
+                cloneCapa.addEventListener('transitionend', () => {
+                    const medidaModal = $(".container-infos")[0].getBoundingClientRect();
+                    console.log(medidaModal);
+                    $(".fechar-modal")[0].style.top = `${medidaModal.top}px`;
+                    $(".fechar-modal")[0].style.right = `${medidaModal.right + 5}px`;
+                    cloneTitulo.style.opacity = 1;
+                    cloneAutor.style.opacity = 1;
+                    cloneEditora.style.opacity = 1;
+                    $(".modal-info-livro").addClass("visible");
+
+                    cloneEditora.style.left = `${medidasEditora.left}px`;
+                    cloneAutor.style.left = `${medidasAutor.left}px`;
+                    cloneTitulo.style.left = `${medidasTitulo.left}px`;
+
+                    cloneTitulo.addEventListener('transitionend', () => {
+                        cloneEditora.style.top = `${medidasEditora.top}px`;
+                        cloneAutor.style.top = `${medidasAutor.top}px`;
+                        cloneTitulo.style.top = `${medidasTitulo.top}px`;
+
+                        cloneTitulo.addEventListener('transitionend', () => {
+                            $(".titulo-h2")[0].style.opacity = 1;
+                            $(".autor")[0].style.opacity = 1;
+                            $(".editora")[0].style.opacity = 1;
+                            cloneTitulo.remove();
+                            cloneAutor.classList.add("d-none");
+                            cloneEditora.classList.add("d-none");
+                        })
+                    });
+
+                    setTimeout(() => {
+                        cloneCapa.classList.add("d-none");
+                    }, 400);
+                });
+            }
+
+        });
+
+        $(".fechar-modal").on("click", function() {
+            const cloneCapa = sourceImage.cloneNode();
+            cloneCapa.classList.add('clone-capa');
+            cloneCapa.style.top = `${medidasCapa.top}px`;
+            cloneCapa.style.left = `${medidasCapa.left}px`;
+            cloneCapa.style.width = `${medidasCapa.width}px`;
+            cloneCapa.style.height = `${medidasCapa.height}px`;
+
+            document.body.appendChild(cloneCapa);
+
+            const cloneTitulo = document.createElement('h2');
+            cloneTitulo.appendChild(document.createTextNode($(".titulo-h2").text()));
+            cloneTitulo.classList.add('clone-info');
+            cloneTitulo.id = 'clone-titulo';
+            cloneTitulo.style.top = `${medidasTitulo.top}px`;
+            cloneTitulo.style.left = `${medidasTitulo.left}px`;
+            cloneTitulo.style.fontSize = `${$(".titulo-h2")[0].style.fontSize}`; 
+            cloneTitulo.style.width = `${medidasTitulo.width}`;
+
+            document.body.appendChild(cloneTitulo);
+
+            $(".titulo-h2").remove();
+
+            requestAnimationFrame(() => {
+                cloneTitulo.style.top = `${((medidasCapa.bottom - medidasCapa.top) / 2) + medidasCapa.top}px`;
+
+                cloneTitulo.addEventListener('transitionend', () => {
+                    requestAnimationFrame(() => {
+                        cloneTitulo.style.left = `${medidasCapa.left}px`;
+
+                        cloneTitulo.addEventListener('transitionend', () => {
+                            requestAnimationFrame(() => {
+                                medidasLivroEscolhido = $(`#${livroEscolhido}`)[0].children[0].getBoundingClientRect();
+
+                                cloneCapa.style.top = `${medidasLivroEscolhido.top}px`;
+                                cloneCapa.style.left = `${medidasLivroEscolhido.left}px`;
+                                cloneCapa.style.width = `${medidasLivroEscolhido.width}px`;
+                                cloneCapa.style.height = `${medidasLivroEscolhido.height}px`;
+                            });
+                        });
+                    });               
+                });
+            });
+
+        });
+
     });
 
 </script>

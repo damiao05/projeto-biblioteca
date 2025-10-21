@@ -91,9 +91,7 @@
         width: 50rem;
         height: 35rem;
         margin-top: 2rem;
-
-        transform: translateX(0);
-        transition: transform 1s ease-out;
+        opacity: 0;
     }
 
     .modal-info-livro {
@@ -102,7 +100,6 @@
         align-items: center;
         background-color: rgba(0,0,0,0.5);
         backdrop-filter: blur(2px);
-        transition: opacity 0.4s ease;
 
         position: fixed;
         top: 0;
@@ -120,7 +117,7 @@
         z-index: 2001;
         object-fit: cover;
 
-        transition: top 1s ease-in-out, left 1s ease-in-out, width 1s ease-in-out, height 1s ease-in-out;
+        transition: top 0.7s ease-in-out, left 0.7s ease-in-out, width 0.7s ease-in-out, height 0.7s ease-in-out;
     }
 
     .clone-info {
@@ -129,7 +126,7 @@
         z-index: 1500;
         object-fit: cover;
 
-        transition: top 0.4s ease-in-out, left 0.4s ease-in-out, width 0.4s ease-in-out, height 0.4s ease-in-out;
+        transition: top 0.3s ease-in-out, left 0.3s ease-in-out, width 0.3s ease-in-out, height 0.3s ease-in-out;
     }
 
     .info-capa-livro {
@@ -173,6 +170,14 @@
         color: white;
         font-size: 1.5rem;
         position: fixed;
+        transition: top 0.3s ease-in-out, left 0.3s ease-in-out, width 0.3s ease-in-out, height 0.3s ease-in-out;
+        opacity: 0;
+    }
+
+    .btn-add-livro {
+        position: fixed;
+        left: 2rem;
+        bottom: 2rem;
     }
 
 </style>
@@ -192,6 +197,7 @@
 
     <div class="conteudo-body">
         <div class="container-livros"></div>
+        <button class="btn-add-livro" type="button">Adicionar Livro</button>
     </div>
     
 </body>
@@ -207,6 +213,7 @@
             <h2 class="titulo-h2"></h2>
             <p class="autor"></p>
             <p class="editora"></p>
+            <button type="button" class="editar-infos">Editar Informações</button>
         </div>
     </div>
 </div>
@@ -216,6 +223,8 @@
 <script>
 
     $(document).ready(function() {
+        sessionStorage.setItem('urlAnterior', window.location.href);
+
         let medidasTitulo;
         let medidasAutor;
         let medidasEditora;
@@ -295,6 +304,10 @@
         });
 
         $(".container-livros").on("click", function() {
+            $(".modal-info-livro").addClass("visible");
+            let scrollbarWidth = window.innerWidth - $(document).width();
+            document.body.style.paddingRight = `${scrollbarWidth}px`;
+            document.body.style.overflow = 'hidden';
             livroEscolhido = $(event.target)[0].parentElement.id;
             console.log(livroEscolhido);
             medidasLivroEscolhido = $(event.target)[0].getBoundingClientRect();
@@ -333,6 +346,17 @@
                 medidasAutor = $(".autor")[0].getBoundingClientRect();
                 medidasEditora = $(".editora")[0].getBoundingClientRect();
 
+                const medidaModal = $(".container-infos")[0].getBoundingClientRect();
+                const cloneModal = document.createElement('div')
+                cloneModal.classList.add('clone-info');
+                cloneModal.id = 'clone-modal';
+                cloneModal.style.top = `${medidaModal.top}px`;
+                cloneModal.style.left = `${medidaModal.left}px`;
+                cloneModal.style.width = `0`;
+                cloneModal.style.borderRadius = '15px';
+                cloneModal.style.backgroundColor = 'white';
+                cloneModal.style.height = `${medidaModal.height}px`;
+
                 const cloneTitulo = document.createElement('h2');
                 cloneTitulo.appendChild(document.createTextNode(infoLivroEscolhido.titulo));
                 cloneTitulo.classList.add('clone-info');
@@ -361,48 +385,64 @@
                 cloneEditora.style.width = `${medidasEditora.width}`;
                 cloneEditora.style.opacity = 0;
 
+                document.body.appendChild(cloneModal);
                 document.body.appendChild(cloneTitulo);
                 document.body.appendChild(cloneAutor);
                 document.body.appendChild(cloneEditora);
 
                 cloneCapa.addEventListener('transitionend', () => {
-                    const medidaModal = $(".container-infos")[0].getBoundingClientRect();
-                    console.log(medidaModal);
-                    $(".fechar-modal")[0].style.top = `${medidaModal.top}px`;
-                    $(".fechar-modal")[0].style.right = `${medidaModal.right + 5}px`;
-                    cloneTitulo.style.opacity = 1;
-                    cloneAutor.style.opacity = 1;
-                    cloneEditora.style.opacity = 1;
-                    $(".modal-info-livro").addClass("visible");
 
-                    cloneEditora.style.left = `${medidasEditora.left}px`;
-                    cloneAutor.style.left = `${medidasAutor.left}px`;
-                    cloneTitulo.style.left = `${medidasTitulo.left}px`;
+                    cloneModal.style.width = `${medidaModal.width}px`;
 
-                    cloneTitulo.addEventListener('transitionend', () => {
-                        cloneEditora.style.top = `${medidasEditora.top}px`;
-                        cloneAutor.style.top = `${medidasAutor.top}px`;
-                        cloneTitulo.style.top = `${medidasTitulo.top}px`;
+                    cloneModal.addEventListener('transitionend', () => {
+                        requestAnimationFrame(() => {
+                            $(".fechar-modal")[0].style.top = `${medidaModal.top}px`;
+                            $(".fechar-modal")[0].style.opacity = 1;
+                            $(".fechar-modal")[0].style.right = `${medidaModal.right + 5}px`;
+                            cloneTitulo.style.opacity = 1;
+                            cloneAutor.style.opacity = 1;
+                            cloneEditora.style.opacity = 1;
+                            $(".container-infos").addClass("visible");
 
-                        cloneTitulo.addEventListener('transitionend', () => {
-                            $(".titulo-h2")[0].style.opacity = 1;
-                            $(".autor")[0].style.opacity = 1;
-                            $(".editora")[0].style.opacity = 1;
-                            cloneTitulo.remove();
-                            cloneAutor.classList.add("d-none");
-                            cloneEditora.classList.add("d-none");
-                        })
+                            cloneEditora.style.left = `${medidasEditora.left}px`;
+                            cloneAutor.style.left = `${medidasAutor.left}px`;
+                            cloneTitulo.style.left = `${medidasTitulo.left}px`;
+
+                            cloneTitulo.addEventListener('transitionend', () => {
+                                cloneEditora.style.top = `${medidasEditora.top}px`;
+                                cloneAutor.style.top = `${medidasAutor.top}px`;
+                                cloneTitulo.style.top = `${medidasTitulo.top}px`;
+
+                                cloneTitulo.addEventListener('transitionend', () => {
+                                    $(".titulo-h2")[0].style.opacity = 1;
+                                    $(".autor")[0].style.opacity = 1;
+                                    $(".editora")[0].style.opacity = 1;
+                                    cloneModal.remove();
+                                    cloneCapa.remove();
+                                    cloneTitulo.remove();
+                                    cloneAutor.classList.add("d-none");
+                                    cloneEditora.classList.add("d-none");
+                                })
+                            });
+                        });
                     });
-
-                    setTimeout(() => {
-                        cloneCapa.classList.add("d-none");
-                    }, 400);
                 });
             }
 
         });
 
         $(".fechar-modal").on("click", function() {
+            const medidaModal = $(".container-infos")[0].getBoundingClientRect();
+            const cloneModal = document.createElement('div')
+            cloneModal.classList.add('clone-info');
+            cloneModal.id = 'clone-modal';
+            cloneModal.style.top = `${medidaModal.top}px`;
+            cloneModal.style.left = `${medidaModal.left}px`;
+            cloneModal.style.width = `${medidaModal.width}px`;
+            cloneModal.style.borderRadius = '15px';
+            cloneModal.style.backgroundColor = 'white';
+            cloneModal.style.height = `${medidaModal.height}px`
+
             const cloneCapa = sourceImage.cloneNode();
             cloneCapa.classList.add('clone-capa');
             cloneCapa.style.top = `${medidasCapa.top}px`;
@@ -411,6 +451,8 @@
             cloneCapa.style.height = `${medidasCapa.height}px`;
 
             document.body.appendChild(cloneCapa);
+            document.body.appendChild(cloneModal);
+            $(".container-infos").removeClass("visible");
 
             const cloneTitulo = document.createElement('h2');
             cloneTitulo.appendChild(document.createTextNode($(".titulo-h2").text()));
@@ -423,7 +465,7 @@
 
             document.body.appendChild(cloneTitulo);
 
-            $(".titulo-h2").remove();
+            $(".titulo-h2")[0].style.opacity = 0;
 
             requestAnimationFrame(() => {
                 cloneTitulo.style.top = `${((medidasCapa.bottom - medidasCapa.top) / 2) + medidasCapa.top}px`;
@@ -434,18 +476,43 @@
 
                         cloneTitulo.addEventListener('transitionend', () => {
                             requestAnimationFrame(() => {
-                                medidasLivroEscolhido = $(`#${livroEscolhido}`)[0].children[0].getBoundingClientRect();
 
-                                cloneCapa.style.top = `${medidasLivroEscolhido.top}px`;
-                                cloneCapa.style.left = `${medidasLivroEscolhido.left}px`;
-                                cloneCapa.style.width = `${medidasLivroEscolhido.width}px`;
-                                cloneCapa.style.height = `${medidasLivroEscolhido.height}px`;
+                                cloneTitulo.remove();
+                                cloneModal.style.width = '0px';
+                                $(".fechar-modal")[0].style.right = `${$(".modal-info-livro")[0].getBoundingClientRect().width / 2}px`;
+                                $(".fechar-modal")[0].style.opacity = 0;
+
+                                cloneModal.addEventListener('transitionend', () => {
+                                    requestAnimationFrame(() => {
+                                        cloneModal.remove();
+
+                                        medidasLivroEscolhido = $(`#${livroEscolhido}`)[0].children[0].getBoundingClientRect();
+
+                                        cloneCapa.style.top = `${medidasLivroEscolhido.top}px`;
+                                        cloneCapa.style.left = `${medidasLivroEscolhido.left}px`;
+                                        cloneCapa.style.width = `${medidasLivroEscolhido.width}px`;
+                                        cloneCapa.style.height = `${medidasLivroEscolhido.height}px`;
+
+                                        cloneCapa.addEventListener('transitionend', () => {
+                                            requestAnimationFrame(() => {
+                                                $('.modal-info-livro').removeClass('visible');
+                                                document.body.style.overflow = '';
+                                                document.body.style.paddingRight = ``;
+                                                cloneCapa.remove();
+                                            })
+                                        })
+                                    })
+                                })
                             });
                         });
                     });               
                 });
             });
 
+        });
+
+        $(".btn-add-livro").on("click", function() {
+            window.location.href = "cadastroLivro.html";
         });
 
     });

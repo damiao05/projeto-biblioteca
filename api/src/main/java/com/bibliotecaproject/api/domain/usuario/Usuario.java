@@ -49,6 +49,8 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String telefone;
+
     @NotBlank
     @Email
     @Column(nullable = false, unique = true)

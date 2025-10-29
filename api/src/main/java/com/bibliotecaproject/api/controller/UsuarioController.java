@@ -60,9 +60,10 @@ public class UsuarioController {
         return usuarioService.buscarPorId(id);
     }
 
-    @PutMapping("/{id}")
-    public Usuario atualizar(@PathVariable UUID id, @RequestBody Usuario usuario) {
-        return usuarioService.atualizar(id, usuario);
+    @PutMapping("/meu-perfil")
+    @PreAuthorize("isAuthenticated()")
+    public Usuario atualizar(@AuthenticationPrincipal Usuario usuarioLogado, @RequestBody Usuario usuario) {
+        return usuarioService.atualizar(usuarioLogado, usuario);
     }
 
     @DeleteMapping("/{id}")

@@ -111,6 +111,7 @@
         transform: translateX(100%);
         pointer-events: none;
         transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        color: #f7f5e9;
     }
 
     .menu.visible {
@@ -169,7 +170,9 @@
         <div class="categorias" id="aventura">Aventura</div>
     </div>
 
-    <div class="menu"></div>
+    <div class="menu">
+        <span class="sair"><i class="fa fa-sign-out"></i> Sair</span>
+    </div>
 
 </body>
 </html>
@@ -207,6 +210,8 @@
     }
 
     $(document).ready(function() {
+
+        sessionStorage.setItem('urlAnterior', window.location.href);
 
         $(".menu")[0].style.height = (parseInt(window.innerHeight) - 60);
 
@@ -264,6 +269,10 @@
 
         $(".user-menu").on("click", function() {
             window.location.href = 'user-menu.html';
+        });
+
+        $(".sair").on("click", function() {
+            window.location.href = 'home.html';
         });
     })
     

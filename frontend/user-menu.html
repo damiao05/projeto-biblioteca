@@ -1,8 +1,48 @@
 <style>
 
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background-color: #986c4a;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 1rem;
+        padding: 0 2px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
+
+    body {
+        height: auto;
+        background: #f7f5e9;
+        margin: 0;
+        margin-top: 60px;
+    }
+
+    .user-infos {
+        display: flex;
+        flex-direction: column;
+        /* justify-content: center; */
+        align-items: center;
+    }
+
+    .user-infos input {
+        border-radius: 5px;
+        padding: 6px;
+    }
+
     .disabled {
         pointer-events: none;
         background-color: lightgray;
+    }
+
+    .d-none {
+        display: none;
     }
 
 </style>
@@ -16,34 +56,64 @@
 <body>
 
     <header>
+        <nav>
+            <button type="button" class="btn-voltar" id="btn-voltar">Voltar</button>
+        </nav>
         <h2>LitHub</h2>
     </header>
 
-    <div class="user-infos">
-        <label for="perfil-nome">Nome</label>
-        <input type="text" name="perfil-nome" id="perfil-nome" class="disabled">
-        <label for="perfil-cpf">CPF</label>
-        <input type="text" name="perfil-cpf" id="perfil-cpf" class="disabled">
-        <label for="perfil-dt-nascimento">Data de Nascimento</label>
-        <input type="text" name="perfil-dt-nascimento" id="perfil-dt-nascimento" placeholder="__/__/____" class="disabled">
-        <label for="perfil-telefone">Telefone</label>
-        <input type="text" name="perfil-telefone" id="perfil-telefone" class="disabled">
-        <label for="perfil-email">Email</label>
-        <input type="email" name="perfil-email" id="perfil-email" class="disabled">
-    </div>
+    <form class="form-editar-infos">
+        <div class="user-infos">
+            <label for="perfil-nome">Nome Completo</label>
+            <input type="text" name="perfil-nome" id="perfil-nome" class="disabled">
+            <label for="perfil-cpf">CPF</label>
+            <input type="text" name="perfil-cpf" id="perfil-cpf" class="disabled">
+            <label for="perfil-dt-nascimento">Data de Nascimento</label>
+            <input type="text" name="perfil-dt-nascimento" id="perfil-dt-nascimento" placeholder="__/__/____" class="disabled">
+            <label for="perfil-telefone">Telefone</label>
+            <input type="text" name="perfil-telefone" id="perfil-telefone" class="disabled">
+            <label for="perfil-email">Email</label>
+            <input type="email" name="perfil-email" id="perfil-email" class="disabled">
+        </div>
 
-    <button class="editar-infos">Editar</button>
+        <button type="button" class="editar-infos" id="btn-editar">Editar</button>
+        <button type="button" class="salvar-infos d-none" id="btn-salvar">Salvar</button>
+    </form>
 
 
     <script src="./js/jquery.min.js"></script>
-    <script src="https://unpkg.com/jwt-decode/build/jwt-decode.js"></script> 
-    <script src="./js/seu-script.js"></script>
+    <!-- <script src="https://unpkg.com/jwt-decode/build/jwt-decode.js"></script>  -->
+     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+    <!-- <script src="./js/seu-script.js"></script> -->
 </body>
 </html>
 
 <script>
 
+    function formataDataParaUsuario(data) {
+        data = data.split('-');
+        return `${data[2]}/${data[1]}/${data[0]}`;
+    }
+
+    function formataDataParaBanco(data) {
+        data = data.split('/');
+        return `${data[2]}-${data[1]}-${data[0]}`;
+    }
+
+    function formatarTelefone(telefone) {
+        if(telefone.length == 11) {
+            return `(${telefone.slice(0, 2)})${telefone.slice(2, 11)}`;
+        }
+
+        return telefone;
+    }
+
     $(document).ready(function() {
+
+        let infosUsuario;
+
+        const urlAnterior = sessionStorage.getItem('urlAnterior');
+
         const token = localStorage.getItem("jwtToken");
 
         if (!token) {
@@ -52,6 +122,7 @@
             return;
         }
 
+        const API_BASE = 'http://localhost:8080/usuarios';
         const API_URL = 'http://localhost:8080/usuarios/meu-perfil';
 
         fetch(API_URL, {
@@ -70,10 +141,11 @@
             }
             return response.json();
         }).then(usuario => {
+            infosUsuario = usuario;
             $("#perfil-nome").val(usuario.nome);
-            $("#perfil-cpf").val(usuario.cpf);
-            $("#perfil-dt-nascimento").val(usuario.dataNascimento);
-            $("#perfil-telefone").val(usuario.telefone);
+            $("#perfil-cpf").val(usuario.cpf);  
+            $("#perfil-dt-nascimento").val(formataDataParaUsuario(usuario.dataNascimento));
+            $("#perfil-telefone").val(usuario.telefone ? formatarTelefone(usuario.telefone) : '');
             $("#perfil-email").val(usuario.email);
 
         }).catch(error => {
@@ -81,12 +153,52 @@
             alert(error.message);
         });
 
-        $(".editar-infos").on("click", function() {
+        $("#btn-editar").on("click", function() {
             $("#perfil-nome").removeClass("disabled");
             $("#perfil-cpf").removeClass("disabled");
             $("#perfil-dt-nascimento").removeClass("disabled");
             $("#perfil-telefone").removeClass("disabled");
             $("#perfil-email").removeClass("disabled");
+            $("#btn-salvar").removeClass("d-none");
+            $("#btn-editar").addClass("d-none");
+        });
+
+        $("#btn-salvar").on("click", function() {
+            const infosForm = {
+                nome: $("#perfil-nome").val(),
+                cpf: $("#perfil-cpf").val(),
+                dataNascimento: formataDataParaBanco($("#perfil-dt-nascimento").val()),
+                telefone: $("#perfil-telefone").val(),
+                email: $("#perfil-email").val()
+            };
+
+            $("#perfil-nome").addClass("disabled");
+            $("#perfil-cpf").addClass("disabled");
+            $("#perfil-dt-nascimento").addClass("disabled");
+            $("#perfil-telefone").addClass("disabled");
+            $("#perfil-email").addClass("disabled");
+            $("#btn-salvar").addClass("d-none");
+            $("#btn-editar").removeClass("d-none");
+
+            fetch(API_URL, {
+                method: "PUT",
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(infosForm)
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Não foi possível atualizar os dados do perfil.');
+                } else {
+                    alert('Dados atualizados com sucesso');
+                }
+            });
+
+        });
+
+        $("#btn-voltar").on("click", function() {
+            window.location.href = urlAnterior;
         });
 
     });

@@ -80,12 +80,12 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
-    public Usuario atualizar(UUID id, Usuario usuarioAtualizado) {
-        Usuario usuarioExistente = buscarPorId(id);
-        usuarioExistente.setNome(usuarioAtualizado.getNome());
-        usuarioExistente.setCpf(usuarioAtualizado.getCpf());
-        usuarioExistente.setDataNascimento(usuarioAtualizado.getDataNascimento());
-        return usuarioRepository.save(usuarioExistente);
+    @Transactional
+    public Usuario atualizar(Usuario usuarioLogado, Usuario usuarioAtualizado) {
+        usuarioLogado.setNome(usuarioAtualizado.getNome());
+        usuarioLogado.setCpf(usuarioAtualizado.getCpf());
+        usuarioLogado.setDataNascimento(usuarioAtualizado.getDataNascimento());
+        return usuarioRepository.save(usuarioLogado);
     }
 
     private String gerarSenhaAleatoria(int length) {

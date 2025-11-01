@@ -1,5 +1,6 @@
 package com.bibliotecaproject.api.domain.usuario;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Table(name = "usuario")
@@ -62,6 +64,10 @@ public class Usuario implements UserDetails {
     private String senha;
 
     private Boolean inativo = false;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Reserva> reservas;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

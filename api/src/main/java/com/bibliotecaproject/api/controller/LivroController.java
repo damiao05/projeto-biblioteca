@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/livros")
@@ -79,6 +80,8 @@ public class LivroController {
     public ResponseEntity<List<Livro>> exibirLivros(@RequestParam(name = "categoria", required = false) String categoria){
         List<Livro> livros = livroService.exibirLivros(categoria);
 
+        System.out.println("Processo exibir: " + livros);
+
         if(livros.isEmpty()){
             return ResponseEntity.notFound().build();
         } else {
@@ -101,7 +104,7 @@ public class LivroController {
 
     @GetMapping("/{isbn}/capa")
     public ResponseEntity<Resource> serveCapa(@PathVariable String isbn) {
-        Livro livro = livroRepository.findById(isbn).orElse(null);
+        Livro livro = livroRepository.findByIsbn(isbn).orElse(null);
         if(livro == null || livro.getCapaFilename() == null) {
             return ResponseEntity.notFound().build();
         }

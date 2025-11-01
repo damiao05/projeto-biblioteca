@@ -153,6 +153,10 @@
         opacity: 1;
     }
 
+    .d-none {
+        display: none;
+    }
+
 </style>
 
 <html lang="pt-BR">
@@ -203,7 +207,8 @@
             </div>
             <div class="botoes">
                 <p class="disponivel"></p>
-                <button type="button" class="botao-reserva">Reservar</button>
+                <button type="button" id="btn-reserva" class="botao-reserva">Reservar</button>
+                <button type="button" id="btn-lista-espera" class="botao-lista-espera d-none">Lista de Espera</button>
             </div>
         </div>
     </div>
@@ -232,6 +237,8 @@
         const API_LIVRO = `${API_BASE}/${isbn}`;
 
         const card = $("#capa-livro");
+
+        let id;
 
         let categoria;
 
@@ -266,6 +273,7 @@
 
                 card.attr('src', objectURL)
 
+                id = data.id;
                 $(".titulo-livro").text(data.titulo);
                 $("#editora-livro").text(data.editora);
                 $("#autor-livro").text(data.autor);
@@ -273,6 +281,9 @@
 
                 if(data.qtd_disponivel) {
                     $(".disponivel").text(`Na prateleira: ${data.qtd_disponivel}`);
+                } else {
+                    $(".botao-reserva").addClass("d-none");
+                    $(".botao-lista-espera").removeClass("d-none");
                 }
  
             }).catch(error => {
@@ -293,9 +304,9 @@
             window.location.href = `exibeLivros.html?categoria=${categoria}`;
         });
 
-        $(".botao-reserva").on("click", function() {
-            alert('boa garoto')
-        });
+        // $(".botao-reserva").on("click", function() {
+        //     alert('boa garoto')
+        // });
 
         function renderizarEstrelas() {
             for(let i=1; i<= 5; i++) {
@@ -318,6 +329,23 @@
         })
 
         renderizarEstrelas();
+
+        $("#btn-reserva").on("click", () => {
+            fetch(`http://localhost:8080/reserva/${id}`, {
+                method: 'POST',
+                headers: { "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(response => {
+                if(!response.ok) {
+                    throw new Error('Não foi possível reservar este livro');
+                } else {
+                    alert('livro reservado');
+                }
+
+                // return response.blob();
+            });
+        });
 
     })
 

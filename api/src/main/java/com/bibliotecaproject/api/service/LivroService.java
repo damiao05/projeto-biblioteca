@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.List;
 import java.util.UUID;
@@ -39,13 +40,13 @@ public class LivroService {
     }
 
     public Optional<Livro> mostrarLivro(String isbn){
-        return livroRepository.findById(isbn);
+        return livroRepository.findByIsbn(isbn);
     }
 
     public List<Livro> exibirLivros(String categoria) {
         Sort sort = Sort.by(Sort.Direction.ASC, "titulo");
 
-        if(categoria != null && !categoria.isBlank()) {
+        if (categoria != null && !categoria.isBlank()) {
             return livroRepository.findByCategoria(categoria, sort);
         } else {
             return livroRepository.findAll(sort);
@@ -60,7 +61,7 @@ public class LivroService {
 
     public Livro salvarCapa(String isbn, MultipartFile file)  throws IOException {
         // buscar livro
-        Livro livro = livroRepository.findById(isbn)
+        Livro livro = livroRepository.findByIsbn(isbn)
                 .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado"));
 
         // validações

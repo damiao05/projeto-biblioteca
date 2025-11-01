@@ -1,14 +1,11 @@
 package com.bibliotecaproject.api.domain.usuario;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
 
+import lombok.EqualsAndHashCode;
+import java.util.Set;
 import java.util.UUID;
 
 @Table(name = "livro")
@@ -17,9 +14,12 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Livro {
 
     @Id
+    @GeneratedValue
+    private UUID id;
     private String isbn;
     private String autor;
     private String editora;
@@ -30,5 +30,9 @@ public class Livro {
     private String capaFilename;
     @Column(columnDefinition = "TEXT")
     private String sinopse;
+
+    @OneToMany(mappedBy = "livro", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Reserva> reservas;
 
 }

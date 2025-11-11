@@ -10,27 +10,166 @@
       left: 0;
       width: 100%;
       height: 60px;
-      background: #986c4a;
-      color: white;
+      /* background: #986c4a; */
+      color: #f7f5e9;
       display: flex;
       align-items: center;
       justify-content: flex-start;
       gap: 1rem;
       padding: 0 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      /* box-shadow: 0 2px 5px rgba(0,0,0,0.2); */
       z-index: 1000;
     }
 
     body {
-      height: 100vh;            
+      font-size:16px;
+      font-family: 'Work Sans', sans-serif;
+      height: fit-content;            
       display: flex;
       justify-content: center;  
       align-items: center;      
-      background: #f7f5e9;
-      margin: 0;
+      /* background: #986c4a; */
+      background: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218
+      );
+      background: linear-gradient(
+        to right, #b57747,
+                #5e3211
+      );
     }
 
-    #formUsuario {
+    .signin-welcome-row {
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .logo {
+      height: 3.5rem;
+      margin: 0 auto;
+    }
+
+    #form-usuario {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      align-items: center;
+      position: relative;
+      gap: 1rem;
+      background-color: #f7f5e9;
+      width: 100%;
+      max-width: 70rem;
+      padding: 2.5rem 2rem;
+      border-radius: 1rem;
+      height: fit-content;
+      box-shadow: 8px 8px 100px #13162a;
+    }
+
+    .form-button {
+      background-color: #986c4a;
+      color: #f7f5e9;
+      white-space: nowrap;
+      border: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 0.5rem;
+      line-height: 3.125rem;
+      outline: none;
+      font-size: 1.125rem;
+      letter-spacing: .025rem;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 800;
+      min-height: 3.125rem;
+      width: 30%;
+      border-radius: 0.75rem;
+      transition: all .3s ease;
+      -webkit-transition: all .3s ease;
+    }
+
+    .form-button:hover {
+      background-color: #784b28;
+      box-shadow: 2px 2px 30px #b57747;
+    }
+
+    .input__wrapper {
+      position: relative;
+      padding: 0.9375rem 0 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .input__field {
+      font-size: 1.4rem;
+      color: #13162a;
+      padding: 0.375rem 0;
+      padding-right: 2rem;
+      padding-bottom: 0.7rem;
+      line-height: 2rem;
+      height: 2rem;
+      outline: 0;
+      border: 0;
+      width: 100%;
+      vertical-align: middle;
+      border-bottom: 3px solid #13162a;
+      background: transparent;
+      transition: border-color 0.2s;
+    }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+      width: 90%;
+      margin-top: 3%;
+      margin-bottom: 3%;
+      gap: 3rem;
+    }
+
+    .input__field::placeholder {
+      color: transparent;
+    }
+
+    .input__label {
+      user-select: none;
+    }
+
+    .input__field:placeholder-show~.input__label {
+      cursor: text;
+      color: #13162a;
+      top: 0.8rem;
+      font-size: 1.2rem;
+    }
+
+    .input__label,
+    .input__field:focus~.input__label {
+      position: absolute;
+      top: -0.8rem;
+      display: block;
+      font-size: 1.2rem;
+      color: #13162a;
+      transition: 0.3s;
+    }
+
+    .input__field:focus~.input__label {
+      color: #986c4a;
+    }
+
+    .input__field:focus {
+      border-bottom: 3px solid #986c4a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    *::selection {
+      background-color: #986c4a;
+      color: #f7f5e9;
+    }
+
+    /* #formUsuario {
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -45,7 +184,7 @@
     #formUsuario input,
     #formUsuario button {
       padding: 6px;
-    }
+    } */
 
 </style>
 
@@ -60,7 +199,7 @@
     <nav>
       <button id="btn-home">Voltar</button>
     </nav>
-    <h2>Biblioteca</h2>
+    <h2>LitHub</h2>
   </header>
 
   <!-- <h1>Lista de Usuários</h1>
@@ -68,20 +207,55 @@
   <ul id="lista-usuarios"></ul> -->
 
   <!-- <h2>Adicionar Usuário</h2> -->
-  <form id="formUsuario">
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" placeholder="Nome" required>
-    <label for="cpf">CPF:</label>
-    <input type="text" id="cpf" placeholder="CPF" required>
-    <label for="dataNascimento">Data de Nascimento:</label>
-    <input type="date" id="dataNascimento" style="text-align: center" required>
-    <label for="telefone">Telefone:</label>
-    <input type="text" name="telefone" id="telefone" required>
-    <label for="email">E-mail:</label>
-    <input type="email" name="email" id="email" required>
-    <label for="senha">Senha:</label>
-    <input type="text" name="senha" id="senha" required>
-    <button type="submit">Salvar</button>
+  <form id="form-usuario" aria-labelled="signin-title">
+
+      <div class="signin-welcome-row">
+        <a href="#" title="Logo">
+          <img src="assets/logo-lithub.png" alt="Logo" class="logo">
+        </a>
+        <h1 id="signin-title">Bem-Vindo ao LitHub</h1>
+        <p>Por favor, insira suas credenciais!</p>
+      </div>
+      <div class="inputs">
+        <div class="input__wrapper">
+          <input type="text" id="nome" class="input__field" placeholder="Nome" required>
+          <label for="nome" class="input__label">Nome:</label>
+        </div>
+        <div class="input__wrapper">
+          <input type="text" name="cpf" id="cpf" class="input__field" required>
+          <label for="cpf" class="input__label">CPF:</label>
+        </div>
+        <div class="input__wrapper">
+          <input type="date" name="data-nascimento" id="data-nascimento" class="input__field" required>
+          <label for="data-nascimento" class="input__label">Data de Nascimento:</label>
+        </div>
+        <div class="input__wrapper">
+          <input type="text" name="telefone" id="telefone" class="input__field">
+          <label for="telefone" class="input__label">Telefone:</label>
+        </div>
+        <div class="input__wrapper">
+          <input type="email" name="email" id="email" class="input__field" required>
+          <label for="email" class="input__label">Email:</label>
+        </div>
+        <div class="input__wrapper">
+          <input type="password" name="senha" id="senha" class="input__field" required>
+          <label for="senha" class="input__label">Senha:</label>
+        </div>
+      </div>
+
+      <!-- <label for="nome">Nome:</label>
+      <input type="text" id="nome" placeholder="Nome" required>
+      <label for="cpf">CPF:</label>
+      <input type="text" id="cpf" placeholder="CPF" required>
+      <label for="dataNascimento">Data de Nascimento:</label>
+      <input type="date" id="dataNascimento" style="text-align: center" required>
+      <label for="telefone">Telefone:</label>
+      <input type="text" name="telefone" id="telefone" required>
+      <label for="email">E-mail:</label>
+      <input type="email" name="email" id="email" required>
+      <label for="senha">Senha:</label>
+      <input type="text" name="senha" id="senha" required> -->
+      <button type="submit" class="form-button">Cadastrar</button>
   </form>
 
   <script src="./js/jquery.min.js"></script>

@@ -7,15 +7,22 @@
         box-sizing: border-box;
         width: 100%;
         height: 60px;
-        background-color: #986c4a;
-        color: white;
+        background: -webkit-linear-gradient(
+            to right, #986c4a,
+                    #9d5218
+        );
+        background: linear-gradient(
+            to right, #b57747,
+                    #5e3211
+        );
+        color: #f7f5e9;
         
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 0 25px;
         
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        /* box-shadow: 0 2px 5px rgba(0,0,0,0.2); */
         z-index: 1000;
     }
 
@@ -45,15 +52,22 @@
         display: grid;
         align-items: center;
         justify-content: center;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));
         position: absolute;
         top: 110%;
         left: 0;
         width: 100%;
         max-height: 300px;
         overflow-y: auto;
-        background-color: white;
-        color: black;
+        background: -webkit-linear-gradient(
+            to right, #986c4a,
+                    #9d5218
+        );
+        background: linear-gradient(
+            to right, #b57747,
+                    #5e3211
+        );
+        color: #f7f5e9;
         border-radius: 8px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
@@ -83,10 +97,10 @@
     }
 
     .container > div {
-        border-radius: 5px;
-        padding: 3rem 2rem;
+        border-radius: 10px;
+        /* padding: 3rem 2rem; */
         background-color: rgb(227, 230, 228);
-        border: 2px solid rgba(48, 48, 48, 0.781);
+        border: none;
         text-align: center;
     }
 
@@ -101,12 +115,19 @@
     }
 
     .menu {
-        background-color: #986c4a;
+        background: -webkit-linear-gradient(
+            to right, #6b3c19,
+                    #9d5218
+        );
+        background: linear-gradient(
+            to right, #6b3c19,
+                    #5e3211
+        );
         width: 15%;
         position: fixed;
         top: 60px;
         right: 0;
-        height: calc(100vh - 60);
+        height: 100%;
         opacity: 0;
         transform: translateX(100%);
         pointer-events: none;
@@ -127,6 +148,41 @@
         object-fit: cover;
         background-color: #eee;
         align-items: center;
+    }
+
+    .categorias {
+        width: 90%;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+        display: inline-block;
+    }
+
+    .categorias img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 1/1;
+        object-fit: cover;
+        filter: blur(0.9px);
+    }
+
+    .categorias span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-shadow: 0 2px 5px rgba(0,0,0,0.6);
+        pointer-events: none;
+    }
+
+    .categorias:hover {
+        transform: scale(1.1);
+        background-color: #784b28;
+        box-shadow: 8px 8px 90px #b57747;
     }
     
 
@@ -162,12 +218,27 @@
     </header>
 
     <div class="container">
-        <div class="categorias" id="ficcao-cientifica">Ficção Científica</div>
-        <div class="categorias" id="romance">Romance</div>
-        <div class="categorias" id="terror">Terror</div>
-        <div class="categorias" id="fantasia">Fantasia</div>
-        <div class="categorias" id="biografia">Biografia</div>
-        <div class="categorias" id="aventura">Aventura</div>
+        <div class="categorias" id="ficcao-cientifica">
+            <img src="assets/fundo-ficcaocientifica.jpg" alt="">
+            <span>Ficção Científica</span>
+        </div>
+        <div class="categorias" id="romance">
+            <img src="assets/fundo-romance.jpg" alt="">
+            <span>Romance</span>
+        </div>
+        <div class="categorias" id="terror">
+            <img src="assets/fundo-terror.png" alt="">
+            <span>Terror</span>
+        </div>
+        <div class="categorias" id="fantasia">
+            <img src="assets/fundo-fantasia.jpg" alt="">
+            <span>Fantasia</span>
+        </div>
+        <div class="categorias" id="biografia">
+            <img src="" alt="">
+            <span>Biografia</span>
+        </div>
+        <!-- <div class="categorias" id="aventura">Aventura</div> -->
     </div>
 
     <div class="menu">
@@ -220,7 +291,8 @@
         });
 
         $(".categorias").on("click", function() {
-            window.location.href = `exibeLivros.html?categoria=${this.textContent}`;
+            categoria = $(this).children()[1];
+            window.location.href = `exibeLivros.html?categoria=${categoria.textContent}`;
         });
 
         $(document).on("click", function() {

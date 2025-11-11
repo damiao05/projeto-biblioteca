@@ -16,7 +16,7 @@ public interface OperacoesBibliotecario {
 
     Livro cadastrarLivro(Livro livro, MultipartFile file) throws IOException;
 
-    Livro editarLivro(String isbn, Livro livroAtualizado);
+    Livro editarLivro(String isbn, Livro livroAtualizado, MultipartFile file) throws IOException;
 
     //Emprestimo registrarEmprestimo(String id_livro, UUID id_usuario);
 

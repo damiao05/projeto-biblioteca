@@ -52,6 +52,22 @@ public class LivroController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar o arquivo da capa.");
         }
     }
+
+    @PutMapping("/{isbn}")
+    @PreAuthorize("hasAnyRole('BIBLIOTECARIO', 'GERENTE')")
+    public ResponseEntity<?> editarLivro (
+            @PathVariable String isbn,
+            @RequestPart Livro dadosLivro,
+            @RequestPart(value = "file", required = false)  MultipartFile file) {
+        try {
+            Livro livroAtualizado = funcionarioService.editarLivro(isbn, dadosLivro, file);
+            return ResponseEntity.ok(livroAtualizado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar a nova capa.");
+        }
+    }
     
     @GetMapping("/{isbn}")
     public ResponseEntity<Livro> exibir(@PathVariable String isbn){

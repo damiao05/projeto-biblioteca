@@ -1,12 +1,21 @@
 <style>
 
+    html {
+        overflow-y: hidden;
+    }
+
     header {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 60px;
-        background-color: #986c4a;
+        background: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218);
+        background: linear-gradient(
+            to right, #b57747,
+                #5e3211);
         color: white;
         display: flex;
         align-items: center;
@@ -15,12 +24,21 @@
         padding: 0 2px;
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         z-index: 1000;
+        /* display: none; */
     }
 
     body {
-        height: 100vh;
-        background: #f7f5e9;
+        height: 100%;
         margin: 0;
+        font-family: 'Work Sans', sans-serif;
+    }
+
+    .main-content {
+        overflow: hidden;
+        overflow-y: scroll;
+        background: #f7f5e9;
+        height: 100%;
+        margin-top: 60px;
     }
 
     .conteudo-body {
@@ -40,11 +58,11 @@
     }
 
     .container {
-        max-width: 1200px;
+        max-width: 80%;
         margin: 20px auto;
         padding: 20px;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
         gap: 25px;
     }
 
@@ -57,20 +75,39 @@
     }
 
     .book-card {
-        background-color: #fff;
+        /* background-color: #fff;
         position: relative;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        overflow: hidden;
+        overflow: hidden; */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218);
+        background: linear-gradient(
+            to right, #b57747,
+                #5e3211);
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .book-card:hover {
         /* width:110%; */
         transform: scale(1.1); 
+        background-color: #784b28;
+        box-shadow: 8px 8px 90px #b57747;
     }
 
     .book-info {
-        padding: 15px;
+        /* padding: 15px; */
+        padding: 1.2rem;
+        text-align: center;
+        letter-spacing: .025rem;
+        color: #f7f5e9;
+        height: 10%;
     }
 
     .book-info h3 {
@@ -80,11 +117,11 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        font-weight: 800;
     }
 
-    .book-info p {
+    .book-info span {
         font-size: 0.9em;
-        color: #666;
         margin: 0;
     }
 
@@ -92,12 +129,191 @@
         margin-top: 60px;
         width: 100%;
         padding: 0.1rem;
-        background-color: lightgray;
+    }
+
+    .container-categoria span {
+        font-size: 1.1rem;
+        color: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218);
+        color: linear-gradient(
+            to right, #b57747,
+                #5e3211);
     }
 
     .categoria {
         margin-left: 3%;
         color: brown;
+    }
+
+    .tela-loading {
+        background: -webkit-linear-gradient(
+            to right, #986c4a,
+                    #9d5218
+        );
+        background: linear-gradient(
+            to right, #b57747,
+                    #5e3211
+        );
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        visibility: hidden;
+        z-index: 9999;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .tela-loading.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .polaroid-1 {
+        width: 14%;
+        height: 43%;
+        background: white;
+        box-shadow: 5px 5px 20px;
+        display: flex;
+        position: fixed;
+        justify-content: center;
+    }
+
+    .img-polaroid-1 {
+        width: 87%;
+        height: 70%;
+        background: black;
+        margin-top: 6%;
+        overflow: hidden;
+    }
+
+    .img-polaroid-1 img {
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .layout-polaroid-1 {
+        top: 20%;
+        left: 31%;
+        transform: rotate(-15deg);
+        z-index: 1;
+    }
+
+    .layout-polaroid-2 {
+        transform: rotate(4deg);
+        top: 24%;
+        left: 42%;
+        z-index: 2;
+    }
+
+    .layout-polaroid-3 {
+        transform: rotate(40deg);
+        top: 20%;
+        left: 55%
+    }
+
+    .container-layout {
+        width: 100%;
+        height: 43%;
+    }
+
+    .loading-text span {
+        font-size: 1.2rem;
+        color: #f7f5e9;
+        font-family: 'Work Sans', sans-serif;
+    }
+
+    .container-mosaico {
+        display: grid;
+        width: 35%;
+        height: 35%;
+        gap: 0.6rem;
+        transition: all 0.3s ease;
+    }
+
+    .container-mosaico.layout-1 {
+        grid-template-columns: 1.5fr 1fr;
+        grid-template-rows: repeat(3, 1fr);
+        grid-template-areas:
+            "tall-left small-1"
+            "tall-left small-2"
+            "tall-left small-3";
+    }
+
+    .container-mosaico.layout-2 {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: 2fr 1fr;
+        grid-template-areas:
+            "wide-top wide-top wide-top"
+            "small-1  small-2  small-3";
+    }
+
+    .container-mosaico.layout-3 {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+        grid-template-areas: "tall-1 tall-2";
+    }
+
+    .item-a { grid-area: tall-left; }
+    .item-b { grid-area: small-1; }
+    .item-c { grid-area: small-2; }
+    .item-d { grid-area: small-3; }
+
+    .item-e { grid-area: wide-top; }
+
+    .item-f { grid-area: tall-1; }
+    .item-g { grid-area: tall-2; }
+
+    .shape-square {
+        clip-path: inset(0 0 0 0);
+    }
+
+    /* .shape-circle {
+        clip-path: circle(50% at 50% 50%);
+    } */
+
+    .gif-mosaico {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #eee; /* Cor de fundo caso o GIF demore */
+    }
+
+    .gif-mosaico img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Garante que o GIF preencha o quadro sem distorcer */
+    }
+
+    .img-capa {
+        overflow: hidden;
+        object-fit: cover;
+        width: 95%;
+        height: 77%;
+        aspect-ratio: 2/3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+    ::-webkit-scrollbar {
+        width: 0.6rem;
+        /* background: #986c4a; */
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #986c4a;
+        border-radius: 6px;
     }
 
 </style>
@@ -116,15 +332,26 @@
         <h2>Biblioteca</h2>
     </header>
 
-    <div class="conteudo-body">
-        <div class="container-categoria">
-            <p class="categoria"></p>
-        </div>
-
-        <div class="conteudo">
-            <div class="container" id="container-livros"></div>
+    <div class="tela-loading">
+        <div class="container-layout"></div>
+        <div class="loading-text">
+            <span>Carregando...</span>
         </div>
     </div>
+
+    <main class="main-content">
+
+        <div class="conteudo-body">
+            <div class="container-categoria">
+                <span class="categoria"></span>
+            </div>
+
+            <div class="conteudo">
+                <div class="container" id="container-livros"></div>
+            </div>
+        </div>
+
+    </main>
     
 </body>
 </html>
@@ -167,6 +394,84 @@
     }
 
     $(document).ready(function() {
+
+        let layout = `  <div class="polaroid-1 layout-polaroid-1">
+                            <div class="img-polaroid-1">
+                                <img src="assets/loadings-categorias/loading-fantasia/hobbit/dragao.jpg">    
+                            </div>
+                        </div>
+                        <div class="polaroid-1 layout-polaroid-2">
+                            <div class="img-polaroid-1">
+                                <img src="assets/loadings-categorias/loading-fantasia/hobbit/tocahobbit.jpg">    
+                            </div>
+                        </div>
+                        <div class="polaroid-1 layout-polaroid-3">
+                            <div class="img-polaroid-1">
+                                <img src="assets/loadings-categorias/loading-fantasia/hobbit/bilbo.jpg">    
+                            </div>
+                        </div>`;
+
+        $(".container-layout").append(layout);
+
+        $('.main-content').css({overflowY: 'hidden'});
+
+        const bancoGifs = {
+            'Fantasia': ['assets/loadings-categorias/loading-fantasia/castelo-harry-potter.gif',
+                'assets/loadings-categorias/loading-fantasia/senhor-dos-aneis.gif',
+                'assets/loadings-categorias/loading-fantasia/worm-dune.gif',
+                'assets/loadings-categorias/loading-fantasia/narnia.gif'
+            ] 
+        };
+
+        const layoutTemplates = [
+            {
+                containerClass: 'layout-1',
+                items: [
+                    { areaClass: 'item-a' },
+                    { areaClass: 'item-b' },
+                    { areaClass: 'item-c' },
+                    { areaClass: 'item-d' }
+                ]
+            },
+            {
+                containerClass: 'layout-2',
+                items: [
+                    { areaClass: 'item-e' },
+                    { areaClass: 'item-b' },
+                    { areaClass: 'item-c' },
+                    { areaClass: 'item-d' }
+                ]
+            },
+            {
+                containerClass: 'layout-3',
+                items: [
+                    { areaClass: 'item-f' },
+                    { areaClass: 'item-g' } 
+                ]
+            }
+        ]
+
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function getRandomShape() {
+            const formas = ['shape-square', 'shape-square', 'shape-square', 'shape-square'];
+            return getRandomItem(formas);
+        }
+
+        function showLoader(categoria) {
+            const tela = $(".tela-loading");
+            
+
+            tela.addClass("visible");
+        }
+
+        function hideLoader() {
+            $(".tela-loading").removeClass("visible");
+            $('.main-content').css({overflowY: 'overlay'});
+        }
+
         const token = localStorage.getItem("jwtToken");
 
         if (!token) {
@@ -183,6 +488,8 @@
         $(".categoria").text(categoria);
 
         if(categoria) {
+            showLoader(categoria);
+
             const API_BASE = "http://localhost:8080/livros";
             const API_CATEGORIA = `${API_BASE}?categoria=${categoria}`;
 
@@ -198,13 +505,14 @@
                     console.log(livro);
                     let urlCapa = `${API_BASE}/${livro.isbn}/capa`;
 
-                    $("#container-livros").append(`<div class="book-card" data-isbn="${livro.isbn}"><img class="capa-livro" data-isbn="${livro.isbn}" src="" alt="Capa do Livro ${livro.titulo}"><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><p id="autor-livro" style="margin: 0">${livro.autor}</p></div></div>`)
+                    $("#container-livros").append(`<div class="book-card" data-isbn="${livro.isbn}"><div class="img-capa"><img class="capa-livro" data-isbn="${livro.isbn}" src="" alt="Capa do Livro ${livro.titulo}"></div><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><span id="autor-livro" style="margin: 0">${livro.autor}</span></div></div>`)
 
                 });
 
                 return carregarCapas(token);    
             }).then(() => {
                 $(".conteudo-body").addClass("mostrar"); 
+                hideLoader();
             });  
 
         }

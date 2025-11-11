@@ -6,76 +6,218 @@
         left: 0;
         width: 100%;
         height: 60px;
-        background-color: #986c4a;
         color: white;
         display: flex;
         align-items: center;
         justify-content: flex-start;
         gap: 1rem;
         padding: 0 2px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         z-index: 1000;
     }
 
     body {
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: #f7f5e9;
-        margin: 0;
+        font-size: 16px;
+        font-family: 'Work Sans', sans-serif;
+        min-height: 100vh;
+        background: -webkit-linear-gradient(
+            to right, #986c4a,
+                    #9d5218
+        );
+        background: linear-gradient(
+            to right, #b57747,
+                    #5e3211
+        );
     }
 
     #btn-carregar-usuarios {
         border-radius: 1rem;
     }
 
-    #formCadastroLivro {
+    #form-cadastro-livro {
         display: flex;
-        /* justify-content: space-between; */
-        gap: 20px;
-        margin-top: 60px;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+        position: relative;
+        gap: 1rem;
+        background-color: #f7f5e9;
+        width: 85%;
+        /* max-width: 80rem; */
+        padding: 2.5rem 2rem;
+        border-radius: 1rem;
+        height: fit-content;
+        box-shadow: 8px 8px 100px #13162a;
+        align-self: stretch;
+        margin: 60px auto 60px auto;
+    }
+
+    .container-capa-info {
+        display: flex;
+        flex-direction: row;
         width: 100%;
-        height: 70%;
-        margin-left: 5rem;
-        margin-right: 5rem;
+    }
+
+    .form-button {
+        background-color: #986c4a;
+        color: #f7f5e9;
+        white-space: nowrap;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 0.5rem;
+        line-height: 3.125rem;
+        outline: none;
+        font-size: 1.125rem;
+        letter-spacing: .025rem;
+        text-decoration: none;
+        cursor: pointer;
+        font-weight: 800;
+        min-height: 3.125rem;
+        width: 30%;
+        border-radius: 0.75rem;
+        transition: all .3s ease;
+        -webkit-transition: all .3s ease;
+    }
+
+    .form-button:hover {
+        background-color: #784b28;
+        box-shadow: 2px 2px 30px #b57747;
+    }
+
+    .input__wrapper {
+        position: relative;
+        padding: 0.9375rem 0 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .input__field {
+        font-size: 1.4rem;
+        color: #13162a;
+        padding: 0.375rem 0;
+        padding-right: 2rem;
+        padding-bottom: 0.7rem;
+        line-height: 2rem;
+        height: 2rem;
+        outline: 0;
+        border: 0;
+        width: 100%;
+        vertical-align: middle;
+        border-bottom: 3px solid #13162a;
+        background: transparent;
+        transition: border-color 0.2s;
     }
 
     .container-informacoes {
-        display: flex;
-        flex-direction: column;
-        width: 50%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+        width: 90%;
+        margin-top: 3%;
+        margin-bottom: 3%;
+        margin-right: 3%;
+        gap: 3rem;
+    }
+
+    .input__field::placeholder {
+        color: transparent;
+    }
+
+    .input__label {
+        user-select: none;
+    }
+
+    .input__field:placehoder-show~.input__label {
+        cursor: text;
+        color: #13162a;
+        top: 0.8rem;
+        font-size: 1.2rem;
+    }
+
+    .input__label,
+    .input__field:focus~.input__label {
+        position: absolute;
+        top: -0.8rem;
+        display: block;
+        font-size: 1.2rem;
+        color: #13162a;
+        transition: 0.3s;
+    }
+
+    .input__field:focus~.input__label {
+        color: #986c4a;
+    }
+
+    .input__field:focus {
+        border-bottom: 3px solid #986c4a;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    *::selection {
+        background-color: #986c4a;
+        color: #f7f5e9;
     }
 
     .container-sinopse {
-        display: flex;
-        flex-direction: column;
-        width: 20%
+        width: 95%
     }
 
     .container-capa {
-        width: 30%;
-        height: 100%;
+        width: 45%;
+        height: 70vh;
         display: flex;
         flex-direction: column;
         align-items: center;
     }
 
-    #formCadastroLivro label {
+    #form-cadastro-livro label {
         font-weight: bold;
         text-align: center;
     }
 
-    #formCadastroLivro input,
-    #formCadastroLivro button {
+    #form-cadastro-livro input,
+    #form-cadastro-livro button {
         padding: 6px;
     }
 
-    .capa-livro {
+    .imagem-capa {
         height: 90%;
-        width: 80%;
-        border: 3px dashed gray;
+        width: 70%;
         border-radius: 15px;
+        overflow: hidden;
+        object-fit: cover;
+        background: -webkit-linear-gradient(
+            to right, #986c4a,
+                    #9d5218
+        );
+        background: linear-gradient(
+            to right, #b57747,
+                    #5e3211
+        );
+    }
+
+    .capa-livro {
+        height: 100%;
+        width: 100%;
+        display: none;
+        object-fit: cover;
+    }
+
+    .span-file, .trash-file {
+        margin-top: 0.5rem;
+        cursor: pointer;
+    }
+
+    .span-file:hover, .trash-file:hover {
+        color: #986c4a;
+    }
+
+    .d-none {
+        display: none;
     }
 
 </style>
@@ -86,44 +228,79 @@
     <title>Cadastrar Livro</title>
 
     <!-- <link href="https://releases.transloadit.com/uppy/v3.21.0/uppy.min.css" rel="stylesheet"> -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 </head>
 <body>
     <header>
         <nav>
             <button id="btn-home">Voltar</button>
         </nav>
-        <h2>Biblioteca</h2>
+        <h2>LitHub</h2>
     </header>
 
-    <form id="formCadastroLivro" class="dropzone">
-        <div class="container-capa">
-            <img id="capa-livro" class="capa-livro" src="" alt="">
-            <input type="file" name="capa-file" id="capa-file" accept="image/*">
-            <!-- <div class="drop-zone" id="dropZone">
-                <span class="drop-zone-prompt">Arraste a imagem da capa aqui, ou clique para selecionar</span>
-                <input type="file" name="file" id="file" class="drop-zone-input" accept="image/*" required>
-                <div class="drop-zone-thumb" style="display: none;"></div>
-            </div> -->
-        </div>
-        <div class="container-informacoes">
-            <label for="titulo">Título</label>
-            <input type="text" name="titulo" id="titulo">
-            <label for="autor">Autor</label>
-            <input type="text" name="autor" id="autor">
-            <label for="editora">Editora</label>
-            <input type="text" name="editora" id="editora">
-            <label for="categoria">Categoria</label>
-            <input type="text" name="categoria" id="categoria">
-            <label for="isbn">ISBN</label>
-            <input type="text" name="isbn" id="isbn" required>
-            <label for="quantidade">Quantidade em Estoque</label>
-            <input type="text" name="quantidade" id="quantidade">
+    <form id="form-cadastro-livro">
+        <div class="container-capa-info">
+            <div class="container-capa">
+                <div class="imagem-capa">
+                    <img id="capa-livro" class="capa-livro" src="" alt="">
+                </div>
+                <span class="span-file">Adicionar Capa</span>
+                <span class="trash-file d-none"><i class="fa fa-trash"></i></span>
+                <input type="file" class="d-none" name="capa-file" id="capa-file" accept="image/*">
+            </div>
+            <div class="container-informacoes">
+                <div class="input__wrapper">
+                    <input type="text" name="titulo" id="titulo" class="input__field">
+                    <label for="titulo" class="input__label">Título:</label>
+                </div>
+                <div class="input__wrapper">
+                    <input type="text" name="autor" id="autor" class="input__field">
+                    <label for="autor" class="input__label">Autor:</label>
+                </div>
+                <div class="input__wrapper">
+                    <input type="text" name="editora" id="editora" class="input__field">
+                    <label for="editora" class="input__label">Editora:</label>
+                </div>
+                <div class="input__wrapper">
+                    <input type="text" name="categoria" id="categoria" class="input__field">
+                    <label for="categoria" class="input__label">Categoria:</label>
+                </div>
+                <div class="input__wrapper">
+                    <input type="text" name="isbn" id="isbn" class="input__field">
+                    <label for="isbn" class="input__label">ISBN:</label>
+                </div>
+                <div class="input__wrapper">
+                    <input type="text" name="quantidade" id="quantidade" class="input__field">
+                    <label for="quantidade" class="input__label">Quantidade em Estoque:</label>
+                </div>
+                <!-- <div class="container-button">
+                    <button type="submit" class="form-button">Salvar</button>
+                </div> -->
+                <!-- <label for="titulo">Título</label>
+                <input type="text" name="titulo" id="titulo">
+                <label for="autor">Autor</label>
+                <input type="text" name="autor" id="autor">
+                <label for="editora">Editora</label>
+                <input type="text" name="editora" id="editora">
+                <label for="categoria">Categoria</label>
+                <input type="text" name="categoria" id="categoria">
+                <label for="isbn">ISBN</label>
+                <input type="text" name="isbn" id="isbn" required>
+                <label for="quantidade">Quantidade em Estoque</label>
+                <input type="text" name="quantidade" id="quantidade"> -->
+            </div>
         </div>
         <div class="container-sinopse">
+            <div class="input__wrapper">
+                <textarea name="sinopse" style="height: 100%" id="sinopse" rows="5" class="input__field"></textarea>
+                <label for="sinopse" class="input__label">Sinopse:</label>
+            </div>
+        </div>
+        <button type="submit" class="form-button">Salvar</button>
+        <!-- <div class="container-sinopse">
             <label for="sinopse">Sinopse</label>
             <textarea name="sinopse" id="sinopse" rows="5"></textarea>
-            <button type="submit">Salvar</button>
-        </div>  
+        </div>   -->
     </form>
 </body>
 </html>
@@ -142,100 +319,168 @@
             window.location.href = '/login.html';
         }
 
-        // const { Uppy, Dashboard, XHRUpload, pt_BR } = Uppy.Core;
+        const API_BASE = "http://localhost:8080/livros";
 
-        // const uppy = new Uppy({
-        //     debug: true,
-        //     autoProceed: false,
-        //     locale: pt_BR,
-        //     restriction: {
-        //         maxNumberOfFiles: 1,
-        //         allowedFileTypes: ['image/jpeg', 'image/png', 'image/webp']
-        //     }
-        // });
+        const queryString = window.location.search;
 
-        // uppy.use(Dashboard, {
-        //     inline: true,
-        //     target: '.container-capa',
-        //     height: 400,
-        //     showProgressDetails: true,
-        //     note: 'Apenas imagens (JPEG, PNG e WEBP). 1 arquivo no máximo.'
-        // });
+        const urlParams = new URLSearchParams(queryString);
 
-        // uppy.use(XHRUpload, {
-        //     endpoint: 'http://localhost:8080/livros',
-        //     method: 'POST',
-        //     fieldName: 'file',
-        //     headers: {
-        //         'Authorization': `Bearer ${token}`
-        //     }
-        // });
+        const isbnLivro = urlParams.get('livro');
+
+        const card = $(".capa-livro");
+
+        if(isbnLivro) {
+            $(".span-file").addClass("d-none");
+            $(".trash-file").removeClass("d-none");
 
 
-        // uppy.on('upload-prepare', (file) => {
-        //     const livro = {
-        //         isbn: $("#isbn").val().trim(),
-        //         titulo: $("#titulo").val(),
-        //         autor: $("#autor").val(),
-        //         categoria: $("#categoria").val(),
-        //         editora: $("#editora").val(),
-        //         sinopse: $("#sinopse").val()
-        //     };
+            fetch(`${API_BASE}/${isbnLivro}`, {
+                headers:{ "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            }).then(response => {
+                return response.json();
 
-        //     uppy.setFileMeta(file.id, {
-        //         livro: new Blob([JSON.stringify(livro)], { type: "application/json" })
-        //     });
-        // })
+            }).then(data => {
+                const promises = [];
 
-        $("#formCadastroLivro").on("submit")
+                const urlCapa = `http://localhost:8080/livros/${isbnLivro}/capa`;
 
-        
+                const promise = fetch(urlCapa, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).then(response => {
+                    if(!response.ok) {
+                        throw new Error('Não foi possível carregar a capa.');
+                    }
 
-        const API_BASE = "http://localhost:8080";
+                    return response.blob();
+                }).then(blob => {   
+                    const objectURL = URL.createObjectURL(blob);
 
-        $("#formCadastroLivro").on("submit", async (e) => {
-            e.preventDefault();
-            const fileInput = $("#capa-file")[0];
-            const livroIsbn = $("#isbn").val().trim();
+                    $("#capa-livro").css({display: 'block'})
 
-            if(!fileInput.files.length) return alert("Adicione uma capa");
+                    card.attr('src', objectURL)
 
-            const livro = {
-                isbn: $("#isbn").val().trim(),
-                titulo: $("#titulo").val(),
-                autor: $("#autor").val(),
-                categoria: $("#categoria").val(),
-                editora: $("#editora").val(),
-                sinopse: $("#sinopse").val(),
-                qtd_total: $("#quantidade").val(),
-                qtd_disponivel: $("#quantidade").val()
-            }
+                    id = data.id;
+                    $("#titulo").val(data.titulo);
+                    $("#autor").val(data.autor);
+                    $("#editora").val(data.editora);
+                    $("#categoria").val(data.categoria);
+                    $("#isbn").val(data.isbn);
+                    $("#sinopse").text(data.sinopse);
+                    $("#quantidade").val(data.qtd_total);
 
-            const formData = new FormData();
+                    // $(".span-file").addClass("d-none");
+                    // $(".trash-file").removeClass("d-none");
+    
+                }).catch(error => {
+                    console.error(`Erro ao carregar capa para o ISBN ${isbnLivro}:`, error);
+                    
+                    card.attr('src', 'caminho/para/imagem_padrao.png');
+                });
 
-            formData.append("file", fileInput.files[0]);
-            formData.append('livro', new Blob([JSON.stringify(livro)], {
-                type: "application/json"
-            }));
+                promises.push(promise);
 
-            fetch('http://localhost:8080/livros', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            }).then(() => {
-                alert("Livro cadastrado!");
-                
-                window.location.href = 'cadastroLivro.html';
+                return Promise.all(promises);
+
             });
 
+            $("#form-cadastro-livro").on("submit", async (e) => {
+                e.preventDefault();
 
-        });
+                const fileInput = $("#capa-file")[0];
+                const livroIsbn = $("#isbn").val().trim();
+
+                const livro = {
+                    id: id,
+                    isbn: $("#isbn").val().trim(),
+                    titulo: $("#titulo").val(),
+                    autor: $("#autor").val(),
+                    categoria: $("#categoria").val(),
+                    editora: $("#editora").val(),
+                    sinopse: $("#sinopse").val(),
+                    qtd_total: $("#quantidade").val(),
+                    qtd_disponivel: $("#quantidade").val()
+                }
+
+                const formData = new FormData();
+
+                if(fileInput.files.length > 0) formData.append("file", fileInput.files[0]);
+
+                formData.append('dadosLivro', new Blob([JSON.stringify(livro)], {
+                    type: "application/json"
+                }));
+
+                fetch(`${API_BASE}/${livroIsbn}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                }).then(response => {
+                    if(!response.ok) {
+                        throw new Error("Não foi possível atualizar as informações!");
+                    }
+
+                    alert("Livro Atualizado");
+
+                    window.location.href = `cadastroLivro.html?livro=${livroIsbn}`;
+                })
+
+            })
+
+        } else {
+
+            $("#form-cadastro-livro").on("submit", async (e) => {
+                e.preventDefault();
+                const fileInput = $("#capa-file")[0];
+                const livroIsbn = $("#isbn").val().trim();
+
+                if(!fileInput.files.length) return alert("Adicione uma capa");
+
+                const livro = {
+                    isbn: $("#isbn").val().trim(),
+                    titulo: $("#titulo").val(),
+                    autor: $("#autor").val(),
+                    categoria: $("#categoria").val(),
+                    editora: $("#editora").val(),
+                    sinopse: $("#sinopse").val(),
+                    qtd_total: $("#quantidade").val(),
+                    qtd_disponivel: $("#quantidade").val()
+                }
+
+                const formData = new FormData();
+
+                formData.append("file", fileInput.files[0]);
+                formData.append('livro', new Blob([JSON.stringify(livro)], {
+                    type: "application/json"
+                }));
+
+                fetch('http://localhost:8080/livros', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                }).then(() => {
+                    alert("Livro cadastrado!");
+        
+                    window.location.href = 'cadastroLivro.html';
+                });
+
+
+            });
+        }
 
         $("#btn-home").on("click", function() {
             window.location.href = urlAnterior;
         });
+
+        $(".span-file").on("click", () => {
+            $("#capa-file").trigger("click");
+        })
 
         $("#capa-file").on("change", function(e) {
             const arquivo = e.target.files[0];
@@ -244,7 +489,10 @@
                 const reader = new FileReader();
 
                 reader.onload = function(event) {
+                    $("#capa-livro").css({display: 'block'})
                     $("#capa-livro")[0].src = event.target.result;
+                    $(".span-file").addClass("d-none");
+                    $(".trash-file").removeClass("d-none");
 
                 }
 
@@ -252,6 +500,14 @@
 
             }
         });
+
+        $(".trash-file").on("click", () => {
+            $("#capa-file").val("");
+            $("#capa-livro")[0].src = "";
+            $("#capa-livro").css({display: 'none'})
+            $(".span-file").removeClass("d-none");
+            $(".trash-file").addClass("d-none");
+        })
     });
 
 </script>

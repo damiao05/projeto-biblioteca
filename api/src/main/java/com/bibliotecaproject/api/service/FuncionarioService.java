@@ -129,8 +129,30 @@ public class FuncionarioService implements OperacoesGerente {
     }
 
     @Override
-    public Livro editarLivro(String isbn, Livro livroAtualizado) {
-        return null;
+    public Livro editarLivro(String isbn, Livro livroAtualizado, MultipartFile file) throws IOException {
+        Livro livroExistente = livroRepository.findByIsbn(isbn)
+                .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado"));
+
+        livroExistente.setTitulo(livroAtualizado.getTitulo());
+        livroExistente.setAutor(livroAtualizado.getAutor());
+        livroExistente.setCategoria(livroAtualizado.getCategoria());
+        livroExistente.setEditora(livroAtualizado.getEditora());
+        livroExistente.setSinopse(livroAtualizado.getSinopse());
+        livroExistente.setQtd_total(livroAtualizado.getQtd_total());
+
+        if(file != null && !file.isEmpty()) {
+            String capaAntiga = livroAtualizado.getCapaFilename();
+            String novaCapaFilename = salvarArquivoCapa(file);
+
+            livroExistente.setCapaFilename(novaCapaFilename);
+
+            if(capaAntiga != null && !capaAntiga.isBlank()) {
+                Path antigoPath = this.uploadDir.resolve(capaAntiga);
+                Files.deleteIfExists(antigoPath);
+            }
+        }
+
+        return livroRepository.save(livroExistente);
     }
 
     @Override

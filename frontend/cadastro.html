@@ -259,8 +259,9 @@
   </form>
 
   <script src="./js/jquery.min.js"></script>
+  <script src="js/config.js"></script>
   <script>
-    const API_URL = "http://localhost:8080/usuarios/cadastro"; 
+    const API_CADASTRO = `${API_URL}/usuarios/cadastro`;
 
     // Salvar novo usuário
     document.getElementById("formUsuario").addEventListener("submit", async (e) => {
@@ -275,7 +276,7 @@
         senha: document.getElementById("senha").value
       };
 
-      await fetch(API_URL, {
+      await fetch(API_CADASTRO, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuario)

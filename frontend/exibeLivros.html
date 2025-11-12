@@ -357,6 +357,7 @@
 </html>
 
 <script src="./js/jquery.min.js"></script>
+<script src="js/config.js"></script>
 <script>
 
     function carregarCapas(token) {
@@ -368,7 +369,7 @@
 
             if(!isbn) return;
 
-            const urlCapa = `http://localhost:8080/livros/${isbn}/capa`;
+            const urlCapa = `${API_URL}/livros/${isbn}/capa`;
 
             const promise = fetch(urlCapa, {
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -490,7 +491,7 @@
         if(categoria) {
             showLoader(categoria);
 
-            const API_BASE = "http://localhost:8080/livros";
+            const API_BASE = `${API_URL}/livros`;
             const API_CATEGORIA = `${API_BASE}?categoria=${categoria}`;
 
             fetch(API_CATEGORIA, {

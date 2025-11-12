@@ -137,6 +137,8 @@
     <main>
         <div class="container-reservas"></div>
     </main>
+
+    <script src="js/config.js"></script>
     
 </body>
 </html>
@@ -157,7 +159,7 @@
             window.location.href = '/login.html';
         }
         
-        const API_BASE = 'http://localhost:8080/reserva';
+        const API_BASE = `${API_URL}/reserva`;
 
         fetch(API_BASE, {
             method: 'GET',

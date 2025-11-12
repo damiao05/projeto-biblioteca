@@ -27,6 +27,7 @@ public class Livro {
     private String editora;
     private String titulo;
     private String categoria;
+    private Integer paginas;
     private Integer qtd_total;
     private Integer qtd_disponivel;
     private String capaFilename;

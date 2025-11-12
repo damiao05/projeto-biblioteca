@@ -76,7 +76,7 @@
     .book-card {
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        /* justify-content: center; */
         align-items: center;
         background: -webkit-linear-gradient(
         to right, #986c4a,
@@ -97,6 +97,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        border-radius: 8px;
+        margin-top: 3%;
     }
 
     .book-info {
@@ -610,6 +612,7 @@
 
 <script src="./js/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+<script src="js/config.js"></script>
 <script>
 
     $(window).on('load', function() {
@@ -799,7 +802,7 @@
 
                 if(!isbn) return;
 
-                const urlCapa = `http://localhost:8080/livros/${isbn}/capa`;
+                const urlCapa = `${API_URL}/livros/${isbn}/capa`;
 
                 const promise = fetch(urlCapa, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -828,7 +831,7 @@
 
         const token = localStorage.getItem('jwtToken');
 
-        const API_BASE = 'http://localhost:8080/livros';
+        const API_BASE = `${API_URL}/livros`;
 
         fetch(API_BASE, {
             method: 'GET',

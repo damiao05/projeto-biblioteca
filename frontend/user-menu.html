@@ -84,6 +84,7 @@
     <script src="./js/jquery.min.js"></script>
     <!-- <script src="https://unpkg.com/jwt-decode/build/jwt-decode.js"></script>  -->
      <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+     <script src="js/config.js"></script>
     <!-- <script src="./js/seu-script.js"></script> -->
 </body>
 </html>
@@ -122,10 +123,10 @@
             return;
         }
 
-        const API_BASE = 'http://localhost:8080/usuarios';
-        const API_URL = 'http://localhost:8080/usuarios/meu-perfil';
+        const API_BASE = `${API_URL}/usuarios`;
+        const API_PERFIL = `${API_BASE}/meu-perfil`;
 
-        fetch(API_URL, {
+        fetch(API_PERFIL, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -180,7 +181,7 @@
             $("#btn-salvar").addClass("d-none");
             $("#btn-editar").removeClass("d-none");
 
-            fetch(API_URL, {
+            fetch(API_PERFIL, {
                 method: "PUT",
                 headers: {
                     'Authorization': `Bearer ${token}`,

@@ -3,6 +3,8 @@
     html {
         overflow-y: hidden;
         overflow-x: hidden;
+        width: auto;
+        height: auto;
     }
 
     body {
@@ -43,6 +45,45 @@
     main {
         width: 100%;
         height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .container-informacoes {
+        display: flex;
+        flex-direction: row;
+        /* gap: 5rem; */
+        width: 80%;
+        height: 80%;
+        border-radius: 15px;
+        background: #f7f5e9;
+        color: #986c4a;
+    }
+
+    .container-informacoes > .container-capa {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 35%;
+    }
+
+    .informacoes {
+        display: flex;
+        flex-direction: column;
+        width: 60%;
+        gap: 1.5rem;
+    }
+
+    .container-livro {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
     }
 
 </style>
@@ -61,13 +102,47 @@
     </header>
 
     <main>
-        <div class="container-informacoes"></div>
+        <div class="container-informacoes">
+            <div class="container-capa">
+                <img src="" id="capa-livro">    
+            </div>
+            <div class="informacoes">
+                <div class="container-livro">
+                    <span id="titulo-livro"></span>
+                    <span id="autor-livro"></span>
+                    <span id="editora-livro"></span>
+                </div>
+                <div class="container-usuario">
+                    <span id="nome-usuario"></span>    
+                </div>
+                <div class="container-reserva-emprestimo">
+                    <span id="data-reserva"></span>
+                    <span>até</span>   
+                    <span id="data-limite-emprestimo"></span>
+                </div>
+            </div>
+        </div>
     </main>
+
+    <script src="js/config.js"></script>
     
 </body>
 </html>
 
 <script>
+
+    function formataData(data) {
+        data = data.split('-');
+        return `${data[2]}/${data[1]}/${data[0]}`;
+    }
+
+    function calculaPrazo(paginas) {
+        if(paginas <= 150) return 7;
+        if(paginas <= 300) return 10;
+        if(paginas <= 600) return 14;
+
+        return 20;
+    }
 
     $(document).ready(function() {
 
@@ -85,7 +160,7 @@
         const reserva = urlParams.get('reserva');
 
         if(reserva) {
-            const API_RESERVA = `http://localhost:8080/reserva?reserva=${reserva}`;
+            const API_RESERVA = `${API_URL}/reserva?reserva=${reserva}`;
 
             fetch(API_RESERVA, {
                 method: 'GET',
@@ -97,9 +172,60 @@
                     throw new Error('Não foi possível trazer a lista de reservas.');
                 }
 
-                const reserva = await response.json();
+                const listaReserva = await response.json();
 
-                console.log(reserva);
+                let isbn;
+                let dataReserva;
+                let paginas;
+
+                listaReserva.forEach(reserva => {
+                    $("#titulo-livro").text(reserva.livro['titulo']);
+                    $("#autor-livro").text(reserva.livro['autor']);
+                    $("#editora-livro").text(reserva.livro['editora']);
+                    $("#nome-usuario").text(reserva.usuario['nome']);
+                    $("#data-reserva").text(formataData(reserva.dtReserva));
+                    dataReserva = reserva.dtReserva.replace('-', '/');
+                    paginas = reserva.livro['paginas'];
+                    
+                    isbn = reserva.livro['isbn'];
+
+                });
+
+                let dataBase = new Date(dataReserva);
+                dataBase.setDate(dataBase.getDate() + calculaPrazo(paginas));
+                let dataLimite = `${dataBase.getDate()}/${(dataBase.getMonth() + 1).toString().padStart(2, '0')}/${dataBase.getFullYear()}`;
+
+                $("#data-limite-emprestimo").text(dataLimite);
+
+                const promises = [];
+
+                const urlCapa = `${API_URL}/livros/${isbn}/capa`;
+
+                const promise = fetch(urlCapa, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).then(response => {
+                    if(!response.ok) {
+                        throw new Error('Não foi possível carregar a capa.');
+                    }
+
+                    return response.blob();
+                }).then(blob => {   
+                    const objectURL = URL.createObjectURL(blob);
+
+                    $("#capa-livro").attr('src', objectURL)
+    
+                }).catch(error => {
+                    console.error(`Erro ao carregar capa para o ISBN ${isbn}:`, error);
+                    
+                    card.attr('src', 'caminho/para/imagem_padrao.png');
+                });
+
+                promises.push(promise);
+
+                return Promise.all(promises);
+
             })
         }
 

@@ -231,6 +231,7 @@
 </html>
 
 <script src="./js/jquery.min.js"></script>
+<script src="js/config.js"></script>
 <script>
     
     $(document).ready(function() {
@@ -245,7 +246,7 @@
 
         const urlParams = new URLSearchParams(queryString);
 
-        const API_BASE = 'http://localhost:8080/livros';
+        const API_BASE = `${API_URL}/livros`;
         const isbn = urlParams.get('isbn');
 
         const API_LIVRO = `${API_BASE}/${isbn}`;
@@ -270,7 +271,7 @@
 
             const promises = [];
 
-            const urlCapa = `http://localhost:8080/livros/${isbn}/capa`;
+            const urlCapa = `${API_BASE}/${isbn}/capa`;
 
             const promise = fetch(urlCapa, {
                 headers: {
@@ -345,7 +346,7 @@
         renderizarEstrelas();
 
         $("#btn-reserva").on("click", () => {
-            fetch(`http://localhost:8080/reserva/${id}`, {
+            fetch(`${API_URL}/reserva/${id}`, {
                 method: 'POST',
                 headers: { "Content-Type": "application/json",
                     'Authorization': `Bearer ${token}`

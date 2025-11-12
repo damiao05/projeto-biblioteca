@@ -5,8 +5,9 @@
   <button type="submit">Enviar capa</button>
 </form>
 
+<script src="js/config.js"></script>
+
 <script>
-  const API_BASE = "http://localhost:8080";
 
   document.getElementById("formCapa").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -17,7 +18,7 @@
     fd.append("file", fileInput.files[0]);
     // fd['file'] = fileInput.files[0];
 
-    const resp = await fetch(`${API_BASE}/livros/${livroId}/capa`, {
+    const resp = await fetch(`${API_URL}/livros/${livroId}/capa`, {
       method: "POST",
       body: fd
     });

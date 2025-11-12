@@ -249,6 +249,7 @@
 </html>
 
 <script src="./js/jquery.min.js"></script>
+<script src="js/config.js"></script>
 <script>
 
     function carregarCapas(token) {
@@ -256,7 +257,7 @@
             const card = $(this);
             const isbn = card.data("isbn");
 
-            const urlCapa = `http://localhost:8080/livros/${isbn}/capa`;
+            const urlCapa = `${API_URL}/livros/${isbn}/capa`;
 
             fetch(urlCapa, {
                 headers: {
@@ -310,7 +311,7 @@
                 return;
             }
 
-            const API_BASE = "http://localhost:8080/livros";
+            const API_BASE =  `${API_URL}/livros`;
             const API_PESQUISA = `${API_BASE}/pesquisa?input=${input}`;
 
             fetch(API_PESQUISA, {

@@ -79,6 +79,8 @@
         <button type="submit">Salvar</button>
     </form>
     
+    <script src="js/config.js"></script>
+    
 </body>
 </html>
 
@@ -86,7 +88,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
 <script>
 
-    const API_URL = "http://localhost:8080/usuarios/funcionario";
+    const API_CADASTRO = `${API_URL}/usuarios/funcionario`;
 
     $("#formFuncionario").on("submit", async function(e) {
         e.preventDefault();
@@ -107,7 +109,7 @@
             email: $("#email").val()
         }
 
-        await fetch(API_URL, {
+        await fetch(API_CADASTRO, {
             method: "POST",
             headers: { "Content-Type": "application/json",
               "Authorization": `Bearer ${token}`

@@ -1,0 +1,108 @@
+<style>
+
+    html {
+        overflow-y: hidden;
+        overflow-x: hidden;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        font-family: 'Work Sans', sans-serif;
+        font-weight: 800;
+        background: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218);
+        background: linear-gradient(
+            to right, #b57747,
+                #5e3211);
+    }
+
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        /* background: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218);
+        background: linear-gradient(
+            to right, #b57747,
+                #5e3211); */
+        color: #f7f5e9;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        gap: 1rem;
+        padding: 0 2px;
+        /* box-shadow: 0 2px 5px rgba(0,0,0,0.2); */
+        z-index: 5000;
+    }
+
+    main {
+        width: 100%;
+        height: 100%;
+    }
+
+</style>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empréstimo</title>
+
+    <script src="./js/jquery.min.js"></script>
+</head>
+<body>
+    <header>
+        <h2 class="lithub">LitHub</h2>
+    </header>
+
+    <main>
+        <div class="container-informacoes"></div>
+    </main>
+    
+</body>
+</html>
+
+<script>
+
+    $(document).ready(function() {
+
+        const token = localStorage.getItem('jwtToken');
+
+        if (!token) {
+            alert('Você não está logado! Redirecionando para o login.');
+            window.location.href = '/login.html';
+        }
+
+        const queryString = window.location.search;
+
+        const urlParams = new URLSearchParams(queryString);
+
+        const reserva = urlParams.get('reserva');
+
+        if(reserva) {
+            const API_RESERVA = `http://localhost:8080/reserva?reserva=${reserva}`;
+
+            fetch(API_RESERVA, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(async response => {
+                if(!response.ok) {
+                    throw new Error('Não foi possível trazer a lista de reservas.');
+                }
+
+                const reserva = await response.json();
+
+                console.log(reserva);
+            })
+        }
+
+    });
+
+</script>

@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,6 +30,18 @@ public class ReservaController {
     public ResponseEntity<Reserva> criarReserva(@AuthenticationPrincipal Usuario usuarioLogado, @PathVariable UUID id_livro){
         Reserva novaReserva = reservaService.criarReserva(usuarioLogado, id_livro);
         return new ResponseEntity<>(novaReserva, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Reserva>> listarReservas(@AuthenticationPrincipal Usuario usuarioLogado, @RequestParam(name = "reserva", required = false) UUID reserva){
+        List<Reserva> reservas = reservaService.listarReservas(usuarioLogado, reserva);
+
+        if(reservas.isEmpty()) {
+            return  ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(reservas);
+        }
     }
 
 }

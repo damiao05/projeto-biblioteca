@@ -1,0 +1,202 @@
+<style>
+
+    html {
+        overflow-y: hidden;
+        overflow-x: hidden;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        font-family: 'Work Sans', sans-serif;
+        font-weight: 800;
+    }
+
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218);
+        background: linear-gradient(
+            to right, #b57747,
+                #5e3211);
+        color: #f7f5e9;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        gap: 1rem;
+        padding: 0 2px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 5000;
+    }
+
+    main {
+        width: 100%;
+        height: 100%;
+        margin-top: 60px;
+        background: #f7f5e9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .container-reservas {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+        justify-items: center;
+        margin-top: 10%;
+        width: 85%;
+        height: 100%;
+    }
+
+    .container-infos {
+        width: 85%;
+        height: 35%;
+        background: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218);
+        background: linear-gradient(
+            to right, #b57747,
+                #5e3211);
+        color: #f7f5e9;
+        border-radius: 15px;
+        cursor: pointer;
+    }
+
+    .container-infos:hover {
+        transform: scale(1.1);
+        background-color: #784b28;
+        box-shadow: 8px 8px 90px #b57747;
+    }
+
+    .infos-livro {
+        width: 100%;
+        height: 40%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* .infos-livro span,
+    .infos-usuario span,
+    .infos-reserva span {
+        width: 100%;
+        height: 100%;
+    } */
+
+    .infos-usuario,
+    .infos-reserva {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 30%;
+        margin-left:5%;
+        margin-right: 5%;
+    }
+
+    #titulo-livro {
+        font-size: 2rem;
+    }
+
+    #editora-livro,
+    #name,
+    #date {
+        font-size: 0.75rem;
+    }
+
+</style>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas</title>
+
+    <script src="./js/jquery.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <h2 class="lithub">LitHub</h2>
+
+        <div class="right-group">
+            <span class="menu-icon"><i class="fa fa-bars"></i></span>
+        </div>
+    </header>
+
+    <main>
+        <div class="container-reservas"></div>
+    </main>
+    
+</body>
+</html>
+
+<script>
+
+    function formataData(data) {
+        data = data.split('-');
+        return `${data[2]}/${data[1]}/${data[0]}`;
+    }
+
+    $(document).ready(function() {
+
+        const token = localStorage.getItem('jwtToken');
+
+        if (!token) {
+            alert('Você não está logado! Redirecionando para o login.');
+            window.location.href = '/login.html';
+        }
+        
+        const API_BASE = 'http://localhost:8080/reserva';
+
+        fetch(API_BASE, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(async response => {
+            if(!response.ok) {
+                throw new Error('Não foi possível trazer a lista de reservas.');
+            }
+
+            const reservas = await response.json();
+
+            reservas.forEach(reserva => {
+                const containerInfos = `<div class="container-infos" data-id="${reserva.id}">
+                                            <div class="infos-livro">
+                                                <span id="titulo-livro">${reserva.livro['titulo']}</span>    
+                                                <span id="editora-livro"><i>${reserva.livro['editora']}</i></span>
+                                            </div>
+                                            <div class="infos-usuario">
+                                                <span id="name">Nome:</span>
+                                                <span id="nome-usuario">${reserva.usuario['nome']}</span>    
+                                            </div>
+                                            <div class="infos-reserva">
+                                                <span id="date">Reserva para:</span>
+                                                <span id="data-reserva">${formataData(reserva.dtReserva)}</span>
+                                            </div>
+                                        </div>`;
+
+                $(".container-reservas").append(containerInfos);
+            });
+        });
+
+        $(document).on("click", ".container-infos", function() {
+            const id = $(this).data('id');
+        
+            window.location.href = `/emprestimo.html?reserva=${encodeURIComponent(id)}`;
+        });
+
+    });
+
+</script>

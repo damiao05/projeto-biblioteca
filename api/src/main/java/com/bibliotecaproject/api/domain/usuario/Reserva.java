@@ -23,21 +23,21 @@ public class Reserva {
     @GeneratedValue
     private UUID id;
 
-    private LocalDate dt_reserva;
+    private LocalDate dtReserva;
 
     @CreationTimestamp
-    @Column(name = "dt_reserva_cadastro", updatable = false, nullable = false)
-    private LocalDateTime dt_reserva_cadastro;
+    @Column(name = "dtReservaCadastro", updatable = false, nullable = false)
+    private LocalDateTime dtReservaCadastro;
 
     @Column(nullable = false)
     private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_usuario", nullable = false)
+    @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_livro", nullable = false)
+    @JoinColumn(name = "idLivro", nullable = false)
     private Livro livro;
 
 }

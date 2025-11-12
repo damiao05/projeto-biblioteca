@@ -86,6 +86,7 @@
                 #5e3211);
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        cursor: pointer;
     }
 
     .img-capa {
@@ -419,7 +420,7 @@
 
     .right-group {
         position: relative;
-        left: 95%;
+        left: 90%;
     }
 
     .menu-icon {
@@ -448,7 +449,7 @@
     }
 
     .menu-bar.aberto {
-        left: 88%;
+        left: 84%;
     }
 
     .menu-bar span {
@@ -458,7 +459,7 @@
         height: 10%;
         border-bottom: 1px solid;
         padding-left: 2rem;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-family: 'Work Sans', sans-serif;
         color: #f7f5e9;
         font-weight: bold;
@@ -468,6 +469,33 @@
     .menu-option:hover {
         background: linear-gradient(75deg, #f7f5e9, transparent);
         color: #986c4a;
+    }
+
+    .editar-infos {
+        background: #f7f5e9;
+        color: #986c4a;
+        white-space: nowrap;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 0.3rem;
+        line-height: 3.125rem;
+        outline: none;
+        font-size: 1.125rem;
+        letter-spacing: .025rem;
+        text-decoration: none;
+        cursor: pointer;
+        font-weight: 800;
+        width: fit-content;
+        border-radius: 0.75rem;
+        transition: all .3s ease;
+        -webkit-transition: all .3s ease;
+    }
+
+    .editar-infos:hover {
+        background-color: white;
+        box-shadow: 2px 2px 30px #f7f5e9;
     }
 
     .btn-add-livro {
@@ -487,7 +515,8 @@
         cursor: pointer;
         font-weight: 800;
         min-height: 3.125rem;
-        width: 2%;
+        /* width: ; */
+        aspect-ratio: 1/1;
         border-radius: 0.75rem;
         transition: all .3s ease;
         -webkit-transition: all .3s ease;
@@ -504,7 +533,8 @@
     .btn-add-livro:hover {
         background-color: #784b28;
         box-shadow: 2px 2px 30px #b57747;
-        width: 10%;
+        aspect-ratio: 0;
+        width: fit-content;
     }
 
 </style>
@@ -513,7 +543,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Menu</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 </head>
@@ -547,12 +577,12 @@
     </div>
 
     <div class="menu-bar">
-        <span class="menu-option" id="reservas">Reservas</span>
-        <span class="menu-option" id="emprestimos">Empréstimos</span>
-        <span class="menu-option" id="categorias">Categorias</span>
-        <span class="menu-option" id="livros"><i class="fa fa-book"></i>  Livros</span>
-        <span class="menu-option" id="meu-perfil"><i class="fa fa-user-circle"></i>  Meu Perfil</span>
-        <span class="menu-option" id="sair"><i class="fa fa-sign-out"></i>  Sair</span>
+        <span class="menu-option" id="reservas"><i class="fa-solid fa-book-bookmark"></i> Reservas</span>
+        <span class="menu-option" id="emprestimos"><i class="fa-solid fa-right-left"></i> Empréstimos</span>
+        <span class="menu-option" id="categorias"><i class="fa-solid fa-layer-group"></i> Categorias</span>
+        <span class="menu-option" id="livros"><i class="fa-solid fa-book-open-reader"></i>  Livros</span>
+        <span class="menu-option" id="meu-perfil"><i class="fa-solid fa-user-circle"></i>  Meu Perfil</span>
+        <span class="menu-option" id="sair"><i class="fa-solid fa-arrow-right-from-bracket"></i>  Sair</span>
     </div>
 
     <div class="conteudo-body">
@@ -839,6 +869,10 @@
             }
             
         })
+
+        $(".menu-option").on("click", function() {
+            window.location.href = `/${$(this)[0].id}.html`;
+        });
 
         $(".container-livros").on("click", function() {
             $(".modal-info-livro").addClass("visible");

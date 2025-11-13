@@ -65,58 +65,58 @@ public class FuncionarioService implements OperacoesGerente {
         usuarioRepository.deleteById(id);
     }
 
-    public String salvarArquivoCapa(MultipartFile file, String isbn)  throws IOException {
-
-        return s3Service.uploadCapa(file, isbn);
-    }
-
-//    public String salvarArquivoCapa(MultipartFile file) throws IOException {
-//        if(file.isEmpty()) {
-//            throw new IllegalArgumentException("Arquivo vazio");
-//        }
-//        if(file.getSize() == 0) {
-//            throw new IllegalArgumentException("Arquivo vazio");
-//        }
+//    public String salvarArquivoCapa(MultipartFile file, String isbn)  throws IOException {
 //
-//        String contentType = file.getContentType();
-//        boolean ok = false;
-//        if (contentType != null) {
-//
-//            for(String allowed : ALLOWED_MIMES) {
-//                if(allowed.equalsIgnoreCase(contentType)) {ok = true; break;}
-//            }
-//        }
-//        if(!ok) {
-//            String detected = URLConnection.guessContentTypeFromName(file.getOriginalFilename());
-//            ok = false;
-//            if(detected != null) {
-//                for(String allowed : ALLOWED_MIMES) {
-//                    if(allowed.equalsIgnoreCase(detected)) {ok = true; break;}
-//                }
-//            }
-//        }
-//
-//        if(!ok) {
-//            throw new IllegalArgumentException("Tipo de arquivo não permitido! Apenas imagens (jpg/jpeg/png/webp).");
-//        }
-//
-//        String original = file.getOriginalFilename();
-//        String ext = "";
-//        if(original != null && original.contains(".")) {
-//            ext = original.substring(original.lastIndexOf("."));
-//        }
-//        String generatedFilename = UUID.randomUUID().toString() + ext;
-//
-//        Path target = this.uploadDir.resolve(generatedFilename);
-//
-//        try {
-//            Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-//        } catch(IOException e) {
-//            throw new IOException("Falha ao salvar arquivo", e);
-//        }
-//
-//        return generatedFilename;
+//        return s3Service.uploadCapa(file, isbn);
 //    }
+
+    public String salvarArquivoCapa(MultipartFile file) throws IOException {
+        if(file.isEmpty()) {
+            throw new IllegalArgumentException("Arquivo vazio");
+        }
+        if(file.getSize() == 0) {
+            throw new IllegalArgumentException("Arquivo vazio");
+        }
+
+        String contentType = file.getContentType();
+        boolean ok = false;
+        if (contentType != null) {
+
+            for(String allowed : ALLOWED_MIMES) {
+                if(allowed.equalsIgnoreCase(contentType)) {ok = true; break;}
+            }
+        }
+        if(!ok) {
+            String detected = URLConnection.guessContentTypeFromName(file.getOriginalFilename());
+            ok = false;
+            if(detected != null) {
+                for(String allowed : ALLOWED_MIMES) {
+                    if(allowed.equalsIgnoreCase(detected)) {ok = true; break;}
+                }
+            }
+        }
+
+        if(!ok) {
+            throw new IllegalArgumentException("Tipo de arquivo não permitido! Apenas imagens (jpg/jpeg/png/webp).");
+        }
+
+        String original = file.getOriginalFilename();
+        String ext = "";
+        if(original != null && original.contains(".")) {
+            ext = original.substring(original.lastIndexOf("."));
+        }
+        String generatedFilename = UUID.randomUUID().toString() + ext;
+
+        Path target = this.uploadDir.resolve(generatedFilename);
+
+        try {
+            Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
+        } catch(IOException e) {
+            throw new IOException("Falha ao salvar arquivo", e);
+        }
+
+        return generatedFilename;
+    }
 
     @Override
     public Livro cadastrarLivro(Livro livro, MultipartFile file) throws IOException {
@@ -130,7 +130,7 @@ public class FuncionarioService implements OperacoesGerente {
             //}
         //}
 
-        livro.setCapaFilename(salvarArquivoCapa(file, livro.getIsbn()));
+        livro.setCapaFilename(salvarArquivoCapa(file));
         return livroRepository.save(livro);
 
     }
@@ -149,7 +149,7 @@ public class FuncionarioService implements OperacoesGerente {
 
         if(file != null && !file.isEmpty()) {
             String capaAntiga = livroAtualizado.getCapaFilename();
-            String novaCapaFilename = salvarArquivoCapa(file, isbn);
+            String novaCapaFilename = salvarArquivoCapa(file);
 
             livroExistente.setCapaFilename(novaCapaFilename);
 

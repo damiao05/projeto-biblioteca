@@ -4,6 +4,7 @@ import com.bibliotecaproject.api.domain.usuario.Livro;
 import com.bibliotecaproject.api.service.FuncionarioService;
 import com.bibliotecaproject.api.service.LivroService;
 import com.bibliotecaproject.api.repository.LivroRepository;
+import com.bibliotecaproject.api.service.S3Service;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -30,11 +31,13 @@ public class LivroController {
     private final LivroService livroService;
     private final LivroRepository livroRepository;
     private final FuncionarioService funcionarioService;
+    private final S3Service s3Service;
 
-    public LivroController(LivroService livroService, LivroRepository livroRepository, FuncionarioService funcionarioService) {
+    public LivroController(LivroService livroService, LivroRepository livroRepository, FuncionarioService funcionarioService, S3Service s3Service) {
         this.livroService = livroService;
         this.livroRepository = livroRepository;
         this.funcionarioService = funcionarioService;
+        this.s3Service = s3Service;
     }
 
     @PostMapping
@@ -108,11 +111,11 @@ public class LivroController {
     @PostMapping("/{isbn}/capa")
     public ResponseEntity<?> uploadCapa(@PathVariable String isbn, @RequestParam("file") MultipartFile file) {
         try {
-            Livro atualizado = livroService.salvarCapa(isbn, file);
-            String imageUrl = "/livros/"+isbn+"/capa";
-            return ResponseEntity.ok().body(imageUrl);
-        } catch(IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            String imageUrl = s3Service.uploadCapa(file, isbn);
+
+            Livro atualizado = livroService.salvarCapa(isbn, imageUrl);
+
+            return ResponseEntity.ok(imageUrl);
         } catch(IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar imagem");
         }

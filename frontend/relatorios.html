@@ -1,0 +1,250 @@
+<style>
+
+    html {
+        overflow-y: hidden;
+        overflow-x: hidden;
+        width: auto;
+        height: auto;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        font-family: 'Work Sans', sans-serif;
+        font-weight: 800;
+        background: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218);
+        background: linear-gradient(
+            to right, #b57747,
+                #5e3211);
+    }
+
+    main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        margin-top: 60px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .relatorio-container {
+        width: 80%;
+        background-color: #f7f5e9;
+        border-radius: 1rem;
+        padding: 2.5rem;
+        box-shadow: 0 6px 30px #13162a;
+        font-family: 'Work Sans', sans-serif;
+        color: #13162a;
+        margin-top: -60px;
+    }
+
+    .relatorio-header {
+        border-bottom: 3px solid #986c4a;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .relatorio-header h1 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #5e3211;
+    }
+
+    .relatorio-data {
+        font-size: 1rem;
+        color: #986c4a;
+        font-weight: 600;
+    }
+
+    .relatorio-conteudo {
+        padding: 1.2rem;
+        background: #fff;
+        border-radius: 0.7rem;
+        border: 1px solid #ddd0b4;
+        box-shadow: inset 2px 2px 15px rgba(0,0,0,0.1);
+    }
+
+    .relatorio-conteudo pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: "Courier New", monospace;
+        font-size: 1rem;
+        color: #13162a;
+        line-height: 1.6rem;
+    }
+
+    .opcoes-relatorios {
+        width: fit-content;
+        height: fit-content;
+        background: #f7f5e9;
+        position: fixed;
+        border-radius: 0.7rem;
+        cursor: pointer;
+        transition: all .3s ease;
+        top: var(--top-card-relatorio);
+        left: var(--left-card-relatorio);
+    }
+
+    .opcoes-relatorios span {
+        color: #986c4a;
+        font-size: 1.1rem;
+        padding: 1rem;
+        font-family: 'Work Sans', sans-serif;
+        font-weight: 600;
+    }
+
+    .options {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .d-none {
+        display: none;
+    }
+
+
+</style>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</head>
+<body>
+
+    <div id="header-container"></div>
+    <div id="navbar-container"></div>
+
+    <main>
+
+        <div class="opcoes-relatorios">
+            <div class="grupo-expandir">
+                <span id="span-titulo-opcoes">Relatórios</span>
+                <span id="span-seta-baixo"><i class="fa fa-caret-down"></i></span>
+            </div>
+
+            <div class="options d-none">
+                <span id="span-seta-cima"><i class="fa fa-caret-up"></i></span>
+                <span class="option" id="livros-emprestados">Livros mais Emprestados</span>
+                <span class="option" id="multas-ativas">Multas ativas</span>
+            </div>
+        </div>
+
+        <div class="relatorio-container">
+
+            <div class="relatorio-header">
+                <h1 id="relatorio-titulo">Relatório</h1>
+                <span class="relatorio-data" id="relatorio-data"></span>
+            </div>
+
+            <div class="relatorio-conteudo">
+                <pre id="relatorio-texto"></pre>
+            </div>
+
+        </div>
+
+    </main>
+    
+    <script src="js/jquery.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+</html>
+
+<script>
+
+    function posicionarCardFlutuante() {
+        const medidasContainer = $(".relatorio-container")[0].getBoundingClientRect()
+        const medidasCard = $(".opcoes-relatorios")[0].getBoundingClientRect();
+
+        $(".opcoes-relatorios").css('--left-card-relatorio', medidasContainer.left + 'px');
+        $(".opcoes-relatorios").css('--top-card-relatorio', `${(medidasContainer.top - medidasCard.height - 10)}px`);
+    }
+
+    $(document).ready(function() {
+
+        const token = localStorage.getItem('jwtToken');
+        const decodedPayload = jwt_decode(token);
+
+        const role = decodedPayload.role;
+
+        $("#navbar-container").load("template/navbar.html", function() {
+            atualizaRoleNavbar(role);
+        });
+        $("#header-container").load("template/header.html");
+
+        $(".grupo-expandir").on("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            $(this).css({ 
+                width: '20rem',
+                boxShadow: '0 5px 20px #986c4a'
+             });
+            $("#span-titulo-opcoes").addClass("d-none");
+            $("#span-seta-baixo").addClass("d-none");
+            $(".options").removeClass("d-none");
+
+        });
+
+        $("#span-seta-cima").on("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(".grupo-expandir").css({ 
+                width: 'fit-content',
+                boxShadow: '0'
+             });
+            $("#span-titulo-opcoes").removeClass("d-none");
+            $("#span-seta-baixo").removeClass("d-none");
+            $(".options").addClass("d-none");
+        });
+
+        $(".option").on("click", function() {
+
+            const tipoRelatorio = $(this).attr("id");
+
+            $("#relatorio-texto").empty();
+            $("#span-seta-cima").trigger("click");
+            
+            posicionarCardFlutuante();
+
+            fetch(`${API_URL}/relatorios/${tipoRelatorio}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(async response => {
+
+                const relatorio = await response.text();
+
+                const linhas = relatorio.split('\n');
+
+                const titulo = linhas.shift();
+                const corpo = linhas.join('\n');
+
+                $("#relatorio-titulo").text(titulo);
+                $("#relatorio-texto").text(corpo);
+                $("#relatorio-data").text(new Date().toLocaleDateString("pt-BR"));
+
+                posicionarCardFlutuante();
+                
+            });
+        })
+
+        posicionarCardFlutuante();
+
+    });
+
+</script>

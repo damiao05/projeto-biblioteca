@@ -1,6 +1,8 @@
 package com.bibliotecaproject.api.service;
 
+import com.bibliotecaproject.api.domain.usuario.Emprestimo;
 import com.bibliotecaproject.api.domain.usuario.Livro;
+import com.bibliotecaproject.api.domain.usuario.Multa;
 import com.bibliotecaproject.api.domain.usuario.Usuario;
 import com.bibliotecaproject.api.repository.LivroRepository;
 import com.bibliotecaproject.api.repository.UsuarioRepository;
@@ -19,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +30,8 @@ public class FuncionarioService implements OperacoesGerente {
 
     private final UsuarioRepository usuarioRepository;
     private final LivroRepository livroRepository;
-    //private final EmprestimoRespository emprestimoRepository;
+    private final EmprestimoService emprestimoService;
+    private final MultaService multaService;
     private final EmailService emailService;
     private final S3Service s3Service;
     private final PasswordEncoder passwordEncoder;
@@ -36,15 +40,20 @@ public class FuncionarioService implements OperacoesGerente {
     private static final String[] ALLOWED_MIMES = {"image/jpeg", "image/jpg", "image/png", "image/webp"};
 
     @Autowired
-    public FuncionarioService(UsuarioRepository usuarioRepository, LivroRepository livroRepository, @Value("${file.upload-dir}") String uploadDir, EmailService emailService, S3Service s3Service, PasswordEncoder passwordEncoder) {
+    public FuncionarioService(UsuarioRepository usuarioRepository, LivroRepository livroRepository, EmprestimoService emprestimoService, MultaService multaService, @Value("${file.upload-dir}") String uploadDir, EmailService emailService, S3Service s3Service, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.livroRepository = livroRepository;
+        this.emprestimoService = emprestimoService;
+        this.multaService = multaService;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.s3Service = s3Service;
         this.uploadDir = Paths.get(uploadDir).toAbsolutePath().normalize();
 
     }
+
+    @Autowired
+    private LivroService livroService;
 
     @PostConstruct
     public void init() {
@@ -120,15 +129,6 @@ public class FuncionarioService implements OperacoesGerente {
 
     @Override
     public Livro cadastrarLivro(Livro livro, MultipartFile file) throws IOException {
-
-        //if(livro.getCapaFilename() != null && !livro.getCapaFilename().isBlank()) {
-          //  Path antigo = this.uploadDir.resolve(livro.getCapaFilename());
-            //try {
-              //  Files.deleteIfExists(antigo);
-            //} catch(IOException ex) {
-              //  ex.printStackTrace();
-            //}
-        //}
 
         livro.setCapaFilename(salvarArquivoCapa(file));
         return livroRepository.save(livro);
@@ -209,6 +209,31 @@ public class FuncionarioService implements OperacoesGerente {
         }
 
         return senha.toString();
+    }
+
+    @Override
+    public Emprestimo registrarEmprestimo(Emprestimo emprestimo) {
+        return emprestimoService.registrarEmprestimo(emprestimo);
+    }
+
+    @Override
+    public Emprestimo registrarDevolucao(UUID id, LocalDate data) {
+        return emprestimoService.registrarDevolucao(id, data);
+    }
+
+    @Override
+    public Multa registrarPagamento(UUID id, LocalDate dataPagamento) {
+        return multaService.registrarPagamento(id, dataPagamento);
+    }
+
+    @Override
+    public void deletarLivro(UUID id) {
+        livroService.deletarLivro(id);
+    }
+
+    @Override
+    public List<Emprestimo> listarEmprestimos() {
+        return emprestimoService.listarEmprestimos();
     }
 
 }

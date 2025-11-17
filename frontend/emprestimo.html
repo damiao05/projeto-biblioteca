@@ -96,6 +96,22 @@
         font-size: 3.5rem;
     }
 
+    .d-none {
+        display: none;
+    }
+
+    .img-capa {
+        width: 85%;
+        height: 80%;
+        overflow: hidden;
+    }
+
+    .img-capa img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
 </style>
 
 <html lang="pt-BR">
@@ -114,7 +130,9 @@
     <main>
         <div class="container-informacoes">
             <div class="container-capa">
-                <img src="" id="capa-livro">    
+                <div class="img-capa">
+                    <img src="" id="capa-livro">    
+                </div>
             </div>
             <div class="informacoes">
                 <div class="container-livro">
@@ -131,6 +149,12 @@
                     <span id="data-limite-emprestimo"></span>
                 </div>
             </div>
+            <div class="status-emprestimo d-none">
+                <span id="situacao"></span>
+                <span id="dias-atraso"></span>
+            </div>
+            <button id="btn-registrar-emprestimo">Registrar Empréstimo</button>
+            <button id="btn-registrar-devolucao">Registrar Devolução</button>
         </div>
     </main>
 
@@ -154,22 +178,49 @@
         return 20;
     }
 
+    function calcularPrazo(data, paginas) {
+        let dataBase = new Date(data);
+        dataBase.setDate(dataBase.getDate() + calculaPrazo(paginas));
+
+        return `${dataBase.getDate()}/${(dataBase.getMonth() + 1).toString().padStart(2, '0')}/${dataBase.getFullYear()}`;
+    }
+
     $(document).ready(function() {
 
         const token = localStorage.getItem('jwtToken');
+        const decodedPayload = jwt_decode(token);
+
+        const role = decodedPayload.role;
+
+        $("#navbar-container").load("template/navbar.html", function() {
+            atualizaRoleNavbar(role);
+        });
+        $("#header-container").load("template/header.html");
+        
 
         if (!token) {
             alert('Você não está logado! Redirecionando para o login.');
             window.location.href = '/login.html';
         }
 
+        // window.location.href = urlAnterior;
+
         const queryString = window.location.search;
 
         const urlParams = new URLSearchParams(queryString);
 
+        const API_EMPRESTIMO = `${API_URL}/emprestimos`;
+
         const reserva = urlParams.get('reserva');
+        const emprestimo = urlParams.get('emprestimo');
+
+        let livro;
+        let usuario;
+        let paginas;
 
         if(reserva) {
+            $("#btn-registrar-devolucao").addClass("d-none");
+
             const API_RESERVA = `${API_URL}/reserva?reserva=${reserva}`;
 
             fetch(API_RESERVA, {
@@ -186,7 +237,6 @@
 
                 let isbn;
                 let dataReserva;
-                let paginas;
 
                 listaReserva.forEach(reserva => {
                     $("#titulo-livro").text(reserva.livro['titulo']);
@@ -194,6 +244,8 @@
                     $("#editora-livro").text(reserva.livro['editora']);
                     $("#nome-usuario").text(reserva.usuario['nome']);
                     $("#data-reserva").text(formataData(reserva.dtReserva));
+                    livro = reserva.livro.id;
+                    usuario = reserva.usuario.id;
                     dataReserva = reserva.dtReserva.replace('-', '/');
                     paginas = reserva.livro['paginas'];
                     
@@ -201,11 +253,7 @@
 
                 });
 
-                let dataBase = new Date(dataReserva);
-                dataBase.setDate(dataBase.getDate() + calculaPrazo(paginas));
-                let dataLimite = `${dataBase.getDate()}/${(dataBase.getMonth() + 1).toString().padStart(2, '0')}/${dataBase.getFullYear()}`;
-
-                $("#data-limite-emprestimo").text(dataLimite);
+                $("#data-limite-emprestimo").text(calcularPrazo(dataReserva));
 
                 const promises = [];
 
@@ -237,7 +285,158 @@
                 return Promise.all(promises);
 
             })
+        } else {
+            $("#btn-registrar-emprestimo").addClass("d-none");
+
+            const API_EMPRESTIMO = `${API_URL}/emprestimos`;
+
+            fetch(`${API_EMPRESTIMO}/${emprestimo}/buscar`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+
+            }).then(async response => {
+                const dadosEmprestimo = await response.json();
+
+                $("#titulo-livro").text(dadosEmprestimo.livro['titulo']);
+                $("#autor-livro").text(dadosEmprestimo.livro['autor']);
+                $("#editora-livro").text(dadosEmprestimo.livro['editora']);
+                $("#nome-usuario").text(dadosEmprestimo.usuario['nome']);
+                $("#data-reserva").text(formataData(dadosEmprestimo.dtEmprestimo));
+                $("#data-limite-emprestimo").text(dadosEmprestimo.dtDevolucaoReal ? formataData(dadosEmprestimo.dtDevolucaoReal) : formataData(dadosEmprestimo.dtPrevistaDevolucao));
+                livro = dadosEmprestimo.livro.id;
+                usuario = dadosEmprestimo.usuario.id;
+                paginas = dadosEmprestimo.livro['paginas'];
+
+                $("#titulo-livro").data('id-emprestimo', dadosEmprestimo.id);
+
+                $(".status-emprestimo").removeClass("d-none");
+
+                let status;
+                let diasAtraso;
+
+                if(dadosEmprestimo.dtDevolucaoReal) {
+                    status = 'Livro devolvido';
+
+                    $("#btn-registrar-devolucao").addClass("d-none");
+
+                } else {
+                    const dataDevolucao = new Date(dadosEmprestimo.dtPrevistaDevolucao);
+                    const dataHoje = new Date();
+
+                    if((dataHoje.getTime() - dataDevolucao.getTime()) > 0) {
+                        status = 'Devolução em Atraso';
+                        diasAtraso = Math.round((dataHoje.getTime() - dataDevolucao.getTime()) / (1000 * 60 * 60 * 24));
+
+                        $("#dias-atraso").text(diasAtraso + " dias");
+
+                    } else {
+                        status = 'Empréstimo Ativo';
+                    }
+                }
+
+                $("#situacao").text(status);
+                
+                isbn = dadosEmprestimo.livro['isbn'];
+
+                const promises = [];
+
+                const urlCapa = `${API_URL}/livros/${isbn}/capa`;
+
+                const promise = fetch(urlCapa, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).then(response => {
+                    if(!response.ok) {
+                        throw new Error('Não foi possível carregar a capa.');
+                    }
+
+                    return response.blob();
+                }).then(blob => {   
+                    const objectURL = URL.createObjectURL(blob);
+
+                    $("#capa-livro").attr('src', objectURL)
+    
+                }).catch(error => {
+                    console.error(`Erro ao carregar capa para o ISBN ${isbn}:`, error);
+                    
+                    card.attr('src', 'caminho/para/imagem_padrao.png');
+                });
+
+                promises.push(promise);
+
+                return Promise.all(promises);
+
+            });
         }
+
+        $("#btn-registrar-emprestimo").on("click", function() {
+
+            let dataHoje = new Date();
+            dataHoje = `${dataHoje.getFullYear()}-${(dataHoje.getMonth() + 1).toString().padStart(2, '0')}-${dataHoje.getDate().toString().padStart(2, '0')}`;
+
+            let dataDevolucao = calcularPrazo(dataHoje, paginas);
+            dataDevolucao = dataDevolucao.split('/');
+            dataDevolucao = `${dataDevolucao[2]}-${dataDevolucao[1]}-${dataDevolucao[0]}`;
+
+            const emprestimo = {
+                'dtEmprestimo': dataHoje,
+                'dtPrevistaDevolucao': dataDevolucao,
+                'usuario': {
+                    'id': usuario
+                },
+                'livro': {
+                    'id': livro
+                }
+            };
+
+            fetch(API_EMPRESTIMO, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(emprestimo)
+
+            }).then(response => {
+                if(!response.ok) {
+                    throw new Error('Não foi possível trazer a lista de reservas.');
+                }
+
+                console.log(response + 'registrado com sucesso');
+
+            })
+
+        });
+
+        $("#btn-registrar-devolucao").on("click", function() {
+            let dataHoje = new Date();
+            dataHoje = `${dataHoje.getFullYear()}-${(dataHoje.getMonth() + 1).toString().padStart(2, '0')}-${dataHoje.getDate().toString().padStart(2, '0')}`;
+
+            const id = $("#titulo-livro").data('id-emprestimo');
+
+            const API_DEVOLUCAO = `${API_EMPRESTIMO}/${id}/devolucao?data=${dataHoje}`;
+
+            fetch(API_DEVOLUCAO, {
+                method: 'PUT',
+                headers: { "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`
+                }
+
+            }).then(response => {
+                if(!response.ok) {
+                    throw new Error('Não foi possível registrar a devolução.');
+                }
+
+                $("#btn-registrar-devolucao").addClass("d-none");
+                $("#situacao").text("Livro devolvido");
+                $("#dias-atraso").text('');
+
+            });
+
+        });
 
     });
 

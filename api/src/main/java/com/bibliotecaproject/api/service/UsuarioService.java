@@ -1,10 +1,14 @@
 package com.bibliotecaproject.api.service;
 
 import com.bibliotecaproject.api.domain.dto.AtualizarSenhaDTO;
+import com.bibliotecaproject.api.domain.usuario.Emprestimo;
 import com.bibliotecaproject.api.domain.usuario.Role;
 import com.bibliotecaproject.api.domain.usuario.Usuario;
+import com.bibliotecaproject.api.repository.EmprestimoRepository;
+import com.bibliotecaproject.api.repository.MultaRepository;
 import com.bibliotecaproject.api.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +28,12 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
     }
+
+    @Autowired
+    private MultaRepository multaRepository;
+
+    @Autowired
+    private EmprestimoRepository emprestimoRepository;
 
     @Transactional
     public Usuario salvar(Usuario usuario) {
@@ -67,8 +77,9 @@ public class UsuarioService {
         return usuarioSalvo;
     }
 
-    public List<Usuario> listarTodos() {
+    public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
+
     }
 
     public Usuario buscarPorId(UUID id) {
@@ -76,8 +87,24 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
-    public void deletar(UUID id) {
+    public void deletarUsuario(UUID id) {
+        Usuario usuario = buscarPorId(id);
+
+        List<Emprestimo> emprestimo = emprestimoRepository.findAll();
+
+        boolean multasAtivas = multaRepository.existsByEmprestimoInAndStatusPagamento(emprestimo, "ATIVA");
+        boolean emprestimosAtivos = emprestimoRepository.existsByUsuarioAndDtDevolucaoRealIsNull(usuario);
+
+        if(multasAtivas) {
+            throw new RuntimeException("Não é possível deletar um usuário que possui multas ativas!");
+
+        } else if(emprestimosAtivos) {
+            throw new RuntimeException("Não é possível deletar um usuário que possui empréstimos ativos!");
+
+        }
+
         usuarioRepository.deleteById(id);
+
     }
 
     @Transactional

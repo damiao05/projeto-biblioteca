@@ -43,8 +43,6 @@ public class ReservaService {
     public List<Reserva> listarReservas(Usuario usuarioLogado, UUID reserva) {
         Role cargo = usuarioLogado.getRole();
 
-        System.out.println("O cargo é: " + cargo);
-
         if (cargo == Role.BIBLIOTECARIO || cargo == Role.GERENTE) {
 
             if (reserva != null) {

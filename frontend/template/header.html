@@ -1,0 +1,157 @@
+<style>
+
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4rem;
+        background: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218);
+        background: linear-gradient(
+            to right, #b57747,
+                #5e3211);
+        color: #f7f5e9;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        /* justify-content: flex-start; */
+        gap: 1rem;
+        padding: 0 2px;
+        /* box-shadow: 0 2px 5px rgba(0,0,0,0.2); */
+        z-index: 5000;
+    }
+
+    .lithub {
+        cursor: default;
+    }
+
+    .home-icon {
+        /* position: relative; */
+        margin-left: 1rem;
+    }
+
+    .home-icon {
+        font-size: 1.25rem;
+        cursor: pointer;
+    }
+
+    .menu-icon {
+        font-size: 1.5rem;
+        cursor: pointer;
+        /* position: relative; */
+        /* margin-left: 1rem; */
+        margin-right: 2rem;
+        background: transparent;
+        /* left: 90%; */
+    }
+
+    .menu-icon:hover,
+    .dashboard-icon:hover {
+        transform: scale(1.25);
+    }
+
+    .area-dashboard {
+        position: fixed;
+        width: 0;
+        height: 0;
+        top: 60px;
+        border-radius: 15px;
+        background-color: #f7f5e9;
+        display: flex;
+        justify-content: center;
+        right: 4rem;
+        z-index: 6000;
+        overflow: hidden;
+        transition: all .5s ease;
+        opacity: 0;
+    }
+
+    .area-dashboard.aberto {
+        opacity: 1;
+        width: 70rem;
+        height: 31rem;
+    }
+
+    .header-container {
+        display: flex;
+    }
+
+    .dashboard-icon {
+        font-size: 1.25rem;
+        cursor: pointer;
+        margin-left: auto;
+    }
+
+    #dashboard {
+        position: relative;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .d-none {
+        display: none;
+    }
+
+    .hidden-role {
+        display: none;
+    }
+
+</style>
+
+<div class="header-container">
+
+<header>
+    <span class="home-icon header-item"><i class="fa fa-home"></i></span>
+
+    <h2 class="lithub header-item">LitHub</h2>
+
+    <span class="dashboard-icon header-item hidden-role role-gerente"><i class="fa fa-pie-chart"></i></span>
+
+    <span class="menu-icon header-item"><i class="fa fa-bars"></i></span>
+</header>
+
+<div class="area-dashboard header-item hidden-role role-gerente">
+    <iframe id="dashboard" src="" frameborder="0"></iframe>
+</div>
+
+</div>
+
+<script>
+
+    function atualizaRoleHeader(role) {
+        $(".header-item.hidden-role").addClass("hidden-role");
+
+        const roleClass = `.role-${role.toLowerCase()}`;
+
+        $(roleClass).removeClass("hidden-role");
+
+        $(".dashboard-icon").hasClass("hidden-role") ? $(".menu-icon").css({ marginLeft: 'auto' }) : $(".menu-icon").css({ marginLeft: '1rem' });
+        
+    }
+
+    $(".menu-icon").on("click", () => {
+        $(document).trigger('navbar:toggleMenu');
+        
+    });
+
+    const iframeUrl = 'http://localhost:3000/public/dashboard/29b8c0a0-f431-48f4-bba0-9d92772635df';
+    $("#dashboard")[0].src = iframeUrl;
+
+    $(".home-icon").on("click", () => {
+        $(document).trigger('navbar:toggleHome');
+
+    });
+
+    $(".dashboard-icon").on("click", function() {
+        $(".area-dashboard").hasClass("aberto") ? $(".area-dashboard").removeClass("aberto") : $(".area-dashboard").addClass("aberto");
+
+    });
+
+    // $(".area-dashboard").on("click", function() {
+    //     alert('oi');
+
+    // });
+
+</script>

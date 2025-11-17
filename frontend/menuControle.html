@@ -1,29 +1,90 @@
 <style>
 
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background: #986c4a;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 1rem;
-      padding: 0 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      z-index: 1000;
+    html {
+        overflow-y: hidden;
+        overflow-x: hidden;
+        width: auto;
+        height: auto;
     }
 
     body {
-      height: 100vh;            
-      display: flex;
-      justify-content: center;  
-      align-items: center;  
-      background: #f7f5e9;
-      margin: 0;
+        width: 100%;
+        height: 100%;
+        font-family: 'Work Sans', sans-serif;
+        font-weight: 800;
+        margin-top: 60px;
+        background: #f7f5e9;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .lithub {
+        position: relative;
+        left: 1%;
+    }
+
+    .right-group {
+        position: relative;
+        left: 90%;
+    }
+
+    .menu-icon {
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    .menu-icon:hover {
+        transform: scale(1.25);
+    }
+
+    .menu-bar {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        left: 100%;
+        background: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218);
+        background: linear-gradient(75deg, #5e3211, transparent);
+        box-shadow: 10px 10px 100px black;
+        transition: all .3s ease;
+        z-index: 4000;
+    }
+
+    .menu-bar.aberto {
+        left: 84%;
+    }
+
+    .menu-bar span {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        height: 10%;
+        border-bottom: 1px solid;
+        padding-left: 2rem;
+        font-size: 1.1rem;
+        font-family: 'Work Sans', sans-serif;
+        color: #f7f5e9;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .menu-option:hover {
+        background: linear-gradient(75deg, #f7f5e9, transparent);
+        color: #986c4a;
     }
 
 </style>
@@ -33,26 +94,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu de Controle</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 </head>
 <body>
+    
+    <div id="header-container"></div>
 
-    <header>
-        <nav>
-            <button id="btn-home">Voltar</button>
-        </nav>
-        <h2>LitHub</h2>
-    </header>
+    <div id="navbar-container"></div>
 
-    <button type="button" id="btn-cadastrar">Cadastrar Funcionário</button>
-    <button type="button" id="btn-add-livro">Adicionar Livro</button>
+    <main>
+
+        <button type="button" id="btn-cadastrar">Cadastrar Funcionário</button>
+        <button type="button" id="btn-add-livro">Adicionar Livro</button>
+        <button type="button" id="btn-relatorios">Relatórios</button>
+        <!-- <button type="button" id="dashboard">Dashboard</button> -->
+
+    </main>
 
 </body>
 </html>
 
 <script src="./js/jquery.min.js"></script>
+<script src="js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
 <script>
 
     $(document).ready(function() {
+
+        const token = localStorage.getItem('jwtToken');
+        const decodedPayload = jwt_decode(token);
+
+        const role = decodedPayload.role;
+
+        $("#navbar-container").load("template/navbar.html", function() {
+            atualizaRoleNavbar(role);
+        });
+        $("#header-container").load("template/header.html", function() {
+            atualizaRoleHeader(role);
+        });
+
         $("#btn-cadastrar").on("click", function() {
             window.location.href = "cadastroFuncionario.html";
         });
@@ -60,6 +141,14 @@
         $("#btn-add-livro").on("click", function() {
             window.location.href = "cadastroLivro.html";
         });
+
+        $("#btn-relatorios").on("click", function() {
+            window.location.href = "relatorios.html";
+        });
+
+        // $("#dashboard").on("click", function() {
+        //     window.location.href = "dashboard.html";
+        // });
 
     });
 

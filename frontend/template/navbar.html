@@ -1,0 +1,98 @@
+<style>
+
+    .menu-bar {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        left: 100%;
+        background: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218);
+        background: linear-gradient(75deg, #5e3211, transparent);
+        box-shadow: 10px 10px 100px black;
+        transition: all .3s ease;
+        z-index: 4000;
+        /* margin-top: 60px; */
+    }
+
+    .menu-bar.aberto {
+        left: 84%;
+    }
+
+    .menu-bar span {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        height: 10%;
+        border-bottom: 1px solid;
+        padding-left: 2rem;
+        font-size: 1.1rem;
+        font-family: 'Work Sans', sans-serif;
+        color: #f7f5e9;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .menu-option:hover {
+        background: linear-gradient(75deg, #f7f5e9, transparent);
+        color: #986c4a;
+    }
+
+    .hidden-role {
+        display: none;
+    }
+
+</style>
+
+<div class="menu-bar">
+    <span class="menu-option hidden-role role-bibliotecario role-gerente" id="reservas"><i class="fa-solid fa-book-bookmark"></i> Reservas</span>
+    <span class="menu-option hidden-role role-bibliotecario role-gerente" id="emprestimos"><i class="fa-solid fa-right-left"></i> Empréstimos</span>
+    <span class="menu-option" id="categorias"><i class="fa-solid fa-layer-group"></i> Categorias</span>
+    <span class="menu-option" id="menu-principal-bibliotecario"><i class="fa-solid fa-book-open-reader"></i>  Livros</span>
+    <span class="menu-option" id="meu-perfil"><i class="fa-solid fa-user-circle"></i>  Meu Perfil</span>
+    <span class="menu-option" id="sair"><i class="fa-solid fa-arrow-right-from-bracket"></i>  Sair</span>
+</div>
+
+<script>
+
+    function atualizaRoleNavbar(role) {
+        $(".menu-option.hidden-role").addClass("hidden-role");
+
+        const roleClass = `.role-${role.toLowerCase()}`;
+
+        $(roleClass).removeClass("hidden-role");
+        $("#sair").data('cargo', role.toLowerCase());
+        
+    }
+
+    $(document).on('navbar:toggleMenu', function() {
+        $(".menu-bar").toggleClass('aberto');
+
+        $(".menu-option").on("click", function() {
+            window.location.href = `/${$(this)[0].id}.html`;
+        });
+
+    });
+
+    $(document).on('navbar:toggleHome', function() {
+        let cargo = $("#sair").data('cargo');
+
+        switch(cargo) {
+            case 'gerente':
+                window.location.href = 'menuControle.html';
+                break;
+
+            case 'bibliotecario':
+                window.location.href = 'menu-principal-bibliotecario.html';
+                break;
+
+            case 'cliente':
+                window.location.href = 'categoria.html';
+        }
+
+
+    });
+
+</script>

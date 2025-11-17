@@ -1,0 +1,43 @@
+<style>
+
+    #dashboard {
+        width: 100%;
+        height: 100%;
+    }
+
+</style>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+    <header>...</header>
+    <div id="dashboard-container">
+        <p>Carregando dashboard...</p>
+    </div>
+
+    <iframe id="dashboard" src="" frameborder="0" allowtransparency></iframe>
+
+    <script src="./js/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const token = localStorage.getItem('jwtToken');
+            const role = localStorage.getItem('userRole');
+
+            const METABASE_SITE_URL = "https://localhost:3000";
+            const METABASE_SECRET_KEY = "4193f57619c42b398de3bf0750e052224808f3dcc94af03b97ceaeb84c07c756";
+
+            const payload = {
+                resource: {dashboar: 2},
+                params: {}
+            };
+
+            const iframeUrl = 'http://localhost:3000/public/dashboard/29b8c0a0-f431-48f4-bba0-9d92772635df';
+            $("#dashboard")[0].src = iframeUrl;
+        });
+    </script>
+</body>
+</html>

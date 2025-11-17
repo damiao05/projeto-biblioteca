@@ -1,39 +1,22 @@
 <style>
 
     html {
-        overflow-y: none;
-    }
-
-    header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 60px;
-        background: -webkit-linear-gradient(
-        to right, #986c4a,
-                #9d5218);
-        background: linear-gradient(
-            to right, #b57747,
-                #5e3211);
-        color: #f7f5e9;
-        display: flex;
-        align-items: center;
-        flex-direction: row;
-        /* justify-content: flex-start; */
-        gap: 1rem;
-        padding: 0 2px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        z-index: 5000;
+        overflow-y: hidden;
+        overflow-x: hidden;
     }
 
     body {
         height: 100%;
         background: #f7f5e9;
         margin: 0;
-        margin-top: -1.25rem;
+        /* margin-top: -1.25rem; */
         font-family: 'Work Sans', sans-serif;
-        /* margin-top: 60px; */
+        margin-top: 60px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
     }
 
     ::-webkit-scrollbar-track {
@@ -51,6 +34,7 @@
     .conteudo-body {
         opacity: 0;
         transition: opacity 0.5s ease-out;
+        /* margin-top: 60px; */
     }
 
     .mostrar {
@@ -277,6 +261,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        /* margin-top: -60px; */
         /* perspective: 1000px; */
     }
 
@@ -415,26 +400,7 @@
     transition-duration: 2s;
     }
 
-    .lithub {
-        position: relative;
-        left: 1%;
-    }
-
-    .right-group {
-        position: relative;
-        left: 90%;
-    }
-
-    .menu-icon {
-        font-size: 1.5rem;
-        cursor: pointer;
-    }
-
-    .menu-icon:hover {
-        transform: scale(1.25);
-    }
-
-    .menu-bar {
+    /* .menu-bar {
         display: flex;
         flex-direction: column;
         position: fixed;
@@ -471,7 +437,7 @@
     .menu-option:hover {
         background: linear-gradient(75deg, #f7f5e9, transparent);
         color: #986c4a;
-    }
+    } */
 
     .editar-infos {
         background: #f7f5e9;
@@ -550,13 +516,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 </head>
 <body>
-    <header>
-        <h2 class="lithub">LitHub</h2>
-
-        <div class="right-group">
-            <span class="menu-icon"><i class="fa fa-bars"></i></span>
-        </div>
-    </header>
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tangerine&display=swap" rel="stylesheet">
@@ -578,14 +537,17 @@
         <p class="loading-text">Carregando...</p> 
     </div>
 
-    <div class="menu-bar">
+    <!-- <div class="menu-bar">
         <span class="menu-option" id="reservas"><i class="fa-solid fa-book-bookmark"></i> Reservas</span>
         <span class="menu-option" id="emprestimos"><i class="fa-solid fa-right-left"></i> Empréstimos</span>
         <span class="menu-option" id="categorias"><i class="fa-solid fa-layer-group"></i> Categorias</span>
         <span class="menu-option" id="livros"><i class="fa-solid fa-book-open-reader"></i>  Livros</span>
         <span class="menu-option" id="meu-perfil"><i class="fa-solid fa-user-circle"></i>  Meu Perfil</span>
         <span class="menu-option" id="sair"><i class="fa-solid fa-arrow-right-from-bracket"></i>  Sair</span>
-    </div>
+    </div> -->
+
+    <div id="header-container"></div>
+    <div id="navbar-container"></div>
 
     <div class="conteudo-body">
         <div class="container-livros"></div>
@@ -616,6 +578,16 @@
 <script>
 
     $(window).on('load', function() {
+
+        const token = localStorage.getItem('jwtToken');
+        const decodedPayload = jwt_decode(token);
+
+        const role = decodedPayload.role;
+
+        $("#navbar-container").load("template/navbar.html", function() {
+            atualizaRoleNavbar(role);
+        });
+        $("#header-container").load("template/header.html");
 
         const textLoading = document.querySelector('.loading-text');
         const text = textLoading.textContent;
@@ -709,7 +681,7 @@
 
                     setTimeout(() => {
                         $(".tela-loading").remove();
-                        $("body").css({marginTop: "60px"})
+                        // $("body").css({marginTop: "60px"})
                         $('html').css({
                             overflowY: 'scroll'
                         });
@@ -829,8 +801,6 @@
             return Promise.all(promises);
         }
 
-        const token = localStorage.getItem('jwtToken');
-
         const API_BASE = `${API_URL}/livros`;
 
         fetch(API_BASE, {
@@ -862,19 +832,6 @@
             setTimeout(() => {
                 escondeTelaLoading();
             }, 1000);
-        });
-
-        $(".menu-icon").on("click", () => {
-            if($(".menu-bar").hasClass("aberto")) {
-                $(".menu-bar").removeClass('aberto');
-            } else {
-                $(".menu-bar").addClass('aberto');
-            }
-            
-        })
-
-        $(".menu-option").on("click", function() {
-            window.location.href = `/${$(this)[0].id}.html`;
         });
 
         $(".container-livros").on("click", function() {

@@ -46,9 +46,10 @@
         padding: 2.5rem 2rem;
         border-radius: 1rem;
         height: fit-content;
-        box-shadow: 8px 8px 100px #13162a;
+        box-shadow: 0 8px 15px #13162a;
         align-self: stretch;
-        margin: 60px auto 60px auto;
+        margin: 70px auto 60px auto;
+        /* margin-top: 90px; */
     }
 
     .container-capa-info {
@@ -231,12 +232,8 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 </head>
 <body>
-    <header>
-        <nav>
-            <button id="btn-home">Voltar</button>
-        </nav>
-        <h2>LitHub</h2>
-    </header>
+    <div id="header-container"></div>
+    <div id="navbar-container"></div>
 
     <form id="form-cadastro-livro">
         <div class="container-capa-info">
@@ -307,13 +304,22 @@
 
 <script src="./js/jquery.min.js"></script>
 <script src="js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
 <script>
 
     $(document).ready(function() {
 
         const urlAnterior = sessionStorage.getItem('urlAnterior');
 
-        const token = localStorage.getItem("jwtToken");
+        const token = localStorage.getItem('jwtToken');
+        const decodedPayload = jwt_decode(token);
+
+        const role = decodedPayload.role;
+
+        $("#navbar-container").load("template/navbar.html", function() {
+            atualizaRoleNavbar(role);
+        });
+        $("#header-container").load("template/header.html");
 
         if (!token) {
             alert('Você não está logado! Redirecionando para o login.');

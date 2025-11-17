@@ -1,7 +1,10 @@
 package com.bibliotecaproject.api.service;
 
 import com.bibliotecaproject.api.domain.usuario.Livro;
+import com.bibliotecaproject.api.domain.usuario.Usuario;
+import com.bibliotecaproject.api.repository.EmprestimoRepository;
 import com.bibliotecaproject.api.repository.LivroRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,9 @@ public class LivroService {
         Files.createDirectories(this.uploadDir);
     }
 
+    @Autowired
+    private EmprestimoRepository emprestimoRepository;
+
     public Optional<Livro> mostrarLivro(String isbn){
         return livroRepository.findByIsbn(isbn);
     }
@@ -57,7 +63,25 @@ public class LivroService {
        // return livroRepository.save(livro);
     //}
 
-    public List<Livro> pesquisarLivros(String input) {return livroRepository.findByInput(input);}
+    public List<Livro> pesquisarLivros(String input) {
+        return livroRepository.findByInput(input);
+
+    }
+
+    public void deletarLivro(UUID id) {
+        Livro livro = livroRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+
+        boolean emprestimosAtivos = emprestimoRepository.existsByLivroAndDtDevolucaoRealIsNull(livro);
+
+        if(emprestimosAtivos) {
+            throw new RuntimeException("Não é possível deletar um usuário que possui empréstimos ativos!");
+
+        }
+
+        livroRepository.deleteById(id);
+
+    }
 
     public Livro salvarCapa(String isbn, String imageUrl)  throws IOException {
 

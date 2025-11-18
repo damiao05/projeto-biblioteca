@@ -319,7 +319,9 @@
         $("#navbar-container").load("template/navbar.html", function() {
             atualizaRoleNavbar(role);
         });
-        $("#header-container").load("template/header.html");
+        $("#header-container").load("template/header.html", function() {
+            atualizaRoleHeader(role);
+        });
 
         if (!token) {
             alert('Você não está logado! Redirecionando para o login.');

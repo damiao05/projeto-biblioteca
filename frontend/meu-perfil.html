@@ -1,6 +1,6 @@
 <style>
 
-    header {
+    /* header {
         position: fixed;
         top: 0;
         left: 0;
@@ -15,19 +15,44 @@
         padding: 0 2px;
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         z-index: 1000;
+    } */
+    html {
+        overflow-x: hidden;
+        overflow-y: hidden;
     }
 
     body {
-        height: auto;
-        background: #f7f5e9;
-        margin: 0;
+        font-size: 16px;
+        font-family: 'Work Sans', sans-serif;
+        min-height: 100vh;
+        background: -webkit-linear-gradient(
+            to right, #986c4a,
+                    #9d5218
+        );
+        background: linear-gradient(
+            to right, #b57747,
+                    #5e3211
+        );
         margin-top: 60px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        margin-top: -60px;
     }
 
     .user-infos {
         display: flex;
         flex-direction: column;
-        /* justify-content: center; */
         align-items: center;
     }
 
@@ -45,6 +70,82 @@
         display: none;
     }
 
+    .form-editar {
+        /* margin-top: 60px; */
+        display: flex;
+        flex-direction: column;
+        width: 60%;
+        height: 80%;
+        background: #f7f5e9;
+        z-index: 5001;
+        border-radius: 15px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .input__wrapper {
+        position: relative;
+        padding: 0.9375rem 0 0;
+        margin-bottom: 2rem;
+    }
+
+    .input__field {
+        font-size: 1.4rem;
+        color: #13162a;
+        padding: 0.375rem 0;
+        padding-right: 2rem;
+        padding-bottom: 0.5rem;
+        line-height: 2rem;
+        height: 2rem;
+        outline: 0;
+        border: 0;
+        width: 100%;
+        vertical-align: middle;
+        padding-bottom: 0.7rem;
+        border-bottom: 3px solid #13162a;
+        background: transparent;
+        transition: border-color 0.2s;
+    }
+
+    .input__field::placeholder {
+        color: transparent;
+    }
+
+    .input__label {
+        user-select: none;
+    }
+
+    .input__field:placeholder-show~.input__label {
+        cursor: text;
+        color: #13162a;
+        top: 0.8rem;
+        font-size: 1.2rem;
+    }
+
+    .input__label,
+    .input__field:focus~.input__label {
+        position: absolute;
+        top: -0.8rem;
+        display: block;
+        font-size: 1.2rem;
+        color: #13162a;
+        transition: 0.3s;
+    }
+
+    .input__field:focus~.input__label {
+        color: #986c4a;
+    }
+
+    .input__field:focus {
+        border-bottom: 3px solid #986c4a;
+    }
+
+    .container-infos {
+        padding: 5%;
+        width: 80%;
+        height: 60%;
+    }
+
 </style>
 
 <html lang="pt-BR">
@@ -54,36 +155,42 @@
     <title>Menu - Usuário</title>
 </head>
 <body>
+    <div id="header-container"></div>
+    <div id="navbar-container"></div>
 
-    <header>
-        <nav>
-            <button type="button" class="btn-voltar" id="btn-voltar">Voltar</button>
-        </nav>
-        <h2>LitHub</h2>
-    </header>
-
-    <form class="form-editar-infos">
-        <div class="user-infos">
-            <label for="perfil-nome">Nome Completo</label>
-            <input type="text" name="perfil-nome" id="perfil-nome" class="disabled">
-            <label for="perfil-cpf">CPF</label>
-            <input type="text" name="perfil-cpf" id="perfil-cpf" class="disabled">
-            <label for="perfil-dt-nascimento">Data de Nascimento</label>
-            <input type="text" name="perfil-dt-nascimento" id="perfil-dt-nascimento" placeholder="__/__/____" class="disabled">
-            <label for="perfil-telefone">Telefone</label>
-            <input type="text" name="perfil-telefone" id="perfil-telefone" class="disabled">
-            <label for="perfil-email">Email</label>
-            <input type="email" name="perfil-email" id="perfil-email" class="disabled">
-        </div>
-
-        <button type="button" class="editar-infos" id="btn-editar">Editar</button>
-        <button type="button" class="salvar-infos d-none" id="btn-salvar">Salvar</button>
-    </form>
-
+    <main>
+        <form class="form-editar">
+            <div class="container-infos">
+                <div class="input__wrapper">
+                    <input type="text" name="perfil-nome" id="perfil-nome" class="input__field disabled">
+                    <label for="perfil-nome" class="input__label">Nome Completo</label>
+                </div>
+                <div class="input__wrapper">
+                    <input type="text" name="perfil-cpf" id="perfil-cpf" class="input__field disabled">
+                    <label for="perfil-cpf" class="input__label">CPF</label>
+                </div>
+                <div class="input__wrapper">
+                    <input type="text" name="perfil-dt-nascimento" id="perfil-dt-nascimento" placeholder="__/__/____" class="input__field disabled">
+                    <label for="perfil-dt-nascimento" class="input__label">Data de Nascimento</label>
+                </div>
+                <div class="input__wrapper">
+                    <input type="text" name="perfil-telefone" id="perfil-telefone" class="input__field disabled">
+                    <label for="perfil-telefone" class="input__label">Telefone</label>
+                </div>
+                <div class="input__wrapper">
+                    <input type="email" name="perfil-email" id="perfil-email" class="input__field disabled">
+                    <label for="perfil-email" class="input__label">Email</label>
+                </div>
+            </div>
+            <button type="button" class="editar-infos" id="btn-editar">Editar</button>
+            <button type="button" class="salvar-infos d-none" id="btn-salvar">Salvar</button>
+        </form>
+    </main>
 
     <script src="./js/jquery.min.js"></script>
     <!-- <script src="https://unpkg.com/jwt-decode/build/jwt-decode.js"></script>  -->
      <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
      <script src="js/config.js"></script>
     <!-- <script src="./js/seu-script.js"></script> -->
 </body>
@@ -115,12 +222,21 @@
 
         const urlAnterior = sessionStorage.getItem('urlAnterior');
 
-        const token = localStorage.getItem("jwtToken");
+        const token = localStorage.getItem('jwtToken');
+        const decodedPayload = jwt_decode(token);
+
+        const role = decodedPayload.role;
+
+        $("#navbar-container").load("template/navbar.html", function() {
+            atualizaRoleNavbar(role);
+        });
+        $("#header-container").load("template/header.html", function() {
+            atualizaRoleHeader(role);
+        });
 
         if (!token) {
-            alert('Acesso negado. Por favor, faça login.');
+            alert('Você não está logado! Redirecionando para o login.');
             window.location.href = '/login.html';
-            return;
         }
 
         const API_BASE = `${API_URL}/usuarios`;

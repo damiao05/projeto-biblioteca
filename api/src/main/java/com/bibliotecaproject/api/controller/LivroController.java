@@ -149,4 +149,10 @@ public class LivroController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('BIBLIOTECARIO', 'GERENTE')")
+    public void deletarLivro(@PathVariable UUID id) {
+        funcionarioService.deletarLivro(id);
+    }
+
 }

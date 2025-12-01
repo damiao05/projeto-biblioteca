@@ -24,8 +24,8 @@ public class S3Service {
                 .build();
     }
 
-    public String uploadCapa(MultipartFile file, String isbn) throws IOException {
-        String fileName = isbn + "-" + UUID.randomUUID() + ".jpg";
+    public String uploadCapa(MultipartFile file, UUID id) throws IOException {
+        String fileName = id + "-" + UUID.randomUUID() + ".jpg";
 
         PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucketName)

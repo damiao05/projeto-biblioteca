@@ -16,6 +16,8 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
 
     Optional<Livro> findByIsbn(String isbn);
 
+    Optional<Livro> findById(UUID id);
+
     @Query("SELECT l FROM Livro l WHERE " +
         "LOWER(l.titulo) LIKE LOWER(CONCAT('%', :input, '%')) OR " +
         "LOWER(l.autor) LIKE LOWER(CONCAT('%', :input, '%')) OR " +

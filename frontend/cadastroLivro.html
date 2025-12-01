@@ -334,16 +334,16 @@
 
         const urlParams = new URLSearchParams(queryString);
 
-        const isbnLivro = urlParams.get('livro');
+        const idLivro = urlParams.get('livro');
 
         const card = $(".capa-livro");
 
-        if(isbnLivro) {
+        if(idLivro) {
             $(".span-file").addClass("d-none");
             $(".trash-file").removeClass("d-none");
 
 
-            fetch(`${API_BASE}/${isbnLivro}`, {
+            fetch(`${API_BASE}/${idLivro}`, {
                 headers:{ "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 }
@@ -353,7 +353,7 @@
             }).then(data => {
                 const promises = [];
 
-                const urlCapa = `${API_BASE}/${isbnLivro}/capa`;
+                const urlCapa = `${API_BASE}/${idLivro}/capa`;
 
                 const promise = fetch(urlCapa, {
                     headers: {
@@ -385,7 +385,7 @@
                     // $(".trash-file").removeClass("d-none");
     
                 }).catch(error => {
-                    console.error(`Erro ao carregar capa para o ISBN ${isbnLivro}:`, error);
+                    console.error(`Erro ao carregar capa para o ISBN ${idLivro}:`, error);
                     
                     card.attr('src', 'caminho/para/imagem_padrao.png');
                 });
@@ -400,7 +400,7 @@
                 e.preventDefault();
 
                 const fileInput = $("#capa-file")[0];
-                const livroIsbn = $("#isbn").val().trim();
+                const livroId = id;
 
                 const livro = {
                     id: id,
@@ -422,7 +422,7 @@
                     type: "application/json"
                 }));
 
-                fetch(`${API_BASE}/${livroIsbn}`, {
+                fetch(`${API_BASE}/${livroId}`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -435,7 +435,7 @@
 
                     alert("Livro Atualizado");
 
-                    window.location.href = `cadastroLivro.html?livro=${livroIsbn}`;
+                    window.location.href = `cadastroLivro.html?livro=${livroId}`;
                 })
 
             })

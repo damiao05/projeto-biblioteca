@@ -24,15 +24,13 @@ public class AvaliacaoService {
     @Autowired
     private AvaliacaoRepository avaliacaoRepository;
 
-    public void registrarAvalicao(Avaliacao avaliacao, UUID idLivro, UUID idUsuario){
-        Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    public void registrarAvalicao(Usuario usuarioLogado, Avaliacao avaliacao){
 
-        Livro livro = livroRepository.findById(idLivro)
+        Livro livro = livroRepository.findById(avaliacao.getLivro().getId())
                 .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
 
         avaliacao.setLivro(livro);
-        avaliacao.setUsuario(usuario);
+        avaliacao.setUsuario(usuarioLogado);
 
         avaliacaoRepository.save(avaliacao);
 
@@ -46,8 +44,8 @@ public class AvaliacaoService {
 
     }
 
-    public List<Avaliacao> listarAvaliacoes() {
-        return avaliacaoRepository.findAll();
+    public List<Avaliacao> listarAvaliacoes(UUID idLivro) {
+        return avaliacaoRepository.findByLivroId(idLivro);
 
     }
 

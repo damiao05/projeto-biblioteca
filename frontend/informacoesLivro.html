@@ -27,6 +27,7 @@
         background: #f7f5e9;
         margin: 0;
         overflow: hidden;
+        overflow-y: scroll;
         font-family: 'Work Sans', sans-serif;
     }
 
@@ -171,6 +172,26 @@
         display: none;
     }
 
+    .container-avaliacoes {
+        margin: 5%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .texto-avaliacoes {
+        cursor: pointer;
+    }
+
+    .container-user-avaliacao {
+        width: 50%;
+    }
+
+    #user-avaliacao {
+        width: 100%;
+    }
+
 </style>
 
 <html lang="pt-BR">
@@ -224,6 +245,17 @@
                 <button type="button" id="btn-reserva" class="botao-reserva">Reservar</button>
                 <button type="button" id="btn-lista-espera" class="botao-lista-espera d-none">Lista de Espera</button>
             </div>
+        </div>
+
+        <div class="container-avaliacoes">
+
+            <div class="container-user-avaliacao">
+                <textarea name="user-avaliacao" id="user-avaliacao" rows="5"></textarea>
+                <button type="button" id="btn-avaliar">Avaliar</button>
+            </div>
+
+            <span class="texto-avaliacoes">Avaliações <i class="fa fa-chevron-down"></i></span>
+            <div class="container-users-avaliacoes"></div>
         </div>
     </div>
     
@@ -313,7 +345,23 @@
 
         }).then(() => {
             $(".conteudo-body").addClass("mostrar");
-        })
+
+            fetch(`${API_URL}/avaliacao?idLivro=${id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(async response => {
+                return await response.json();
+
+            }).then(avaliacoes => {
+                avaliacoes.forEach(avaliacao => {
+                    console.log(avaliacao);
+                })
+                
+            })
+
+        });
 
         $("#btn-home").on("click", function() {
             window.location.href = `exibeLivros.html?categoria=${categoria}`;
@@ -361,6 +409,27 @@
                 // return response.blob();
             });
         });
+
+        $("#btn-avaliar").on("click", function() {
+            const avaliacao = {
+                'avaliacao': 5,
+                'comentario': $("#user-avaliacao").val(),
+                'livro': {
+                    'id': id, 
+                }
+            };
+
+            fetch(`${API_URL}/avaliacao`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`},
+                body: JSON.stringify(avaliacao)
+
+            }).then(() => {
+                alert('Avaliação gravada')
+
+            });
+        })
 
     })
 

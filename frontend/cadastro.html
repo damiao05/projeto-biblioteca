@@ -255,7 +255,7 @@
       <input type="email" name="email" id="email" required>
       <label for="senha">Senha:</label>
       <input type="text" name="senha" id="senha" required> -->
-      <button type="submit" class="form-button">Cadastrar</button>
+      <button type="button" id="btn-cadastro" class="form-button">Cadastrar</button>
   </form>
 
   <script src="./js/jquery.min.js"></script>
@@ -263,20 +263,24 @@
   <script>
     const API_CADASTRO = `${API_URL}/usuarios/cadastro`;
 
+    function formataDataBanco(data) {
+      data = data.split('/');
+      return `${data[2]}-${data[1]}-${data[0]}`;
+    }
+
     // Salvar novo usuário
-    document.getElementById("formUsuario").addEventListener("submit", async (e) => {
-      e.preventDefault();
+    $("#btn-cadastro").on("click", function() {
 
       const usuario = {
         nome: document.getElementById("nome").value,
         cpf: document.getElementById("cpf").value,
-        dataNascimento: document.getElementById("dataNascimento").value,
+        dataNascimento: document.getElementById("data-nascimento").value,
         telefone: document.getElementById("telefone").value,
         email: document.getElementById("email").value,
         senha: document.getElementById("senha").value
       };
 
-      await fetch(API_CADASTRO, {
+      fetch(API_CADASTRO, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuario)
@@ -288,9 +292,8 @@
           return response.json();
       })
       .then(data => {
-          // ESTA É A MUDANÇA
           alert("Cadastro realizado com sucesso! Por favor, faça o login.");
-          window.location.href = 'login.html'; // Redireciona para a página de login
+          window.location.href = 'login.html';
       })
       .catch(error => {
           console.error("Erro:", error);

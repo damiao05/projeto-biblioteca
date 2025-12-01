@@ -136,8 +136,8 @@ public class FuncionarioService implements OperacoesGerente {
     }
 
     @Override
-    public Livro editarLivro(String isbn, Livro livroAtualizado, MultipartFile file) throws IOException {
-        Livro livroExistente = livroRepository.findByIsbn(isbn)
+    public Livro editarLivro(UUID id, Livro livroAtualizado, MultipartFile file) throws IOException {
+        Livro livroExistente = livroRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado"));
 
         livroExistente.setTitulo(livroAtualizado.getTitulo());

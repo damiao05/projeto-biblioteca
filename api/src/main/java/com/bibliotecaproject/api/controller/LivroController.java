@@ -56,14 +56,14 @@ public class LivroController {
         }
     }
 
-    @PutMapping("/{isbn}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('BIBLIOTECARIO', 'GERENTE')")
     public ResponseEntity<?> editarLivro (
-            @PathVariable String isbn,
+            @PathVariable UUID id,
             @RequestPart Livro dadosLivro,
             @RequestPart(value = "file", required = false)  MultipartFile file) {
         try {
-            Livro livroAtualizado = funcionarioService.editarLivro(isbn, dadosLivro, file);
+            Livro livroAtualizado = funcionarioService.editarLivro(id, dadosLivro, file);
             return ResponseEntity.ok(livroAtualizado);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -72,9 +72,9 @@ public class LivroController {
         }
     }
     
-    @GetMapping("/{isbn}")
-    public ResponseEntity<Livro> exibir(@PathVariable String isbn){
-        Optional<Livro> livroOpt = livroService.mostrarLivro(isbn);
+    @GetMapping("/{id}")
+    public ResponseEntity<Livro> exibir(@PathVariable UUID id){
+        Optional<Livro> livroOpt = livroService.mostrarLivro(id);
 
         if(livroOpt.isPresent()){
             return ResponseEntity.ok(livroOpt.get());
@@ -108,12 +108,12 @@ public class LivroController {
         }
     }
 
-    @PostMapping("/{isbn}/capa")
-    public ResponseEntity<?> uploadCapa(@PathVariable String isbn, @RequestParam("file") MultipartFile file) {
+    @PostMapping("/{id}/capa")
+    public ResponseEntity<?> uploadCapa(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
         try {
-            String imageUrl = s3Service.uploadCapa(file, isbn);
+            String imageUrl = s3Service.uploadCapa(file, id);
 
-            Livro atualizado = livroService.salvarCapa(isbn, imageUrl);
+            Livro atualizado = livroService.salvarCapa(id, imageUrl);
 
             return ResponseEntity.ok(imageUrl);
         } catch(IOException e) {
@@ -121,9 +121,9 @@ public class LivroController {
         }
     }
 
-    @GetMapping("/{isbn}/capa")
-    public ResponseEntity<Resource> serveCapa(@PathVariable String isbn) {
-        Livro livro = livroRepository.findByIsbn(isbn).orElse(null);
+    @GetMapping("/{id}/capa")
+    public ResponseEntity<Resource> serveCapa(@PathVariable UUID id) {
+        Livro livro = livroRepository.findById(id).orElse(null);
         if(livro == null || livro.getCapaFilename() == null) {
             return ResponseEntity.notFound().build();
         }

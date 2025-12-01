@@ -45,8 +45,8 @@ public class LivroService {
     @Autowired
     private EmprestimoRepository emprestimoRepository;
 
-    public Optional<Livro> mostrarLivro(String isbn){
-        return livroRepository.findByIsbn(isbn);
+    public Optional<Livro> mostrarLivro(UUID id){
+        return livroRepository.findById(id);
     }
 
     public List<Livro> exibirLivros(String categoria) {
@@ -83,9 +83,9 @@ public class LivroService {
 
     }
 
-    public Livro salvarCapa(String isbn, String imageUrl)  throws IOException {
+    public Livro salvarCapa(UUID id, String imageUrl)  throws IOException {
 
-        Livro livro = livroRepository.findByIsbn(isbn)
+        Livro livro = livroRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado"));
 
         livro.setCapaFilename(imageUrl);

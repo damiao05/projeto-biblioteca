@@ -788,10 +788,11 @@
             $(".capa-livro").each(function() {
                 const card = $(this);
                 const isbn = card.data("isbn");
+                const id = card.data("id");
 
-                if(!isbn) return;
+                if(!id) return;
 
-                const urlCapa = `${API_URL}/livros/${isbn}/capa`;
+                const urlCapa = `${API_URL}/livros/${id}/capa`;
 
                 const promise = fetch(urlCapa, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -804,10 +805,10 @@
                     const objectURL = URL.createObjectURL(blob);
                     card.attr('src', objectURL);
 
-                    informacoesLivros[`book-${isbn}`]["urlCapa"] = objectURL;
+                    informacoesLivros[`book-${id}`]["urlCapa"] = objectURL;
                 })
                 .catch(error => {
-                    console.error(`Erro ao carregar capa para o ISBN ${isbn}:`, error);
+                    console.error(`Erro ao carregar capa para o ID ${id}:`, error);
                     card.attr('src', 'caminho/para/imagem_padrao.png');
                 });
                 
@@ -831,16 +832,17 @@
             livros.forEach(livro => {
                 // console.log(livro);
 
-                let urlCapa = `${API_BASE}/${livro.isbn}/capa`;
+                let urlCapa = `${API_BASE}/${livro.id}/capa`;
 
-                informacoesLivros[`book-${livro.isbn}`] = {
+                informacoesLivros[`book-${livro.id}`] = {
+                    'id': livro.id,
                     'isbn': livro.isbn,
                     'titulo': livro.titulo,
                     'autor': livro.autor,
                     'editora': livro.editora
                 }
 
-                $(".container-livros").append(`<div class="book-card" id="book-${livro.isbn}" data-id="${livro.id}"><div class="img-capa"><img class="capa-livro" data-isbn="${livro.isbn}" src="" alt="Capa do Livro ${livro.titulo}"></div><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><span id="autor-livro" style="margin: 0">${livro.autor}</span></div></div>`);
+                $(".container-livros").append(`<div class="book-card" id="book-${livro.isbn}" data-id="${livro.id}"><div class="img-capa"><img class="capa-livro" data-id="${livro.id}" data-isbn="${livro.isbn}" src="" alt="Capa do Livro ${livro.titulo}"></div><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><span id="autor-livro" style="margin: 0">${livro.autor}</span></div></div>`);
             });
 
             return carregarCapas(token); 
@@ -873,6 +875,7 @@
             $(".editora")[0].style.opacity = 0;
             $(".editora").text(infoLivroEscolhido.editora);
             $(".editar-infos").data("isbn", infoLivroEscolhido.isbn);
+            $(".editar-infos").data("id", $(event.target).parent().parent().data('id'));
 
             const cloneCapa = sourceImage.cloneNode();
             cloneCapa.classList.add('clone-capa');
@@ -1063,7 +1066,7 @@
         });
 
         $(".editar-infos").on("click", function() {
-            window.location.href = `cadastroLivro.html?livro=${$(this).data("isbn")}`;
+            window.location.href = `cadastroLivro.html?livro=${$(this).data("id")}`;
         });
 
         $(".btn-add-livro").on("click", function() {

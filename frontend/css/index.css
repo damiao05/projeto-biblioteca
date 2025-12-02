@@ -1,0 +1,155 @@
+/* ------------ RESET GLOBAL ------------ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Georgia", serif;
+}
+
+body {
+    background: linear-gradient(135deg, #8f5a36, #b07244);
+    color: #4c2f1d;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ================= HEADER ================= */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.8rem 6%;
+}
+
+.logo-area img {
+    height: 65px;
+}
+
+/* -------- BOTÕES DO TOPO -------- */
+
+nav {
+    display: flex;
+    gap: 1.3rem;
+}
+
+.nav-btn {
+    background-color: #f6efe7;      /* bege clarinho */
+    border: 1.8px solid #a67c5b;    /* marrom claro */
+    padding: 0.4rem 1.4rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #4c2f1d;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: 0.25s ease;
+}
+
+.nav-btn:hover {
+    background-color: #f1e7db;
+    border-color: #8c654c;
+}
+
+/* Botão Cadastrar */
+.nav-btn.destaque {
+    background-color: #fcf8f2;
+    border: 2px solid #b68a6d;
+}
+
+.nav-btn.destaque:hover {
+    background-color: #f3e3d2;
+    border-color: #9b7457;
+}
+
+
+/* ================= ÁREA PRINCIPAL ================= */
+
+main {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 0;
+}
+
+.intro {
+    background-color: #f6efe7;
+    width: 70%;
+    max-width: 1000px;
+    padding: 3rem;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    text-align: center;
+}
+
+/* Galeria */
+.galeria {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 2rem;
+}
+
+.galeria img {
+    width: 50%;
+    height: 270px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+/* Texto */
+.slogan {
+    font-size: 2.8rem;
+    margin-top: 1rem;
+}
+
+.intro p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+/* Botões centrais */
+.botoes-centrais {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.my-form__button {
+    padding: 0.9rem 2.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+    border: none;
+}
+
+/* Botão Login (escuro) */
+.my-form__button:not(.secundario) {
+    background-color: #6b4430;
+    color: white;
+}
+
+.my-form__button:not(.secundario):hover {
+    background-color: #4e2f21;
+}
+
+/* Botão Criar Conta (claro) */
+.secundario {
+    background-color: transparent;
+    color: #6b4430;
+    border: 2px solid #6b4430;
+}
+
+.secundario:hover {
+    background-color: #f0d9c7;
+}
+
+/* ================= FOOTER ================= */
+
+footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1rem;
+    color: #f6efe7;
+}

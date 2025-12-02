@@ -1,55 +1,79 @@
-<style>
-
-    header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 60px;
-        background: #986c4a;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 79rem;
-        padding: 0 20px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        z-index: 1000;
-    }
-
-    body {
-        background: #f7f5e9;
-    }
-
-</style>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Home - Biblioteca</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LitHub | Estante Virtual</title>
+
+    <!-- ESTILO DA HOME -->
+    <link rel="stylesheet" href="css/index.css">
 </head>
+
 <body>
+
+    <!-- =================== HEADER =================== -->
     <header>
-        <h2>Biblioteca</h2>
+        <div class="logo-area">
+            <img src="assets/icone_logo_LitHub2.png" alt="Logo LitHub">
+        </div>
+
         <nav>
-            <button id="btn-cadastro">Cadastro</button>
-            <button id="btn-login">Login</button>
+            <button id="btn-login" class="nav-btn">Login</button>
+            <button id="btn-cadastro" class="nav-btn destaque">Cadastrar</button>
         </nav>
     </header>
-    <h1>Seja bem-vindo ao sistema da biblioteca</h1>
 
-    <script src="./js/jquery.min.js"></script>
+
+    <!-- =================== CONTEÚDO PRINCIPAL =================== -->
+    <main>
+        <section class="intro">
+
+            <!-- Galeria de imagens -->
+            <div class="galeria">
+                <img src="assets/imagem home - 1.jpg" alt="Imagem 1">
+                <img src="assets/imagem home - 2.jpg" alt="Imagem 2">
+            </div>
+
+            <!-- Título -->
+            <h2 class="slogan">Livros que conectam</h2>
+            <p>Centro de Literatura</p>
+
+            <!-- Botões -->
+            <div class="botoes-centrais">
+                <button id="btn-login-main" class="my-form__button">Fazer Login</button>
+                <button id="btn-cadastro-main" class="my-form__button secundario">Criar Conta</button>
+            </div>
+
+        </section>
+    </main>
+
+
+    <!-- =================== FOOTER =================== -->
+    <footer>
+        <p>© 2025 LitHub — Todos os direitos reservados.</p>
+    </footer>
+
+
+    <!-- =================== SCRIPT DOS BOTÕES =================== -->
     <script>
-        $("#btn-cadastro").on("click", function() {
+        // ---- Header Buttons ----
+        document.querySelector("#btn-login").addEventListener("click", () => {
+            window.location.href = "login.html";
+        });
+
+        document.querySelector("#btn-cadastro").addEventListener("click", () => {
             window.location.href = "cadastro.html";
         });
 
-        $("#btn-login").on("click", function() {
+        // ---- Main Buttons ----
+        document.querySelector("#btn-login-main").addEventListener("click", () => {
             window.location.href = "login.html";
         });
-        // document.getElementById("btn-cadastro").addEventListener("click", function(){
-        //     window.location.href = "index.html";
-        // });
+
+        document.querySelector("#btn-cadastro-main").addEventListener("click", () => {
+            window.location.href = "cadastro.html";
+        });
     </script>
+
 </body>
+</html>

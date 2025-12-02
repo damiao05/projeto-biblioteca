@@ -1,119 +1,4 @@
-<style>
-
-    html {
-        overflow-y: hidden;
-        overflow-x: hidden;
-        width: auto;
-        height: auto;
-    }
-
-    body {
-        width: 100%;
-        height: 100%;
-        font-family: 'Work Sans', sans-serif;
-        font-weight: 800;
-        background: -webkit-linear-gradient(
-        to right, #986c4a,
-                #9d5218);
-        background: linear-gradient(
-            to right, #b57747,
-                #5e3211);
-    }
-
-    header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 60px;
-        /* background: -webkit-linear-gradient(
-        to right, #986c4a,
-                #9d5218);
-        background: linear-gradient(
-            to right, #b57747,
-                #5e3211); */
-        color: #f7f5e9;
-        display: flex;
-        align-items: center;
-        flex-direction: row;
-        gap: 1rem;
-        padding: 0 2px;
-        /* box-shadow: 0 2px 5px rgba(0,0,0,0.2); */
-        z-index: 5000;
-    }
-
-    main {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-    }
-
-    .container-informacoes {
-        display: flex;
-        flex-direction: row;
-        /* gap: 5rem; */
-        width: 80%;
-        height: 80%;
-        border-radius: 15px;
-        background: #f7f5e9;
-        color: #986c4a;
-    }
-
-    .container-informacoes > .container-capa {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 35%;
-    }
-
-    .informacoes {
-        display: flex;
-        flex-direction: column;
-        width: 65%;
-        gap: 1.5rem;
-        margin: 3%;
-    }
-
-    .container-livro {
-        display: flex;
-        flex-direction: column;
-        /* gap: 0.5rem; */
-    }
-
-    .container-capa img {
-        border-radius: 10px;
-        box-shadow: 0 15px 50px #986c4a;
-    }
-
-    #titulo-livro {
-        font-size: 3.5rem;
-    }
-
-    .d-none {
-        display: none;
-    }
-
-    .img-capa {
-        width: 85%;
-        height: 80%;
-        overflow: hidden;
-    }
-
-    .img-capa img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-</style>
-
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -122,6 +7,219 @@
 
     <script src="./js/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+
+    <style>
+        html {
+            overflow-x: hidden;
+            width: auto;
+            height: auto;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 800;
+            margin: 0;
+            background: -webkit-linear-gradient(
+                to right, #986c4a,
+                        #9d5218);
+            background: linear-gradient(
+                to right, #b57747,
+                        #5e3211);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* O header real vem do template/header.html */
+        header {
+            color: #f7f5e9;
+        }
+
+        main {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 0; /* espaço para não encostar no topo/baixo */
+        }
+
+        .container-informacoes {
+            display: grid;
+            grid-template-columns: 30% 1fr;
+            grid-template-rows: auto auto;
+            grid-template-areas:
+                "capa infos"
+                "acoes status";
+            width: 80%;
+            max-width: 1100px;
+            min-height: 60vh;
+            border-radius: 15px;
+            background: #f7f5e9;
+            color: #986c4a;
+            box-shadow: 8px 8px 90px #13162a;
+            padding: 2.5rem 2.5rem 2rem 2.5rem;
+            column-gap: 2.5rem;
+        }
+
+        .container-capa {
+            grid-area: capa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .img-capa {
+            width: 100%;
+            max-width: 260px;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px #986c4a;
+            background: #e5e2d4;
+        }
+
+        .img-capa img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .informacoes {
+            grid-area: infos;
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+
+        .container-livro {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        #titulo-livro {
+            font-size: 2.3rem;
+            line-height: 2.5rem;
+        }
+
+        #autor-livro,
+        #editora-livro {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .container-usuario span {
+            font-size: 1rem;
+        }
+
+        .container-reserva-emprestimo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .container-reserva-emprestimo span:nth-child(2) {
+            font-weight: 700;
+        }
+
+        .status-emprestimo {
+            grid-area: status;
+            align-self: flex-end;
+            justify-self: flex-end;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .status-emprestimo span#situacao {
+            font-weight: 700;
+        }
+
+        .d-none {
+            display: none !important;
+        }
+
+        /* BOTÕES DE AÇÃO */
+        .acoes {
+            grid-area: acoes;
+            align-self: flex-end;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .acoes button {
+            cursor: pointer;
+            padding: 0.6rem 1.4rem;
+            border-radius: 999px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            transition: all 0.25s ease;
+        }
+
+        #btn-registrar-emprestimo {
+            background-color: #986c4a;
+            color: #f7f5e9;
+        }
+
+        #btn-registrar-emprestimo:hover {
+            background-color: #784b28;
+            box-shadow: 2px 2px 20px #b57747;
+        }
+
+        #btn-registrar-devolucao {
+            background-color: #4caf50;
+            color: #f7f5e9;
+        }
+
+        #btn-registrar-devolucao:hover {
+            background-color: #3e8e41;
+            box-shadow: 2px 2px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        #btn-cancelar-reserva {
+            background-color: #b81c1c;
+            color: #f7f5e9;
+        }
+
+        #btn-cancelar-reserva:hover {
+            background-color: #8c0f0f;
+            box-shadow: 2px 2px 20px rgba(184, 28, 28, 0.4);
+        }
+
+        @media (max-width: 900px) {
+            .container-informacoes {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+                grid-template-areas:
+                    "capa"
+                    "infos"
+                    "acoes";
+                row-gap: 2rem;
+            }
+
+            .status-emprestimo {
+                justify-self: flex-start;
+                align-items: flex-start;
+                margin-top: 1rem;
+            }
+
+            .acoes {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <div id="header-container"></div>
@@ -131,89 +229,84 @@
         <div class="container-informacoes">
             <div class="container-capa">
                 <div class="img-capa">
-                    <img src="" id="capa-livro">    
+                    <img src="" id="capa-livro">
                 </div>
             </div>
+
             <div class="informacoes">
                 <div class="container-livro">
                     <span id="titulo-livro"></span>
                     <span id="autor-livro"></span>
                     <span id="editora-livro"></span>
                 </div>
+
                 <div class="container-usuario">
-                    <span id="nome-usuario"></span>    
+                    <span id="nome-usuario"></span>
                 </div>
+
                 <div class="container-reserva-emprestimo">
                     <span id="data-reserva"></span>
-                    <span>até</span>   
+                    <span>até</span>
                     <span id="data-limite-emprestimo"></span>
                 </div>
             </div>
+
+            <div class="acoes">
+                <button id="btn-registrar-emprestimo">Registrar Empréstimo</button>
+                <button id="btn-registrar-devolucao">Registrar Devolução</button>
+                <button id="btn-cancelar-reserva" class="d-none">Cancelar Reserva</button>
+            </div>
+
             <div class="status-emprestimo d-none">
                 <span id="situacao"></span>
                 <span id="dias-atraso"></span>
             </div>
-            <button id="btn-registrar-emprestimo">Registrar Empréstimo</button>
-            <button id="btn-registrar-devolucao">Registrar Devolução</button>
-            <button id="btn-cancelar-reserva" class="d-none">Cancelar Reserva</button>
         </div>
     </main>
 
     <script src="js/config.js"></script>
-    
-</body>
-</html>
 
 <script>
-
     function formataData(data) {
         data = data.split('-');
         return `${data[2]}/${data[1]}/${data[0]}`;
     }
 
     function calculaPrazo(paginas) {
-        if(paginas <= 150) return 7;
-        if(paginas <= 300) return 10;
-        if(paginas <= 600) return 14;
-
+        if (paginas <= 150) return 7;
+        if (paginas <= 300) return 10;
+        if (paginas <= 600) return 14;
         return 20;
     }
 
     function calcularPrazo(data, paginas) {
         let dataBase = new Date(data);
         dataBase.setDate(dataBase.getDate() + calculaPrazo(paginas));
-
         return `${dataBase.getDate()}/${(dataBase.getMonth() + 1).toString().padStart(2, '0')}/${dataBase.getFullYear()}`;
     }
 
-    $(document).ready(function() {
-
+    $(document).ready(function () {
         const token = localStorage.getItem('jwtToken');
         const decodedPayload = jwt_decode(token);
-
         const role = decodedPayload.role;
 
-        if(role == 'CLIENTE') {
+        if (role == 'CLIENTE') {
             $("#btn-registrar-emprestimo").addClass("d-none");
         }
 
-        $("#navbar-container").load("template/navbar.html", function() {
+        $("#navbar-container").load("template/navbar.html", function () {
             atualizaRoleNavbar(role);
         });
-        $("#header-container").load("template/header.html", function() {
+        $("#header-container").load("template/header.html", function () {
             atualizaRoleHeader(role);
         });
-        
 
         if (!token) {
             alert('Você não está logado! Redirecionando para o login.');
             window.location.href = '/login.html';
         }
 
-        // window.location.href = urlAnterior;
-
         const queryString = window.location.search;
-
         const urlParams = new URLSearchParams(queryString);
 
         const API_EMPRESTIMO = `${API_URL}/emprestimos`;
@@ -225,9 +318,9 @@
         let usuario;
         let paginas;
 
-        if(reserva) {
+        if (reserva) {
             $("#btn-registrar-devolucao").addClass("d-none");
-            if(role == 'CLIENTE') {
+            if (role == 'CLIENTE') {
                 $("#btn-cancelar-reserva").removeClass("d-none");
                 $("#btn-registrar-emprestimo").addClass("d-none");
             }
@@ -240,7 +333,7 @@
                     'Authorization': `Bearer ${token}`
                 }
             }).then(async response => {
-                if(!response.ok) {
+                if (!response.ok) {
                     throw new Error('Não foi possível trazer a lista de reservas.');
                 }
 
@@ -259,54 +352,40 @@
                     usuario = reserva.usuario.id;
                     dataReserva = reserva.dtReserva.replace('-', '/');
                     paginas = reserva.livro['paginas'];
-                    
+
                     id = reserva.livro['id'];
-                    if(reserva.status == 'CANCELADA') {
+                    if (reserva.status == 'CANCELADA') {
                         $("#btn-registrar-emprestimo").addClass("d-none");
                     }
-
                 });
 
-                $("#data-limite-emprestimo").text(calcularPrazo(dataReserva));
-
-                const promises = [];
+                $("#data-limite-emprestimo").text(calcularPrazo(dataReserva, paginas));
 
                 const urlCapa = `${API_URL}/livros/${id}/capa`;
 
-                const promise = fetch(urlCapa, {
+                return fetch(urlCapa, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 }).then(response => {
-                    if(!response.ok) {
+                    if (!response.ok) {
                         throw new Error('Não foi possível carregar a capa.');
                     }
-
                     return response.blob();
-                }).then(blob => {   
+                }).then(blob => {
                     const objectURL = URL.createObjectURL(blob);
-
-                    $("#capa-livro").attr('src', objectURL)
-    
+                    $("#capa-livro").attr('src', objectURL);
                 }).catch(error => {
                     console.error(`Erro ao carregar capa para o id ${id}:`, error);
-                    
-                    card.attr('src', 'caminho/para/imagem_padrao.png');
                 });
-
-                promises.push(promise);
-
-                return Promise.all(promises);
 
             })
         } else {
             $("#btn-registrar-emprestimo").addClass("d-none");
-            if(role == 'CLIENTE') {
+            if (role == 'CLIENTE') {
                 $("#btn-registrar-emprestimo").addClass("d-none");
                 $("#btn-registrar-devolucao").addClass("d-none");
             }
-
-            const API_EMPRESTIMO = `${API_URL}/emprestimos`;
 
             fetch(`${API_EMPRESTIMO}/${emprestimo}/buscar`, {
                 method: 'GET',
@@ -322,7 +401,11 @@
                 $("#editora-livro").text(dadosEmprestimo.livro['editora']);
                 $("#nome-usuario").text(dadosEmprestimo.usuario['nome']);
                 $("#data-reserva").text(formataData(dadosEmprestimo.dtEmprestimo));
-                $("#data-limite-emprestimo").text(dadosEmprestimo.dtDevolucaoReal ? formataData(dadosEmprestimo.dtDevolucaoReal) : formataData(dadosEmprestimo.dtPrevistaDevolucao));
+                $("#data-limite-emprestimo").text(
+                    dadosEmprestimo.dtDevolucaoReal
+                        ? formataData(dadosEmprestimo.dtDevolucaoReal)
+                        : formataData(dadosEmprestimo.dtPrevistaDevolucao)
+                );
                 livro = dadosEmprestimo.livro.id;
                 usuario = dadosEmprestimo.usuario.id;
                 paginas = dadosEmprestimo.livro['paginas'];
@@ -334,64 +417,48 @@
                 let status;
                 let diasAtraso;
 
-                if(dadosEmprestimo.dtDevolucaoReal) {
+                if (dadosEmprestimo.dtDevolucaoReal) {
                     status = 'Livro devolvido';
-
                     $("#btn-registrar-devolucao").addClass("d-none");
-
                 } else {
                     const dataDevolucao = new Date(dadosEmprestimo.dtPrevistaDevolucao);
                     const dataHoje = new Date();
 
-                    if((dataHoje.getTime() - dataDevolucao.getTime()) > 0) {
+                    if ((dataHoje.getTime() - dataDevolucao.getTime()) > 0) {
                         status = 'Devolução em Atraso';
-                        diasAtraso = Math.round((dataHoje.getTime() - dataDevolucao.getTime()) / (1000 * 60 * 60 * 24));
-
+                        diasAtraso = Math.round(
+                            (dataHoje.getTime() - dataDevolucao.getTime()) / (1000 * 60 * 60 * 24)
+                        );
                         $("#dias-atraso").text(diasAtraso + " dias");
-
                     } else {
                         status = 'Empréstimo Ativo';
                     }
                 }
 
                 $("#situacao").text(status);
-                
-                id = dadosEmprestimo.livro['id'];
 
-                const promises = [];
-
+                const id = dadosEmprestimo.livro['id'];
                 const urlCapa = `${API_URL}/livros/${id}/capa`;
 
-                const promise = fetch(urlCapa, {
+                return fetch(urlCapa, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 }).then(response => {
-                    if(!response.ok) {
+                    if (!response.ok) {
                         throw new Error('Não foi possível carregar a capa.');
                     }
-
                     return response.blob();
-                }).then(blob => {   
+                }).then(blob => {
                     const objectURL = URL.createObjectURL(blob);
-
-                    $("#capa-livro").attr('src', objectURL)
-    
+                    $("#capa-livro").attr('src', objectURL);
                 }).catch(error => {
                     console.error(`Erro ao carregar capa para o id ${id}:`, error);
-                    
-                    card.attr('src', 'caminho/para/imagem_padrao.png');
                 });
-
-                promises.push(promise);
-
-                return Promise.all(promises);
-
             });
         }
 
-        $("#btn-registrar-emprestimo").on("click", function() {
-
+        $("#btn-registrar-emprestimo").on("click", function () {
             let dataHoje = new Date();
             dataHoje = `${dataHoje.getFullYear()}-${(dataHoje.getMonth() + 1).toString().padStart(2, '0')}-${dataHoje.getDate().toString().padStart(2, '0')}`;
 
@@ -399,15 +466,11 @@
             dataDevolucao = dataDevolucao.split('/');
             dataDevolucao = `${dataDevolucao[2]}-${dataDevolucao[1]}-${dataDevolucao[0]}`;
 
-            const emprestimo = {
+            const emprestimoObj = {
                 'dtEmprestimo': dataHoje,
                 'dtPrevistaDevolucao': dataDevolucao,
-                'usuario': {
-                    'id': usuario
-                },
-                'livro': {
-                    'id': livro
-                }
+                'usuario': { 'id': usuario },
+                'livro': { 'id': livro }
             };
 
             fetch(API_EMPRESTIMO, {
@@ -416,59 +479,51 @@
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(emprestimo)
-
+                body: JSON.stringify(emprestimoObj)
             }).then(response => {
-                if(!response.ok) {
-                    throw new Error('Não foi possível trazer a lista de reservas.');
+                if (!response.ok) {
+                    throw new Error('Não foi possível registrar o empréstimo.');
                 }
-
-                console.log(response + 'registrado com sucesso');
-
-            })
-
+                alert('Empréstimo registrado com sucesso!');
+            });
         });
 
-        $("#btn-cancelar-reserva").on("click", function() {
+        $("#btn-cancelar-reserva").on("click", function () {
             fetch(`${API_URL}/reserva/${reserva}/cancelar`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
-
             }).then(() => {
                 window.location.href = 'categoria.html';
-
-            })
+            });
         });
 
-        $("#btn-registrar-devolucao").on("click", function() {
+        $("#btn-registrar-devolucao").on("click", function () {
             let dataHoje = new Date();
             dataHoje = `${dataHoje.getFullYear()}-${(dataHoje.getMonth() + 1).toString().padStart(2, '0')}-${dataHoje.getDate().toString().padStart(2, '0')}`;
 
             const id = $("#titulo-livro").data('id-emprestimo');
-
             const API_DEVOLUCAO = `${API_EMPRESTIMO}/${id}/devolucao?data=${dataHoje}`;
 
             fetch(API_DEVOLUCAO, {
                 method: 'PUT',
-                headers: { "Content-Type": "application/json",
+                headers: {
+                    "Content-Type": "application/json",
                     'Authorization': `Bearer ${token}`
                 }
-
             }).then(response => {
-                if(!response.ok) {
+                if (!response.ok) {
                     throw new Error('Não foi possível registrar a devolução.');
                 }
 
                 $("#btn-registrar-devolucao").addClass("d-none");
                 $("#situacao").text("Livro devolvido");
                 $("#dias-atraso").text('');
-
             });
-
         });
-
     });
-
 </script>
+
+</body>
+</html>

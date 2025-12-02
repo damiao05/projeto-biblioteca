@@ -1,42 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro</title>
+
 <style>
 
-    #btn-carregar-usuarios {
-        border-radius: 1rem;
-    }
+    /* ================= HEADER NOVO ================= */
 
     header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      height: 60px;
-      /* background: #986c4a; */
+      height: 65px;
       color: #f7f5e9;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      gap: 1rem;
-      padding: 0 20px;
-      /* box-shadow: 0 2px 5px rgba(0,0,0,0.2); */
+      justify-content: space-between;
+      padding: 0 30px;
       z-index: 1000;
     }
+
+    /* BOTÃO VOLTAR MELHORADO */
+    #btn-home {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1.5px solid #f7f5e9;
+      padding: 0.45rem 1.2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #f7f5e9;
+      backdrop-filter: blur(4px);
+      transition: 0.25s ease;
+    }
+
+    #btn-home:hover {
+      background: rgba(255, 255, 255, 0.28);
+      border-color: #ffffff;
+      transform: translateX(-4px);
+    }
+
+    h2 {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #f7f5e9;
+      letter-spacing: 1px;
+    }
+
+
+    /* ================= FUNDO E LAYOUT ================= */
 
     body {
       font-size:16px;
       font-family: 'Work Sans', sans-serif;
-      height: fit-content;            
+      height: fit-content;
       display: flex;
-      justify-content: center;  
-      align-items: center;      
-      /* background: #986c4a; */
-      background: -webkit-linear-gradient(
-        to right, #986c4a,
-                #9d5218
-      );
-      background: linear-gradient(
-        to right, #b57747,
-                #5e3211
-      );
+      justify-content: center;
+      align-items: center;
+
+      background: linear-gradient(to right, #b57747, #5e3211);
+      padding-top: 90px; /* para não ficar atrás do header */
     }
 
     .signin-welcome-row {
@@ -54,7 +79,7 @@
       flex-direction: column;
       justify-content: start;
       align-items: center;
-      position: relative;
+
       gap: 1rem;
       background-color: #f7f5e9;
       width: 100%;
@@ -78,14 +103,12 @@
       outline: none;
       font-size: 1.125rem;
       letter-spacing: .025rem;
-      text-decoration: none;
       cursor: pointer;
       font-weight: 800;
       min-height: 3.125rem;
       width: 30%;
       border-radius: 0.75rem;
       transition: all .3s ease;
-      -webkit-transition: all .3s ease;
     }
 
     .form-button:hover {
@@ -169,122 +192,85 @@
       color: #f7f5e9;
     }
 
-    /* #formUsuario {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-width: 300px;
-    }
-
-    #formUsuario label {
-      font-weight: bold;
-      text-align: center;
-    }
-
-    #formUsuario input,
-    #formUsuario button {
-      padding: 6px;
-    } */
-
 </style>
-
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Cadastro</title>
 </head>
 <body>
+
+  <!-- HEADER -->
   <header>
-    <nav>
-      <button id="btn-home">Voltar</button>
-    </nav>
+    <button id="btn-home">← Voltar</button>
     <h2>LitHub</h2>
   </header>
 
-  <!-- <h1>Lista de Usuários</h1>
-  <button id="btn-carregar-usuarios" onclick="carregarUsuarios()">Carregar Usuários</button>
-  <ul id="lista-usuarios"></ul> -->
 
-  <!-- <h2>Adicionar Usuário</h2> -->
+  <!-- FORMULÁRIO DE CADASTRO -->
   <form id="form-usuario" aria-labelled="signin-title">
 
       <div class="signin-welcome-row">
-        <a href="#" title="Logo">
-          <img src="assets/logo-lithub.png" alt="Logo" class="logo">
-        </a>
+        <img src="assets/icone_logo_LitHub.png" alt="Logo" class="logo">
         <h1 id="signin-title">Bem-Vindo ao LitHub</h1>
         <p>Por favor, insira suas credenciais!</p>
       </div>
+
       <div class="inputs">
         <div class="input__wrapper">
           <input type="text" id="nome" class="input__field" placeholder="Nome" required>
           <label for="nome" class="input__label">Nome:</label>
         </div>
+
         <div class="input__wrapper">
-          <input type="text" name="cpf" id="cpf" class="input__field" required>
+          <input type="text" id="cpf" class="input__field" required>
           <label for="cpf" class="input__label">CPF:</label>
         </div>
+
         <div class="input__wrapper">
-          <input type="date" name="data-nascimento" id="data-nascimento" class="input__field" required>
+          <input type="date" id="data-nascimento" class="input__field" required>
           <label for="data-nascimento" class="input__label">Data de Nascimento:</label>
         </div>
+
         <div class="input__wrapper">
-          <input type="text" name="telefone" id="telefone" class="input__field">
+          <input type="text" id="telefone" class="input__field">
           <label for="telefone" class="input__label">Telefone:</label>
         </div>
+
         <div class="input__wrapper">
-          <input type="email" name="email" id="email" class="input__field" required>
+          <input type="email" id="email" class="input__field" required>
           <label for="email" class="input__label">Email:</label>
         </div>
+
         <div class="input__wrapper">
-          <input type="password" name="senha" id="senha" class="input__field" required>
+          <input type="password" id="senha" class="input__field" required>
           <label for="senha" class="input__label">Senha:</label>
         </div>
       </div>
 
-      <!-- <label for="nome">Nome:</label>
-      <input type="text" id="nome" placeholder="Nome" required>
-      <label for="cpf">CPF:</label>
-      <input type="text" id="cpf" placeholder="CPF" required>
-      <label for="dataNascimento">Data de Nascimento:</label>
-      <input type="date" id="dataNascimento" style="text-align: center" required>
-      <label for="telefone">Telefone:</label>
-      <input type="text" name="telefone" id="telefone" required>
-      <label for="email">E-mail:</label>
-      <input type="email" name="email" id="email" required>
-      <label for="senha">Senha:</label>
-      <input type="text" name="senha" id="senha" required> -->
       <button type="button" id="btn-cadastro" class="form-button">Cadastrar</button>
   </form>
 
+  <!-- SCRIPTS -->
   <script src="./js/jquery.min.js"></script>
   <script src="js/config.js"></script>
+
   <script>
     const API_CADASTRO = `${API_URL}/usuarios/cadastro`;
 
-    function formataDataBanco(data) {
-      data = data.split('/');
-      return `${data[2]}-${data[1]}-${data[0]}`;
-    }
-
-    // Salvar novo usuário
     $("#btn-cadastro").on("click", function() {
 
       const usuario = {
-        nome: document.getElementById("nome").value,
-        cpf: document.getElementById("cpf").value,
-        dataNascimento: document.getElementById("data-nascimento").value,
-        telefone: document.getElementById("telefone").value,
-        email: document.getElementById("email").value,
-        senha: document.getElementById("senha").value
+        nome: $("#nome").val(),
+        cpf: $("#cpf").val(),
+        dataNascimento: $("#data-nascimento").val(),
+        telefone: $("#telefone").val(),
+        email: $("#email").val(),
+        senha: $("#senha").val()
       };
 
       fetch(API_CADASTRO, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuario)
-      }).then(async response => {
+      })
+      .then(async response => {
           if (!response.ok) {
               const errorText = await response.text();
               throw new Error(errorText || "Falha no cadastro.");
@@ -296,17 +282,17 @@
           window.location.href = 'login.html';
       })
       .catch(error => {
-          console.error("Erro:", error);
           alert(`Erro no cadastro: ${error.message}`);
       });
 
     });
 
+    // CORREÇÃO DO VOLTAR
     $("#btn-home").on("click", function() {
-      window.location.href = "home.html";
+      window.location.href = "index.html";
     });
 
-
   </script>
+
 </body>
 </html>

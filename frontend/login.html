@@ -1,21 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | LitHub</title>
+
 <style>
 
-    header {
+    /* ================= HEADER NOVO ================= */
+
+    .login-header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      height: 60px;
-      /* background: #986c4a; */
-      color: white;
+      height: 65px;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      gap: 1rem;
-      padding: 0 20px;
-      /* box-shadow: 0 2px 5px rgba(0,0,0,0.2); */
+      justify-content: space-between;
+      padding: 0 30px;
+      color: #f6efe7;
       z-index: 1000;
     }
+
+    .btn-voltar {
+      background: transparent;
+      border: none;
+      color: #f6efe7;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .btn-voltar:hover {
+      color: #ffffff;
+      transform: translateX(-3px);
+    }
+
+    .login-logo {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #f6efe7;
+      letter-spacing: 1px;
+    }
+
+    /* ================= FUNDO E LAYOUT ================= */
 
     body {
       font-size: 16px;
@@ -24,56 +54,36 @@
       display: flex;
       justify-content: center;
       align-items: center;
+
+      background: linear-gradient(to right, #b57747, #5e3211);
+      overflow-x: hidden;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    *::selection {
       background: #986c4a;
-      background: -webkit-linear-gradient(
-        to right, #986c4a,
-                #9d5218);
-        background: linear-gradient(
-            to right, #b57747,
-                #5e3211);
+      color: #f7f5e9;
     }
 
-    .socials-row {
+
+    /* ================= FORMULÁRIO ================= */
+
+    .my-form {
         display: flex;
+        flex-direction: column;
         gap: 1rem;
-        justify-content: space-between;
-    }
-
-    .socials-row img {
-        width: 1.35rem;
-        height: 1.35rem;
-    }
-
-    .socials-row>a {
-        padding: 0.5rem;
-        border-radius: 0.75rem;
+        background-color: #f7f5e9;
         width: 100%;
-        min-height: 3rem;
-        display: flex;
-        gap: 0.75rem;
-        justify-content: center;
-        align-items: center;
-        text-decoration: none;
-        font-size: 0.95rem;
-        color: #13162a;
-        padding: 0.5rem;
-        background: #e9e9e9;
-        font-weight: 700;
-        transition: all 0.25s ease-in-out;
-    }
-
-    .socials-row>a:hover {
-        background: #dddddd;
-        border: 1px solid #986c4a;
-    }
-
-    .login-welcome-row {
-        margin-bottom: 1rem;
-        text-align: center;
-    }
-
-    .welcome-message {
-        max-width: 24rem;
+        max-width: 32rem;
+        padding: 2.5rem 2rem;
+        border-radius: 1rem;
+        margin-top: 90px; /* para não ficar atrás do header */
+        box-shadow: 8px 8px 100px #13162a;
     }
 
     .logo {
@@ -81,47 +91,9 @@
         margin: 0 auto;
     }
 
-    .my-form {
-        display: flex;
-        flex-direction: column;
-        justify-content: start;
-        position: relative;
-        gap: 1rem;
-        background-color: #f7f5e9;
-        width: 100%;
-        max-width: 32rem;
-        padding: 2.5rem 2rem;
-        border-radius: 1rem;
-        height: fit-content;
-        box-shadow: 8px 8px 100px #13162a;
-    }
-
-    .my-form__button {
-        background-color: #986c4a;
-        color: #f7f5e9;
-        white-space: nowrap;
-        border: none;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 0.5rem;
-        line-height: 3.125rem;
-        outline: none;
-        font-size: 1.125rem;
-        letter-spacing: .025rem;
-        text-decoration: none;
-        cursor: pointer;
-        font-weight: 800;
-        min-height: 3.125rem;
-        width: 100%;
-        border-radius: 0.75rem;
-        transition: all .3s ease;
-        -webkit-transition: all .3s ease;
-    }
-
-    .my-form__button:hover {
-        background-color: #784b28;
-        box-shadow: 2px 2px 30px #b57747;
+    .login-welcome-row {
+        margin-bottom: 1rem;
+        text-align: center;
     }
 
     .input__wrapper {
@@ -141,237 +113,158 @@
         outline: 0;
         border: 0;
         width: 100%;
-        vertical-align: middle;
-        padding-bottom: 0.7rem;
         border-bottom: 3px solid #13162a;
         background: transparent;
         transition: border-color 0.2s;
-    }
-
-    .input__field::placeholder {
-        color: transparent;
-    }
-
-    .input__label {
-        user-select: none;
-    }
-
-    .input__field:placeholder-show~.input__label {
-        cursor: text;
-        color: #13162a;
-        top: 0.8rem;
-        font-size: 1.2rem;
-    }
-
-    .input__label,
-    .input__field:focus~.input__label {
-        position: absolute;
-        top: -0.8rem;
-        display: block;
-        font-size: 1.2rem;
-        color: #13162a;
-        transition: 0.3s;
-    }
-
-    .input__field:focus~.input__label {
-        color: #986c4a;
     }
 
     .input__field:focus {
         border-bottom: 3px solid #986c4a;
     }
 
-    /* .input__field:focus~span {
-        stroke: #986c4a;
-    } */
-
-    .input__icon {
+    .input__label {
         position: absolute;
-        right: -0.875rem;
-        bottom: -0.6875rem;
-        width: 2.25rem;
-        height: 2.25rem;
-        padding: 0.125rem;
-        transform: translate(-50%, -50%);
-        transform-origin: center;
-        cursor: pointer;
+        top: -0.8rem;
+        left: 0;
+        font-size: 1.2rem;
+        color: #13162a;
+        transition: 0.3s;
     }
 
-    .input__icon:hover {
-        border-radius: 50%;
+    /* ================= BOTÃO LOGIN ================= */
+
+    .my-form__button {
+        background-color: #986c4a;
+        color: #f7f5e9;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 0.5rem;
+        line-height: 3.125rem;
+        font-size: 1.125rem;
+        cursor: pointer;
+        font-weight: 800;
+        min-height: 3.125rem;
+        width: 100%;
+        border-radius: 0.75rem;
+        transition: all .3s ease;
+    }
+
+    .my-form__button:hover {
+        background-color: #784b28;
+        box-shadow: 2px 2px 30px #b57747;
     }
 
     .my-form__actions {
         display: flex;
         flex-direction: column;
-        align-self: center;
-        color: #1d1d1d;
+        align-items: center;
         gap: 1rem;
         width: 100%;
         margin-top: 0.5rem;
     }
 
-    .mt-form__actions a {
-        color: #1d1d1d;
-        font-weight: 600;
-        text-decoration: none;
-    }
-
-    .my-form__actions a:hover {
-        text-decoration: underline;
-    }
-
-    .my-form__row {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    #login-usuario {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        max-width: 300px;
-    }
-
-    #login-usuario label {
-        font-weight: bold;
-        text-align: center;
-    }
-
-    #login-usuario input,
-    #login-usuario button {
-        padding: 6px;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    *::selection {
-        background: #986c4a;
-        color: #f7f5e9;
-    }
-
 </style>
-
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
 </head>
+
 <body>
-    <header>
-        <nav>
-            <button id="btn-home">Voltar</button>
-        </nav>
-        <h2>LitHub</h2>
-    </header>  
 
+    <!-- HEADER NOVO -->
+    <header class="login-header">
+        <button id="btn-home" class="btn-voltar">← Voltar</button>
+        <h2 class="login-logo">LitHub</h2>
+    </header>
+
+    <!-- FORMULÁRIO -->
     <form class="my-form" aria-labelledby="login-title">
-        <!-- <label for="email">E-mail</label>
-        <input type="email" name="email" id="email" required>
-
-        <label for="senha">Senha</label>
-        <input type="text" name="senha" id="senha" required>
-
-        <button type="submit" id="btn-entrar">Entrar</button> -->
 
         <div class="login-welcome-row">
-            <a href="#" title="Logo">
-                <img src="assets/logo-lithub.png" alt="Logo" class="logo">
-            </a>
+            <img src="assets/icone_logo_LitHub.png" alt="Logo" class="logo">
             <h1 id="login-title">Bem-Vindo de Volta</h1>
             <p>Por favor, insira suas credenciais!</p>
         </div>
+
         <div class="input__wrapper">
-            <input type="email" name="email" id="email" class="input__field" placeholder="Seu Email" required>
+            <input type="email" id="email" class="input__field" placeholder="Seu Email" required>
             <label for="email" class="input__label">Email:</label>
         </div>
+
         <div class="input__wrapper">
             <input type="password" id="senha" class="input__field" placeholder="Sua Senha" required>
             <label for="senha" class="input__label">Senha</label>
-            <span><i class="fa fa-lock"></i></span>
         </div>
+
         <button type="submit" class="my-form__button">Login</button>
+
         <div class="my-form__actions">
-            <div class="my-form__row">
-                <span>Não possui uma conta?</span>
-                <a href="cadastro.html" title="Criar Conta">
-                    Cadastrar
-                </a>
-            </div>
+            <span>Não possui uma conta?</span>
+            <a href="cadastro.html">Cadastrar</a>
         </div>
 
     </form>
 
+    <!-- SCRIPTS -->
     <script src="js/config.js"></script>
+    <script src="./js/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+
+    <script>
+
+        const API_LOGIN = `${API_URL}/auth/login`;
+
+        $(".my-form__button").on("click", async(e) => {
+            e.preventDefault();
+
+            if(!$("#email").val() || !$("#senha").val()) {
+                alert('preencha as informações');
+                return;
+            }
+
+            const loginData = {
+                email: $("#email").val(),
+                senha: $("#senha").val()
+            };
+
+            fetch(API_LOGIN, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(loginData)
+            }).then(response => {
+
+                if(!response.ok) {
+                    alert('E-mail ou senha inválidos!');
+                    $("#email").focus();
+                }
+
+                return response.json();
+
+            }).then(data => {
+
+                const token = data.Token;
+                const decodedPayload = jwt_decode(token);
+                const usuario = decodedPayload.role;
+
+                localStorage.setItem('jwtToken', token);
+                localStorage.setItem('userEmail', decodedPayload.sub);
+                localStorage.setItem('usuarioRole', usuario);
+
+                if(usuario == 'CLIENTE') window.location.href = "categoria.html";
+                if(usuario == 'GERENTE') window.location.href = "menuControle.html";
+                if(usuario == 'BIBLIOTECARIO') window.location.href = "menu-principal-bibliotecario.html";
+
+            }).catch(error => {
+                console.log("erro no login: ", error);
+                alert(error.message);
+            });
+        });
+
+        // CORRIGIDO — leva para index.html
+        $("#btn-home").on("click", function() {
+            window.location.href = "index.html";
+        });
+
+    </script>
+
 </body>
 </html>
-
-<script src="./js/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
-<script>
-
-    const API_LOGIN = `${API_URL}/auth/login`;
-
-    $(".my-form__button").on("click", async(e) => {
-        e.preventDefault();
-
-        if(!$("#email").val() || !$("#senha").val()) {
-            alert('preencha as informações');
-            return;
-        }
-
-        const loginData = {
-            email: $("#email").val(),
-            senha: $("#senha").val()
-        };
-
-        fetch(API_LOGIN, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(loginData)
-        }).then(response => {
-
-            if(!response.ok) {
-                alert('E-mail ou senha inválidos!')
-                $("#email").focus();
-                
-            }
-
-            return response.json();
-
-        }).then(data => {
-            const token = data.Token;
-
-            const decodedPayload = jwt_decode(token);
-
-            const usuario = decodedPayload.role;
-
-            localStorage.setItem('jwtToken', token);
-            localStorage.setItem('userEmail', decodedPayload.sub);
-            localStorage.setItem('usuarioRole', usuario);
-
-            if(usuario == 'CLIENTE') {
-                window.location.href = "categoria.html";
-            } else if(usuario == 'GERENTE') {
-                window.location.href = "menuControle.html";
-            } else if(usuario == 'BIBLIOTECARIO') {
-                window.location.href = "menu-principal-bibliotecario.html";
-            }
-
-        }).catch(error => {
-            console.log("erro no login: ", error);
-            alert(error.message);
-        })
-    })
-
-    $("#btn-home").on("click", function() {
-        window.location.href = "home.html";
-    });
-
-</script>

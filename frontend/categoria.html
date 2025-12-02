@@ -1,384 +1,352 @@
-<style>
-
-    html {
-        font-family: 'Work Sans', sans-serif;
-    }
-
-    header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        box-sizing: border-box;
-        width: 100%;
-        height: 60px;
-        background: -webkit-linear-gradient(
-            to right, #986c4a,
-                    #9d5218
-        );
-        background: linear-gradient(
-            to right, #b57747,
-                    #5e3211
-        );
-        color: #f7f5e9;
-        
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 25px;
-        
-        /* box-shadow: 0 2px 5px rgba(0,0,0,0.2); */
-        z-index: 1000;
-    }
-
-    .right-group {
-        display: flex;
-        align-items: center;
-    }
-
-    header h2 {
-        margin: 0;
-    }
-
-    .search-container {
-        position: relative;
-        width: 40%;
-        /* margin-left: 43% */
-    }
-
-    #barra-pesquisa {
-        width: 100%;
-        padding: 8px 12px;
-        border-radius: 20px;
-        border: none;
-    }
-
-    .livros-pesquisados {
-        display: grid;
-        align-items: center;
-        justify-content: center;
-        grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));
-        position: absolute;
-        top: 110%;
-        left: 0;
-        width: 100%;
-        max-height: 300px;
-        overflow-y: auto;
-        background: -webkit-linear-gradient(
-            to right, #986c4a,
-                    #9d5218
-        );
-        background: linear-gradient(
-            to right, #b57747,
-                    #5e3211
-        );
-        color: #f7f5e9;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    }
-
-    .livro-filtro {
-        display: flex;
-        align-items: center;
-        margin: 0.5rem;
-    }
-
-    body {
-      height: 100vh;            
-      display: flex;
-      justify-content: center;  
-      align-items: center;      
-      background: #f7f5e9;     
-      margin: 0;
-    }
-
-    .container {
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 20px;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 25px;
-    }
-
-    .container > div {
-        border-radius: 10px;
-        /* padding: 3rem 2rem; */
-        background-color: rgb(227, 230, 228);
-        border: none;
-        text-align: center;
-    }
-
-    .user-menu i {
-        font-size: 1.5rem;
-        margin-left: 1.5rem;
-    }
-
-    .options-menu i {
-        font-size: 1.5rem;
-        margin-left: 1.5rem;
-    }
-
-    .menu {
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        height: 100%;
-        width: 100%;
-        left: 100%;
-        background: -webkit-linear-gradient(
-        to right, #986c4a,
-                #9d5218);
-        background: linear-gradient(75deg, #5e3211, transparent);
-        box-shadow: 10px 10px 100px black;
-        transition: all .3s ease;
-        z-index: 5500;
-        margin-top: 60px;
-    }
-
-    .menu.aberto {
-        left: 84%;
-    }
-
-    .menu span {
-        display: flex;
-        justify-content: start;
-        align-items: center;
-        height: 10%;
-        border-bottom: 1px solid;
-        padding-left: 2rem;
-        font-size: 1.1rem;
-        font-family: 'Work Sans', sans-serif;
-        color: #f7f5e9;
-        font-weight: bold;
-        cursor: pointer;
-        gap: 1%;
-    }
-
-    .menu-option:hover {
-        background: linear-gradient(75deg, #f7f5e9, transparent);
-        color: #986c4a;
-    }
-
-    .capa-livro {
-        display: block;
-        width: 20%;
-        aspect-ratio: 2/3;
-        object-fit: cover;
-        background-color: #eee;
-        align-items: center;
-    }
-
-    .categorias {
-        width: 90%;
-        height: 100%;
-        overflow: hidden;
-        position: relative;
-        display: inline-block;
-    }
-
-    .categorias img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        aspect-ratio: 1/1;
-        object-fit: cover;
-        filter: blur(0.9px);
-    }
-
-    .categorias span {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 1.5rem;
-        font-weight: bold;
-        text-shadow: 0 2px 5px rgba(0,0,0,0.6);
-        pointer-events: none;
-    }
-
-    .categorias:hover {
-        transform: scale(1.1);
-        background-color: #784b28;
-        box-shadow: 8px 8px 90px #b57747;
-    }
-    
-
-</style>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categorias</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Categorias – LitHub</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+<style>
+
+/* ======================= RESET ======================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Work Sans', sans-serif;
+}
+
+/* ======================= HEADER ======================= */
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    padding: 0 25px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: linear-gradient(to right, #b57747, #5e3211);
+    color: #f7f5e9;
+
+    z-index: 999;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+}
+
+header h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+/* ======================= BARRA DE PESQUISA ======================= */
+
+.search-container {
+    width: 42%;
+    position: relative;
+}
+
+#barra-pesquisa {
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: 18px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background: #f7f5e9;
+    color: #13162a;
+}
+
+/* LISTA DROPDOWN DOS LIVROS PESQUISADOS */
+.livros-pesquisados {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    width: 100%;
+
+    max-height: 300px;
+    overflow-y: auto;
+
+    display: none;
+    grid-template-columns: 1fr;
+    gap: 10px;
+
+    padding: 12px;
+    border-radius: 12px;
+
+    background: linear-gradient(to right, #b57747, #5e3211);
+    color: #f7f5e9;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.livros-pesquisados.ativa {
+    display: grid !important;
+}
+
+/* ----------------- item dentro do dropdown ----------------- */
+.livro-filtro {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    transition: .2s;
+}
+
+.livro-filtro:hover {
+    background: rgba(255,255,255,0.18);
+}
+
+.capa-livro {
+    width: 45px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* ======================= MENU LATERAL ======================= */
+
+.options-menu i {
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+.menu {
+    position: fixed;
+    top: 70px;
+    right: -100%;
+    width: 250px;
+    height: calc(100% - 70px);
+
+    background: linear-gradient(60deg, #5e3211, transparent);
+    padding-top: 20px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    transition: 0.4s ease;
+    z-index: 9999;
+}
+
+.menu.aberto {
+    right: 0;
+}
+
+.menu-option {
+    padding: 14px 22px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #f7f5e9;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: 0.25s;
+}
+
+.menu-option:hover {
+    background: rgba(255,255,255,0.25);
+    color: #5e3211;
+}
+
+/* ======================= CENTRALIZAÇÃO DA PÁGINA ======================= */
+
+body {
+    background: #f7f5e9;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding-top: 120px;
+}
+
+/* ======================= GRID DE CATEGORIAS ======================= */
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+
+    display: grid;
+    justify-content: center;
+    grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+    gap: 35px;
+
+    margin: 40px auto 0 auto;
+}
+
+.categorias {
+    position: relative;
+    width: 185px;
+    height: 185px;
+
+    border-radius: 12px;
+    cursor: pointer;
+    overflow: hidden;
+
+    transition: transform .25s, box-shadow .25s;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.categorias img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.75);
+}
+
+.categorias span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 0 3px 8px rgba(0,0,0,0.7);
+    pointer-events: none;
+}
+
+.categorias:hover {
+    transform: scale(1.08);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+
+/* Remove barra branca quando não há resultados */
+.livros-pesquisados:empty {
+    display: none !important;
+}
+
+</style>
+
 </head>
 <body>
-    <header>
-        <h2>LitHub</h2>
 
-        <div class="search-container">
-            <input type="text" name="barra-pesquisa" id="barra-pesquisa" placeholder="Buscar livro.." autocomplete="off">
-            <div class="livros-pesquisados d-none"></div>
-        </div>
-        
-        <div class="right-group">
-            <div class="options-menu">
-                <i class="fa fa-bars"></i>
-            </div>
+<header>
+    <h2>LitHub</h2>
 
-            <!-- <div class="user-menu">
-                <i class="fa fa-user-circle"></i>
-            </div> -->
-        </div>
-    </header>
-
-    <div class="container">
-        <div class="categorias" id="ficcao-cientifica">
-            <img src="assets/fundo-ficcaocientifica.jpg" alt="">
-            <span>Ficção Científica</span>
-        </div>
-        <div class="categorias" id="romance">
-            <img src="assets/fundo-romance.jpg" alt="">
-            <span>Romance</span>
-        </div>
-        <div class="categorias" id="terror">
-            <img src="assets/fundo-terror.png" alt="">
-            <span>Terror</span>
-        </div>
-        <div class="categorias" id="fantasia">
-            <img src="assets/fundo-fantasia.jpg" alt="">
-            <span>Fantasia</span>
-        </div>
-        <div class="categorias" id="misterio">
-            <img src="assets/fundo-misterio.webp" alt="">
-            <span>Mistério</span>
-        </div>
-        <!-- <div class="categorias" id="aventura">Aventura</div> -->
+    <div class="search-container">
+        <input type="text" id="barra-pesquisa" placeholder="Buscar livro.." autocomplete="off">
+        <div class="livros-pesquisados"></div>
     </div>
 
-    <div class="menu">
-        <span class="menu-option" id="reservas"><i class="fa-solid fa-book-bookmark"></i> Minhas Reservas</span>
-        <span class="menu-option" id="categorias"><i class="fa-solid fa-layer-group"></i> Categorias</span>
-        <span class="menu-option" id="favoritos"><i class="fa fa-heart"></i> Meus Favoritos</span>
-        <span class="menu-option" id="meu-perfil"><i class="fa-solid fa-user-circle"></i>  Meu Perfil</span>
-        <span class="menu-option" id="index"><i class="fa-solid fa-arrow-right-from-bracket"></i>  Sair</span>
+    <div class="options-menu">
+        <i class="fa fa-bars"></i>
     </div>
+</header>
+
+<!-- ======================= CATEGORIAS ======================= -->
+<div class="container">
+    <div class="categorias" id="ficcao-cientifica">
+        <img src="assets/fundo-ficcaocientifica.jpg">
+        <span>Ficção Científica</span>
+    </div>
+
+    <div class="categorias" id="romance">
+        <img src="assets/fundo-romance.jpg">
+        <span>Romance</span>
+    </div>
+
+    <div class="categorias" id="terror">
+        <img src="assets/fundo-terror.png">
+        <span>Terror</span>
+    </div>
+
+    <div class="categorias" id="fantasia">
+        <img src="assets/fundo-fantasia.jpg">
+        <span>Fantasia</span>
+    </div>
+
+    <div class="categorias" id="misterio">
+        <img src="assets/fundo-misterio.webp">
+        <span>Mistério</span>
+    </div>
+</div>
+
+<!-- ======================= MENU LATERAL ======================= -->
+<div class="menu">
+    <div class="menu-option" id="reservas"><i class="fa-solid fa-book-bookmark"></i> Minhas Reservas</div>
+    <div class="menu-option" id="categorias"><i class="fa-solid fa-layer-group"></i> Categorias</div>
+    <div class="menu-option" id="favoritos"><i class="fa fa-heart"></i> Meus Favoritos</div>
+    <div class="menu-option" id="meu-perfil"><i class="fa-solid fa-user-circle"></i> Meu Perfil</div>
+    <div class="menu-option" id="index"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</div>
+</div>
+
+<script src="./js/jquery.min.js"></script>
+<script src="js/config.js"></script>
+
+<script>
+
+$(document).ready(() => {
+
+    /* MENU LATERAL */
+    $(".options-menu").on("click", () => {
+        $(".menu").toggleClass("aberto");
+    });
+
+    /* ABRIR CATEGORIA */
+    $(".categorias").on("click", function () {
+        const categoria = $(this).find("span").text();
+        window.location.href = `exibeLivros.html?categoria=${categoria}`;
+    });
+
+    /* PESQUISA DINÂMICA */
+    $("#barra-pesquisa").on("input", function () {
+
+        let termo = $(this).val().trim();
+        const box = $(".livros-pesquisados");
+
+        if (termo === "") {
+            box.empty().removeClass("ativa");
+            return;
+        }
+
+        const token = localStorage.getItem("jwtToken");
+
+        fetch(`${API_URL}/livros/pesquisa?input=${termo}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        })
+        .then(resp => resp.json())
+        .then(lista => {
+
+            box.empty();
+
+            if (lista.length === 0) {
+                box.removeClass("ativa");
+                return;
+            }
+
+            lista.forEach(livro => {
+                box.append(`
+                    <div class="livro-filtro" data-id="${livro.id}">
+                        <img class="capa-livro" data-id="${livro.id}">
+                        ${livro.titulo} — ${livro.autor}
+                    </div>
+                `);
+            });
+
+            box.addClass("ativa");
+        });
+    });
+
+    /* CLICK NO RESULTADO DA PESQUISA */
+    $(document).on("click", ".livro-filtro", function () {
+        const id = $(this).data("id");
+        window.location.href = `informacoesLivro.html?id=${id}`;
+    });
+
+});
+
+</script>
 
 </body>
 </html>
 
-<script src="./js/jquery.min.js"></script>
-<script src="js/config.js"></script>
-<script>
-
-    function carregarCapas(token) {
-        $(".capa-livro").each(function() {
-            const card = $(this);
-            const id = card.data("id");
-
-            const urlCapa = `${API_URL}/livros/${id}/capa`;
-
-            fetch(urlCapa, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then(response => {
-                if(!response.ok) {
-                    throw new Error('Não foi possível carregar a capa.');
-                }
-
-                return response.blob();
-            }).then(blob => {   
-                const objectURL = URL.createObjectURL(blob);
-
-                card.attr('src', objectURL)
-            }).catch(error => {
-                console.error(`Erro ao carregar capa para o ID ${id}:`, error);
-                
-                card.attr('src', 'caminho/para/imagem_padrao.png');
-            });
-        })
-    }
-
-    $(document).ready(function() {
-
-        sessionStorage.setItem('urlAnterior', window.location.href);
-
-        $(".menu")[0].style.height = (parseInt(window.innerHeight) - 60);
-
-        $(".options-menu").on("click", function() {
-            $(".menu").toggleClass("aberto");
-        });
-
-        $(".categorias").on("click", function() {
-            categoria = $(this).children()[1];
-            window.location.href = `exibeLivros.html?categoria=${categoria.textContent}`;
-        });
-
-        // const decodedPayload = jwt_decode(token);
-        // const role = decodedPayload.role;
-
-        // $("#navbar-container").load("template/navbar.html", function() {
-        //     atualizaRoleNavbar(role);
-        // });
-        // $("#header-container").load("template/header.html", function() {
-        //     atualizaRoleHeader(role);
-        // });
-
-        $("#barra-pesquisa").on("input", function() {
-            const token = localStorage.getItem("jwtToken");
-
-            $(".livros-pesquisados").empty();
-
-            const input = $(this).val();
-            if(!input) {
-                $(".livros-pesquisados").addClass("d-none");
-                return;
-            }
-
-            const API_BASE =  `${API_URL}/livros`;
-            const API_PESQUISA = `${API_BASE}/pesquisa?input=${input}`;
-
-            fetch(API_PESQUISA, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-                
-            }).then(async response => {
-                const livrosPesquisados = await response.json();
-
-                $(".livros-pesquisados").removeClass("d-none");
-                livrosPesquisados.forEach(livro => {
-                    let urlCapa = `${API_BASE}/${livro.id}/capa`;
-
-                    let divLivro = `<div class="livro-filtro" id="$livro-${livro.id}" data-id="${livro.id}"><img class="capa-livro" data-id="${livro.id}">${livro.titulo} - ${livro.autor} - ${livro.editora}</div>`
-                    $(".livros-pesquisados").append(divLivro);
-
-                });
-
-                carregarCapas(token);
-
-            })
-        });
-
-        $(".livros-pesquisados").on("click", function() {
-            window.location.href = `informacoesLivro.html?id=${event.target.dataset.id}`;
-        });
-
-        // $(".user-menu").on("click", function() {
-        //     window.location.href = 'user-menu.html';
-        // });
-
-        // $(".sair").on("click", function() {
-        //     window.location.href = 'index.html';
-        // });
-
-        $(document).on("click", ".menu-option", function() {
-            window.location.href = `${this.id}.html`;
-        })
-    })
-    
-</script>

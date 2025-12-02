@@ -183,7 +183,9 @@
         $("#navbar-container").load("template/navbar.html", function() {
             atualizaRoleNavbar(role);
         });
-        $("#header-container").load("template/header.html");
+        $("#header-container").load("template/header.html", function() {
+            atualizaRoleHeader(role);
+        });
 
         $(".grupo-expandir").on("click", function(e) {
             e.preventDefault();

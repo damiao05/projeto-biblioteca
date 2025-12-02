@@ -143,7 +143,7 @@
     .container-infos {
         padding: 5%;
         width: 80%;
-        height: 60%;
+        height: 65%;
     }
 
 </style>
@@ -181,9 +181,14 @@
                     <input type="email" name="perfil-email" id="perfil-email" class="input__field disabled">
                     <label for="perfil-email" class="input__label">Email</label>
                 </div>
+                <!-- <div class="input__wrapper">
+                    <input type="text" name="senha" id="senha" class="input__field disabled">
+                    <label for="senha" class="input__label">Senha</label>
+                </div> -->
             </div>
             <button type="button" class="editar-infos" id="btn-editar">Editar</button>
             <button type="button" class="salvar-infos d-none" id="btn-salvar">Salvar</button>
+            <button type="button" id="btn-deletar-conta">Excluir Perfil</button>
         </form>
     </main>
 
@@ -219,6 +224,7 @@
     $(document).ready(function() {
 
         let infosUsuario;
+        let id;
 
         const urlAnterior = sessionStorage.getItem('urlAnterior');
 
@@ -259,6 +265,7 @@
             return response.json();
         }).then(usuario => {
             infosUsuario = usuario;
+            id = usuario.id;
             $("#perfil-nome").val(usuario.nome);
             $("#perfil-cpf").val(usuario.cpf);  
             $("#perfil-dt-nascimento").val(formataDataParaUsuario(usuario.dataNascimento));
@@ -278,6 +285,7 @@
             $("#perfil-email").removeClass("disabled");
             $("#btn-salvar").removeClass("d-none");
             $("#btn-editar").addClass("d-none");
+            // $("#senha").removeClass("disabled");
         });
 
         $("#btn-salvar").on("click", function() {
@@ -286,7 +294,8 @@
                 cpf: $("#perfil-cpf").val(),
                 dataNascimento: formataDataParaBanco($("#perfil-dt-nascimento").val()),
                 telefone: $("#perfil-telefone").val(),
-                email: $("#perfil-email").val()
+                email: $("#perfil-email").val(),
+                // senha: $("#senha").val()
             };
 
             $("#perfil-nome").addClass("disabled");
@@ -294,6 +303,7 @@
             $("#perfil-dt-nascimento").addClass("disabled");
             $("#perfil-telefone").addClass("disabled");
             $("#perfil-email").addClass("disabled");
+            // $("#senha").addClass("disabled");
             $("#btn-salvar").addClass("d-none");
             $("#btn-editar").removeClass("d-none");
 
@@ -316,6 +326,18 @@
 
         $("#btn-voltar").on("click", function() {
             window.location.href = urlAnterior;
+        });
+
+        $("#btn-deletar-conta").on("click", function() {
+            fetch(`${API_URL}/usuarios/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(() => {
+                localStorage.removeItem("carrinhoLivros");
+                window.location.href = 'index.html';
+            })
         });
 
     });

@@ -50,10 +50,10 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioLogado);
     }
 
-//    @GetMapping
-//    public List<Usuario> listar() {
-//        return usuarioService.listarTodos();
-//    }
+    @GetMapping("/listar")
+    public List<Usuario> listarUsuarios() {
+        return funcionarioService.listarUsuarios();
+    }
 
     @GetMapping("/{id}")
     public Usuario buscar(@PathVariable UUID id) {
@@ -66,11 +66,10 @@ public class UsuarioController {
         return usuarioService.atualizar(usuarioLogado, usuario);
     }
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deletar(@PathVariable UUID id) {
-//        usuarioService.deletar(id);
-//        return ResponseEntity.noContent().build();
-//    }
+    @DeleteMapping("/{id}")
+    public void deletar(@PathVariable UUID id) {
+        funcionarioService.deletarUsuario(id);
+    }
 
     @PutMapping("/atualizar-senha")
     @PreAuthorize("isAuthenticated()")

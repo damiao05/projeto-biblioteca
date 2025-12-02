@@ -42,19 +42,22 @@
     }
 
     .hidden-role {
-        display: none;
+        display: none !important;
     }
 
 </style>
 
 <div class="menu-bar">
+    <span class="menu-option hidden-role role-cliente" id="reservas"><i class="fa-solid fa-book-bookmark"></i> Minhas Reservas</span>
     <span class="menu-option hidden-role role-bibliotecario role-gerente" id="reservas"><i class="fa-solid fa-book-bookmark"></i> Reservas</span>
     <span class="menu-option hidden-role role-bibliotecario role-gerente" id="emprestimos"><i class="fa-solid fa-right-left"></i> Empréstimos</span>
-    <span class="menu-option" id="categorias"><i class="fa-solid fa-layer-group"></i> Categorias</span>
-    <span class="menu-option" id="menu-principal-bibliotecario"><i class="fa-solid fa-book-open-reader"></i>  Livros</span>
+    <span class="menu-option hidden-role role-cliente" id="categoria"><i class="fa-solid fa-layer-group"></i> Categorias</span>
+    <span class="menu-option hidden-role role-cliente" id="favoritos"><i class="fa fa-heart"></i> Meus Favoritos</span>
+    <span class="menu-option hidden-role role-bibliotecario role-gerente" id="menu-principal-bibliotecario"><i class="fa-solid fa-book-open-reader"></i>  Livros</span>
     <span class="menu-option hidden-role role-bibliotecario role-gerente" id="usuarios"><i class="fa fa-users"></i> Usuários</span>
+    <span class="menu-option hidden-role role-bibliotecario role-gerente" id="multas"><i class="fa fa-credit-card"></i> Multas</span>
     <span class="menu-option" id="meu-perfil"><i class="fa-solid fa-user-circle"></i>  Meu Perfil</span>
-    <span class="menu-option" id="sair"><i class="fa-solid fa-arrow-right-from-bracket"></i>  Sair</span>
+    <span class="menu-option" id="index"><i class="fa-solid fa-arrow-right-from-bracket"></i>  Sair</span>
 </div>
 
 <script>
@@ -65,7 +68,7 @@
         const roleClass = `.role-${role.toLowerCase()}`;
 
         $(roleClass).removeClass("hidden-role");
-        $("#sair").data('cargo', role.toLowerCase());
+        $("#index").data('cargo', role.toLowerCase());
         
     }
 
@@ -73,13 +76,14 @@
         $(".menu-bar").toggleClass('aberto');
 
         $(".menu-option").on("click", function() {
+            if(this.id == 'indec') localStorage.removeItem("carrinhoLivros");
             window.location.href = `/${$(this)[0].id}.html`;
         });
 
     });
 
     $(document).on('navbar:toggleHome', function() {
-        let cargo = $("#sair").data('cargo');
+        let cargo = $("#index").data('cargo');
 
         switch(cargo) {
             case 'gerente':

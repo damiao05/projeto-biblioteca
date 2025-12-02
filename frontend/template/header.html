@@ -84,6 +84,13 @@
         margin-left: auto;
     }
 
+    .carrinho-livros {
+        font-size: 1.25rem;
+        cursor: pointer;
+        position: absolute;
+        right: 6rem;
+    }
+
     #dashboard {
         position: relative;
         width: 100%;
@@ -98,6 +105,42 @@
         display: none;
     }
 
+    .container-carrinho {
+        position: fixed;
+        width: 30%;
+        height: 40%;
+        background: #f7f5e9;
+        top: 60px;
+        z-index: 9999;
+        right: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 1px 30px #986c4a;
+        overflow-y: scroll;
+        overflow-x: hidden;
+
+    }
+
+    .row-livro {
+        width: 100%;
+        height: 45%;
+        display: flex;
+        flex-direction: row;
+        margin: 3%;
+    }
+
+    .possui-item {
+        transform: scale(1.3);
+    }
+
+    .capa-livro-carrinho {
+        height: 75%;
+    }
+
+    .capa-livro-id {
+        height: 100%;
+    }
+
+
 </style>
 
 <div class="header-container">
@@ -108,6 +151,7 @@
     <h2 class="lithub header-item">LitHub</h2>
 
     <span class="dashboard-icon header-item hidden-role role-gerente"><i class="fa fa-pie-chart"></i></span>
+    <span class="carrinho-livros header-item hidden-role role-cliente"><i class="fa fa-cart-arrow-down"></i></span>
 
     <span class="menu-icon header-item"><i class="fa fa-bars"></i></span>
 </header>
@@ -116,9 +160,112 @@
     <iframe id="dashboard" src="" frameborder="0"></iframe>
 </div>
 
+<div class="container-carrinho d-none">
+    <label for="data-reserva">Data de Retirada</label>
+    <input type="date" name="data-reserva" id="data-reserva">
+    <button type="button" id="btn-confirmar-reserva">Confirmar Reserva</button>
 </div>
 
+</div>
+
+<script src="js/config.js"></script>
 <script>
+
+    let carrinho = JSON.parse(localStorage.getItem('carrinhoLivros')) || [];
+    let qtdLivros = carrinho.length;
+    let carrinhoPiscando = null;
+
+    function inicializarCarrinho() {
+        if(carrinho.length > 0) {
+            carrinho.forEach(idLivro => {
+                adicionarItemAoDOM(idLivro, false)
+            });
+
+            iniciarAnimacaoCarrinho()
+        }
+    }
+
+    inicializarCarrinho();
+
+    function iniciarAnimacaoCarrinho() {
+        if(carrinho.length > 0 && carrinhoPiscando === null) {
+            carrinhoPiscando = setInterval(() => {
+                $(".carrinho-livros").toggleClass("possui-item");
+            }, 300);
+        }
+    }
+
+    function pararAnimacaoCarrinho() {
+        clearInterval(carrinhoPiscando);
+        carrinhoPiscando = null;
+        $(".carrinho-livros").removeClass("possui-item");
+    }
+
+    function adicionarItemAoDOM(idLivro) {
+        const token = localStorage.getItem('jwtToken');
+
+        $(".container-carrinho").prepend(`  <div class="row-livro" id="row-${idLivro}"><div class="capa-livro-carrinho"><img src="" id="capa-livro-carrinho-${idLivro}" class="capa-livro-id"></div><span id="titulo-livro-carrinho-${idLivro}"></span></div>`);
+
+        const card = $(`#capa-livro-carrinho-${idLivro}`);
+
+        fetch(`${API_URL}/livros/${idLivro}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(response => {
+            
+            return response.json()
+
+        }).then(data => {
+
+            const promises = [];
+
+            const urlCapa = `${API_URL}/livros/${idLivro}/capa`;
+
+            const promise = fetch(urlCapa, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(response => {
+                if(!response.ok) {
+                    throw new Error('Não foi possível carregar a capa.');
+                }
+
+                return response.blob();
+            }).then(blob => {   
+                const objectURL = URL.createObjectURL(blob);
+
+                card.attr('src', objectURL)
+                console.log(data);
+
+                $(`#titulo-livro-carrinho-${idLivro}`).text(data.titulo);
+
+                // $(".titulo-livro").text(data.titulo);
+                // $("#editora-livro").text(data.editora);
+                // $("#autor-livro").text(data.autor);
+                // $("#sinopse-livro").text(data.sinopse);
+
+                // if(data.qtd_disponivel) {
+                //     $(".disponivel").text(`Na prateleira: ${data.qtd_disponivel}`);
+                // } else {
+                //     $("#btn-reserva").addClass("d-none");
+                //     $("#btn-lista-espera").removeClass("d-none");
+                // }
+
+            }).catch(error => {
+                console.error(`Erro ao carregar capa para o id ${idLivro}:`, error);
+                
+                card.attr('src', 'caminho/para/imagem_padrao.png');
+            });
+
+            promises.push(promise);
+
+            return Promise.all(promises);
+
+        }).then(() => {
+
+        });
+    }
 
     function atualizaRoleHeader(role) {
         $(".header-item.hidden-role").addClass("hidden-role");
@@ -130,6 +277,10 @@
 
         $(".dashboard-icon").hasClass("hidden-role") ? $(".menu-icon").css({ marginLeft: 'auto' }) : $(".menu-icon").css({ marginLeft: '1rem' });
         
+    }
+
+    function esvaziarCarrinho() {
+        localStorage.removeItem("carrinhoLivros");
     }
 
     $(".menu-icon").on("click", () => {
@@ -147,6 +298,66 @@
 
     $(".dashboard-icon").on("click", function() {
         $(".area-dashboard").hasClass("aberto") ? $(".area-dashboard").removeClass("aberto") : $(".area-dashboard").addClass("aberto");
+
+    });
+
+    $(document).on('header:toggleCart', function(e, idRecebido) {
+        if(carrinho.includes(idRecebido)) {
+            carrinho = carrinho.filter(id => id !== idRecebido);
+            $(`row-${idRecebido}`).remove();
+        } else {
+            carrinho.push(idRecebido);
+            adicionarItemAoDOM(idRecebido);
+        }
+
+        localStorage.setItem('carrinhoLivros', JSON.stringify(carrinho));
+
+        qtdLivros = carrinho.length;
+
+        if(qtdLivros > 0) {
+            iniciarAnimacaoCarrinho();
+        } else {
+            pararAnimacaoCarrinho();
+        }
+
+    });
+
+    $(".carrinho-livros").on("click", function() {
+        if($(".container-carrinho").hasClass("d-none")) {
+            $(".container-carrinho").removeClass("d-none");
+        } else {
+            $(".container-carrinho").addClass("d-none");
+        }
+    });
+
+    $("#btn-confirmar-reserva").on("click", function() {
+        const token = localStorage.getItem('jwtToken');
+        let dataReserva = $("#data-reserva").val();
+        
+        if(!dataReserva) {
+            return false;
+        }
+
+        $.each($(".row-livro"), function(chave, valor) {
+            let idLivroReserva = valor.id.split('row-')[1];
+
+            fetch(`${API_URL}/reserva/${idLivroReserva}/${dataReserva}`, {
+                method: 'POST',
+                headers: { "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(response => {
+                if(!response.ok) {
+                    throw new Error('Não foi possível reservar este livro');
+                } else {
+                    alert('livro reservado');
+                }
+
+                // return response.blob();
+            });
+        });
+
+        esvaziarCarrinho();
 
     });
 

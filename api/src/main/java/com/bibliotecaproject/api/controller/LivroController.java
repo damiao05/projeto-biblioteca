@@ -44,10 +44,11 @@ public class LivroController {
     @PreAuthorize("hasAnyRole('BIBLIOTECARIO', 'GERENTE')")
     public ResponseEntity<?> cadastrarLivro(
             @RequestPart("livro") Livro livro,
-            @RequestPart("file") MultipartFile file) {
+            @RequestPart(value = "capa_data", required = false) MultipartFile file,
+            @RequestParam(value = "capa_url", required = false) String capaUrl) {
 
         try {
-            Livro livroSalvo = funcionarioService.cadastrarLivro(livro, file);
+            Livro livroSalvo = funcionarioService.cadastrarLivro(livro, file, capaUrl);
             return new ResponseEntity<>(livroSalvo, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -127,17 +128,33 @@ public class LivroController {
         if(livro == null || livro.getCapaFilename() == null) {
             return ResponseEntity.notFound().build();
         }
-        Path filePath = livroService.getCaminhoCapa(livro);
+
+        String capaFilename = livro.getCapaFilename();
+        Resource resource;
+        String contentType;
+        Path filePath = null;
+
         try {
-            Resource resource = new UrlResource(filePath.toUri());
-            if(!resource.exists() || !resource.isReadable()) {
-                return ResponseEntity.notFound().build();
+
+            if(capaFilename.toLowerCase().startsWith("http://") || capaFilename.toLowerCase().startsWith("https://")) {
+                resource = new UrlResource(capaFilename);
+                contentType = "image/jpeg";
+
+            } else {
+                filePath = livroService.getCaminhoCapa(livro);
+                resource = new UrlResource(filePath.toUri());
+
+                if(!resource.exists() || !resource.isReadable()) {
+                    return ResponseEntity.notFound().build();
+                }
+
+                contentType = Files.probeContentType(filePath);
+                if(contentType == null) {
+                    contentType = "application/octet-stream";
+                }
             }
 
-            String contentType = Files.probeContentType(filePath);
-            if(contentType == null) {
-                contentType = "application/octet-stream";
-            }
+
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")

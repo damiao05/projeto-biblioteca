@@ -31,6 +31,7 @@
         height: 100%;
         margin: 0;
         font-family: 'Work Sans', sans-serif;
+        margin-top: 60px;
     }
 
     .main-content {
@@ -38,7 +39,7 @@
         overflow-y: scroll;
         background: #f7f5e9;
         height: 100%;
-        margin-top: 60px;
+        margin-top: -60px;
     }
 
     .conteudo-body {
@@ -325,12 +326,8 @@
     <title>Livros</title>
 </head>
 <body>
-    <header>
-        <nav>
-            <button id="btn-home">Voltar</button>
-        </nav>
-        <h2>Biblioteca</h2>
-    </header>
+    <div id="header-container"></div>
+    <div id="navbar-container"></div>
 
     <div class="tela-loading">
         <div class="container-layout"></div>
@@ -358,6 +355,8 @@
 
 <script src="./js/jquery.min.js"></script>
 <script src="js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 <script>
 
     function carregarCapas(token) {
@@ -365,11 +364,11 @@
 
         $(".capa-livro").each(function() {
             const card = $(this);
-            const isbn = card.data("isbn");
+            const id = card.data("id");
 
-            if(!isbn) return;
+            if(!id) return;
 
-            const urlCapa = `${API_URL}/livros/${isbn}/capa`;
+            const urlCapa = `${API_URL}/livros/${id}/capa`;
 
             const promise = fetch(urlCapa, {
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -480,6 +479,17 @@
             window.location.href = '/login.html';
         }
 
+        const decodedPayload = jwt_decode(token);
+
+        const role = decodedPayload.role;
+
+        $("#navbar-container").load("template/navbar.html", function() {
+            atualizaRoleNavbar(role);
+        });
+        $("#header-container").load("template/header.html", function() {
+            atualizaRoleHeader(role);
+        });
+
         const queryString = window.location.search;
 
         const urlParams = new URLSearchParams(queryString);
@@ -504,9 +514,9 @@
 
                 livros.forEach(livro => {
                     console.log(livro);
-                    let urlCapa = `${API_BASE}/${livro.isbn}/capa`;
+                    let urlCapa = `${API_BASE}/${livro.id}/capa`;
 
-                    $("#container-livros").append(`<div class="book-card" data-isbn="${livro.isbn}"><div class="img-capa"><img class="capa-livro" data-isbn="${livro.isbn}" src="" alt="Capa do Livro ${livro.titulo}"></div><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><span id="autor-livro" style="margin: 0">${livro.autor}</span></div></div>`)
+                    $("#container-livros").append(`<div class="book-card" data-id="${livro.id}"><div class="img-capa"><img class="capa-livro" data-id="${livro.id}" src="" alt="Capa do Livro ${livro.titulo}"></div><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><span id="autor-livro" style="margin: 0">${livro.autor}</span></div></div>`)
 
                 });
 
@@ -523,8 +533,8 @@
         });
 
         $("#container-livros").on("click", ".book-card", function() {
-            const isbn = $(this).data("isbn");
-            window.location.href = `informacoesLivro.html?isbn=${isbn}`;
+            const id = $(this).data("id");
+            window.location.href = `informacoesLivro.html?id=${id}`;
         });
 
     });

@@ -79,4 +79,8 @@ public class MultaService {
 
     }
 
+    public List<Multa> listarMultas() {
+        return multaRepository.findAll();
+    }
+
 }

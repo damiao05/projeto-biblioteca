@@ -15,4 +15,6 @@ public interface ReservaRepository extends JpaRepository<Reserva, UUID> {
 
     Optional<Reserva> findReservaById(UUID reserva);
 
+    List<Reserva> findAllByUsuarioId(UUID usuarioId);
+
 }

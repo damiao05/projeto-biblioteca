@@ -7,6 +7,8 @@ import com.bibliotecaproject.api.domain.usuario.Usuario;
 import com.bibliotecaproject.api.repository.LivroRepository;
 import com.bibliotecaproject.api.repository.UsuarioRepository;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.management.MemoryUsage;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -127,10 +132,25 @@ public class FuncionarioService implements OperacoesGerente {
         return generatedFilename;
     }
 
-    @Override
-    public Livro cadastrarLivro(Livro livro, MultipartFile file) throws IOException {
+    private static final Logger log = LoggerFactory.getLogger(FuncionarioService.class);
 
-        livro.setCapaFilename(salvarArquivoCapa(file));
+    @Override
+    public Livro cadastrarLivro(Livro livro, MultipartFile file, String capaUrl) throws IOException {
+        log.info("Recebido MultipartFile: {}", (file != null && !file.isEmpty()));
+        log.info("Recebida capaUrl: {}", capaUrl);
+        String caminhoCapa = "";
+
+        if(file != null && !file.isEmpty()) {
+            caminhoCapa = salvarArquivoCapa(file);
+            log.info("Capa salva como arquivo: {}", caminhoCapa);
+
+        }
+        else if(capaUrl != null && !capaUrl.trim().isEmpty()) {
+            caminhoCapa = capaUrl;
+            log.info("Capa salva como URL: {}", caminhoCapa);
+        }
+
+        livro.setCapaFilename(caminhoCapa);
         return livroRepository.save(livro);
 
     }
@@ -194,6 +214,9 @@ public class FuncionarioService implements OperacoesGerente {
     public List<Usuario> listarFuncionarios() {
         return null;
     }
+
+    @Override
+    public List<Multa> listarMultas() {return multaService.listarMultas();}
 
     private String gerarSenhaAleatoria(int length) {
         String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

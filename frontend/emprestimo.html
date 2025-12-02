@@ -121,11 +121,11 @@
     <title>Empréstimo</title>
 
     <script src="./js/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
 </head>
 <body>
-    <header>
-        <h2 class="lithub">LitHub</h2>
-    </header>
+    <div id="header-container"></div>
+    <div id="navbar-container"></div>
 
     <main>
         <div class="container-informacoes">
@@ -155,6 +155,7 @@
             </div>
             <button id="btn-registrar-emprestimo">Registrar Empréstimo</button>
             <button id="btn-registrar-devolucao">Registrar Devolução</button>
+            <button id="btn-cancelar-reserva" class="d-none">Cancelar Reserva</button>
         </div>
     </main>
 
@@ -192,10 +193,16 @@
 
         const role = decodedPayload.role;
 
+        if(role == 'CLIENTE') {
+            $("#btn-registrar-emprestimo").addClass("d-none");
+        }
+
         $("#navbar-container").load("template/navbar.html", function() {
             atualizaRoleNavbar(role);
         });
-        $("#header-container").load("template/header.html");
+        $("#header-container").load("template/header.html", function() {
+            atualizaRoleHeader(role);
+        });
         
 
         if (!token) {
@@ -220,6 +227,10 @@
 
         if(reserva) {
             $("#btn-registrar-devolucao").addClass("d-none");
+            if(role == 'CLIENTE') {
+                $("#btn-cancelar-reserva").removeClass("d-none");
+                $("#btn-registrar-emprestimo").addClass("d-none");
+            }
 
             const API_RESERVA = `${API_URL}/reserva?reserva=${reserva}`;
 
@@ -235,7 +246,7 @@
 
                 const listaReserva = await response.json();
 
-                let isbn;
+                let id;
                 let dataReserva;
 
                 listaReserva.forEach(reserva => {
@@ -249,7 +260,10 @@
                     dataReserva = reserva.dtReserva.replace('-', '/');
                     paginas = reserva.livro['paginas'];
                     
-                    isbn = reserva.livro['isbn'];
+                    id = reserva.livro['id'];
+                    if(reserva.status == 'CANCELADA') {
+                        $("#btn-registrar-emprestimo").addClass("d-none");
+                    }
 
                 });
 
@@ -257,7 +271,7 @@
 
                 const promises = [];
 
-                const urlCapa = `${API_URL}/livros/${isbn}/capa`;
+                const urlCapa = `${API_URL}/livros/${id}/capa`;
 
                 const promise = fetch(urlCapa, {
                     headers: {
@@ -275,7 +289,7 @@
                     $("#capa-livro").attr('src', objectURL)
     
                 }).catch(error => {
-                    console.error(`Erro ao carregar capa para o ISBN ${isbn}:`, error);
+                    console.error(`Erro ao carregar capa para o id ${id}:`, error);
                     
                     card.attr('src', 'caminho/para/imagem_padrao.png');
                 });
@@ -287,6 +301,10 @@
             })
         } else {
             $("#btn-registrar-emprestimo").addClass("d-none");
+            if(role == 'CLIENTE') {
+                $("#btn-registrar-emprestimo").addClass("d-none");
+                $("#btn-registrar-devolucao").addClass("d-none");
+            }
 
             const API_EMPRESTIMO = `${API_URL}/emprestimos`;
 
@@ -338,11 +356,11 @@
 
                 $("#situacao").text(status);
                 
-                isbn = dadosEmprestimo.livro['isbn'];
+                id = dadosEmprestimo.livro['id'];
 
                 const promises = [];
 
-                const urlCapa = `${API_URL}/livros/${isbn}/capa`;
+                const urlCapa = `${API_URL}/livros/${id}/capa`;
 
                 const promise = fetch(urlCapa, {
                     headers: {
@@ -360,7 +378,7 @@
                     $("#capa-livro").attr('src', objectURL)
     
                 }).catch(error => {
-                    console.error(`Erro ao carregar capa para o ISBN ${isbn}:`, error);
+                    console.error(`Erro ao carregar capa para o id ${id}:`, error);
                     
                     card.attr('src', 'caminho/para/imagem_padrao.png');
                 });
@@ -409,6 +427,19 @@
 
             })
 
+        });
+
+        $("#btn-cancelar-reserva").on("click", function() {
+            fetch(`${API_URL}/reserva/${reserva}/cancelar`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+
+            }).then(() => {
+                window.location.href = 'categoria.html';
+
+            })
         });
 
         $("#btn-registrar-devolucao").on("click", function() {

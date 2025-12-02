@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,11 +26,23 @@ public class ReservaController {
         this.reservaService = reservaService;
     }
 
-    @PostMapping("/{id_livro}")
+    @PostMapping("/{id_livro}/{dataReserva}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Reserva> criarReserva(@AuthenticationPrincipal Usuario usuarioLogado, @PathVariable UUID id_livro){
-        Reserva novaReserva = reservaService.criarReserva(usuarioLogado, id_livro);
+    public ResponseEntity<Reserva> criarReserva(@AuthenticationPrincipal Usuario usuarioLogado, @PathVariable UUID id_livro, @PathVariable LocalDate dataReserva){
+        Reserva novaReserva = reservaService.criarReserva(usuarioLogado, id_livro, dataReserva);
         return new ResponseEntity<>(novaReserva, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{idLivro}/lista-espera")
+    @PreAuthorize("isAuthenticated()")
+    public void entrarEspera(@AuthenticationPrincipal Usuario usuarioLogado, @PathVariable UUID idLivro){
+        reservaService.entrarEspera(usuarioLogado, idLivro);
+    }
+
+    @PostMapping("/{idReserva}/cancelar")
+    @PreAuthorize("isAuthenticated()")
+    public void cancelarReserva(@PathVariable UUID idReserva){
+        reservaService.cancelarReserva(idReserva);
     }
 
     @GetMapping

@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,8 +20,8 @@ public class MultaController {
     @Autowired
     private FuncionarioService funcionarioService;
 
-    @PutMapping
-    @PreAuthorize("hasAnyRole('BIBLIOTECARIO','GERENTE)")
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('BIBLIOTECARIO','GERENTE')")
     public ResponseEntity<Multa> registrarPagamento(
             @PathVariable UUID id,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data
@@ -30,6 +31,12 @@ public class MultaController {
 
         return  ResponseEntity.ok(registrarDevolucao);
 
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('BIBLIOTECARIO','GERENTE')")
+    public List<Multa> listarMultas() {
+        return funcionarioService.listarMultas();
     }
 
 }

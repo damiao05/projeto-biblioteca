@@ -169,7 +169,7 @@
     }
 
     .d-none {
-        display: none;
+        display: none !important;
     }
 
     .container-avaliacoes {
@@ -192,6 +192,35 @@
         width: 100%;
     }
 
+    .form-button {
+        background-color: #986c4a;
+        color: #f7f5e9;
+        white-space: nowrap;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 0.5rem;
+        line-height: 3.125rem;
+        outline: none;
+        font-size: 1.125rem;
+        letter-spacing: .025rem;
+        text-decoration: none;
+        cursor: pointer;
+        font-weight: 800;
+        min-height: 3.125rem;
+        min-width: 30%;
+        width: fit-content;
+        border-radius: 0.75rem;
+        transition: all .3s ease;
+        -webkit-transition: all .3s ease;
+    }
+
+    .form-button:hover {
+        background-color: #784b28;
+        box-shadow: 2px 2px 30px #b57747;
+    }
+
 </style>
 
 <html lang="pt-BR">
@@ -207,12 +236,15 @@
 </head>
 <body>
 
-    <header>
+    <!-- <header>
         <nav>
             <button id="btn-home">Voltar</button>
         </nav>
         <h2>Biblioteca</h2>
-    </header>
+    </header> -->
+
+    <div id="header-container"></div>
+    <div id="navbar-container"></div>
 
     <div class="conteudo-body">
         <div class="container-categoria">
@@ -242,8 +274,8 @@
             </div>
             <div class="botoes">
                 <p class="disponivel"></p>
-                <button type="button" id="btn-reserva" class="botao-reserva">Reservar</button>
-                <button type="button" id="btn-lista-espera" class="botao-lista-espera d-none">Lista de Espera</button>
+                <button type="button" id="btn-reserva" class="form-button">Reservar</button>
+                <button type="button" id="btn-lista-espera" class="form-button d-none">Lista de Espera</button>
             </div>
         </div>
 
@@ -255,7 +287,7 @@
             </div>
 
             <span class="texto-avaliacoes">Avaliações <i class="fa fa-chevron-down"></i></span>
-            <div class="container-users-avaliacoes"></div>
+            <div class="container-users-avaliacoes d-none"></div>
         </div>
     </div>
     
@@ -264,6 +296,7 @@
 
 <script src="./js/jquery.min.js"></script>
 <script src="js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
 <script>
     
     $(document).ready(function() {
@@ -274,18 +307,26 @@
             window.location.href = '/login.html';
         }
 
+        const decodedPayload = jwt_decode(token);
+        const role = decodedPayload.role;
+
+        $("#navbar-container").load("template/navbar.html", function() {
+            atualizaRoleNavbar(role);
+        });
+        $("#header-container").load("template/header.html", function() {
+            atualizaRoleHeader(role);
+        });
+
         const queryString = window.location.search;
 
         const urlParams = new URLSearchParams(queryString);
 
         const API_BASE = `${API_URL}/livros`;
-        const isbn = urlParams.get('isbn');
+        const id = urlParams.get('id');
 
-        const API_LIVRO = `${API_BASE}/${isbn}`;
+        const API_LIVRO = `${API_BASE}/${id}`;
 
         const card = $("#capa-livro");
-
-        let id;
 
         let categoria;
 
@@ -303,7 +344,7 @@
 
             const promises = [];
 
-            const urlCapa = `${API_BASE}/${isbn}/capa`;
+            const urlCapa = `${API_BASE}/${id}/capa`;
 
             const promise = fetch(urlCapa, {
                 headers: {
@@ -319,8 +360,8 @@
                 const objectURL = URL.createObjectURL(blob);
 
                 card.attr('src', objectURL)
+                console.log(data);
 
-                id = data.id;
                 $(".titulo-livro").text(data.titulo);
                 $("#editora-livro").text(data.editora);
                 $("#autor-livro").text(data.autor);
@@ -329,8 +370,8 @@
                 if(data.qtd_disponivel) {
                     $(".disponivel").text(`Na prateleira: ${data.qtd_disponivel}`);
                 } else {
-                    $(".botao-reserva").addClass("d-none");
-                    $(".botao-lista-espera").removeClass("d-none");
+                    $("#btn-reserva").addClass("d-none");
+                    $("#btn-lista-espera").removeClass("d-none");
                 }
  
             }).catch(error => {
@@ -346,6 +387,9 @@
         }).then(() => {
             $(".conteudo-body").addClass("mostrar");
 
+            let totalNotas = 0;
+            let totalAvaliacoes = 0;
+
             fetch(`${API_URL}/avaliacao?idLivro=${id}`, {
                 method: 'GET',
                 headers: {
@@ -357,7 +401,20 @@
             }).then(avaliacoes => {
                 avaliacoes.forEach(avaliacao => {
                     console.log(avaliacao);
-                })
+                    totalNotas += avaliacao.avaliacao;
+                    totalAvaliacoes++;
+                    $(".container-users-avaliacoes").append(`   <div id="avaliacao-${avaliacao.id}">
+                                                                    <span id="info-user-avaliacao">${avaliacao.usuario.nome.split(' ')[0]} - ${avaliacao.avaliacao}</span>
+                                                                    <span id="info-user-comentario">${avaliacao.comentario}</span>
+                                                                </div>`);
+                });
+
+                let mediaAvaliacao = 0;
+                if(totalAvaliacoes > 0) {
+                    mediaAvaliacao = Math.round(totalNotas / totalAvaliacoes);
+                }
+
+                renderizarEstrelas(mediaAvaliacao);
                 
             })
 
@@ -371,11 +428,19 @@
         //     alert('boa garoto')
         // });
 
-        function renderizarEstrelas() {
+        function renderizarEstrelas(mediaAvaliacao) {
+            const containerEstrelas = $("#estrelas-avaliacao");
+            containerEstrelas.empty();
+
             for(let i=1; i<= 5; i++) {
                 const starIcon = document.createElement('i');
 
-                starIcon.className = 'far fa-star'
+                if(i <= mediaAvaliacao) {
+                    starIcon.className = 'fas fa-star estrela-preenchida';
+
+                } else {
+                    starIcon.className = 'far fa-star'
+                }
 
                 $("#estrelas-avaliacao").append(starIcon);
             }
@@ -383,39 +448,70 @@
 
         $(".btn-favorito").on("click", function() {
             let classeFavorito = $(".btn-favorito")[0].children[0].className;
+            let API_FAVORITO;
+            const idLivro = id;
 
             if(classeFavorito.includes("far")) {
                 $("#i-favorito").addClass("fas").removeClass("far");
+                API_FAVORITO = `${API_URL}/favoritos/favoritar`;
+
             } else if(classeFavorito.includes("fas")) {
                 $("#i-favorito").addClass("far").removeClass("fas");
+                API_FAVORITO = `${API_URL}/favoritos/retirar-favorito`;
             }
-        })
 
-        renderizarEstrelas();
-
-        $("#btn-reserva").on("click", () => {
-            fetch(`${API_URL}/reserva/${id}`, {
+            fetch(API_FAVORITO, {
                 method: 'POST',
                 headers: { "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`    
+                },
+                body: JSON.stringify(idLivro)
+            });
+        })
+
+        // renderizarEstrelas();
+
+        $("#btn-reserva").on("click", () => {
+            $(document).trigger('header:toggleCart', [id]);
+
+            // fetch(`${API_URL}/reserva/${id}`, {
+            //     method: 'POST',
+            //     headers: { "Content-Type": "application/json",
+            //         'Authorization': `Bearer ${token}`
+            //     }
+            // }).then(response => {
+            //     if(!response.ok) {
+            //         throw new Error('Não foi possível reservar este livro');
+            //     } else {
+            //         alert('livro reservado');
+            //     }
+
+            //     // return response.blob();
+            // });
+
+            // let qtdDisponivel = parseInt($(".disponivel").text().split(':')[1].trim());
+            // qtdDisponivel = qtdDisponivel - 1;
+
+            // $(".disponivel").text(`Na prateleira: ${qtdDisponivel}`);
+        });
+
+        $("#btn-lista-espera").on("click", function() {
+            fetch(`${API_URL}/reserva/${id}/lista-espera`, {
+                method: 'POST',
+                headers: {
                     'Authorization': `Bearer ${token}`
                 }
-            }).then(response => {
-                if(!response.ok) {
-                    throw new Error('Não foi possível reservar este livro');
-                } else {
-                    alert('livro reservado');
-                }
-
-                // return response.blob();
-            });
-        });
+            }).then(() => {
+                $("#btn-lista-espera").addClass("d-none");
+            })
+        }); 
 
         $("#btn-avaliar").on("click", function() {
             const avaliacao = {
                 'avaliacao': 5,
                 'comentario': $("#user-avaliacao").val(),
                 'livro': {
-                    'id': id, 
+                    'id': id,   
                 }
             };
 
@@ -430,6 +526,11 @@
 
             });
         })
+
+        $(".texto-avaliacoes").on("click", function() {
+            $(".container-users-avaliacoes").hasClass("d-none") ? $(".container-users-avaliacoes").removeClass("d-none") : $(".container-users-avaliacoes").addClass("d-none");
+            
+        });
 
     })
 

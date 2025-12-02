@@ -445,9 +445,11 @@
             $("#form-cadastro-livro").on("submit", async (e) => {
                 e.preventDefault();
                 const fileInput = $("#capa-file")[0];
+                const capaUrl = $("#capa-livro").attr('src');
                 const livroIsbn = $("#isbn").val().trim();
+                let API_LIVRO = `${API_URL}/livros`;
 
-                if(!fileInput.files.length) return alert("Adicione uma capa");
+                if(!fileInput.files.length && !capaUrl) return alert("Adicione uma capa");
 
                 const livro = {
                     isbn: $("#isbn").val().trim(),
@@ -462,12 +464,19 @@
 
                 const formData = new FormData();
 
-                formData.append("file", fileInput.files[0]);
+                if(fileInput.files.length) {
+                    formData.append("capa_tipo", "file");
+                    formData.append("capa_data", fileInput.files[0]);
+
+                } else {
+                    API_LIVRO += `?capa_url=${encodeURIComponent(capaUrl)}`;
+                };
+                
                 formData.append('livro', new Blob([JSON.stringify(livro)], {
                     type: "application/json"
                 }));
 
-                fetch('http://localhost:8080/livros', {
+                fetch(API_LIVRO, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -482,6 +491,76 @@
 
             });
         }
+
+        $("#isbn").on("blur", function(e) {
+            if($("#titulo").val()) {
+                return false;
+            }
+            e.stopImmediatePropagation();
+
+            const isbn = $(this).val().trim().replace('-', '');
+
+            if(!isbn) return;
+
+            const API_GOOGLE_BOOKS = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`;
+            const API_OPENLIBRARY = `https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`;
+
+            fetch(API_GOOGLE_BOOKS)
+                .then(async response => await response.json())
+                .then(data => {
+                    if(data.totalItems > 0) {
+                        const livro = data.items[0].volumeInfo;
+                        console.log(livro);
+
+                        const tituloGoogle = livro.title;
+                        const autorGoogle = livro.authors[0];
+                        const paginasGoogle = livro.pageCount ?? null;
+                        const editoraGoogle = livro.publisher ?? null;
+                        const sinopseGoogle = livro.description ?? null;
+
+                        if(!$("#titulo").val()) $("#titulo").val(tituloGoogle);
+                        if(!$("#autor").val()) $("#autor").val(autorGoogle);
+                        if(!$("#editora").val()) $("#editora").val(editoraGoogle);
+                        if(!$("#sinopse").val()) $("#sinopse").val(sinopseGoogle);
+
+                        if(livro.imageLinks && livro.imageLinks.thumbail) {
+                            let urlCapa = livro.imageLinks.thumbnail;
+                            urlCapa = urlCapa.replace('http://', 'https://');
+                            $("#capa-livro").attr('src', urlCapa);
+                            $("#capa-livro").css({display: 'block'});
+                            $(".span-file").addClass("d-none");
+                            $(".trash-file").removeClass("d-none");
+                        }
+                    }
+                });
+
+            fetch(API_OPENLIBRARY)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    const chave = `ISBN:${isbn}`;
+
+                    if(data[chave]) {
+                        const livro = data[chave];
+
+                        const tituloOpen = livro.title;
+                        const autorOpen = livro.authors[0].name;
+                        const paginasOpen = livro.number_of_pages;
+                        const editoraOpen = livro.publishers[0].name;
+
+                        if(!$("#titulo").val()) $("#titulo").val(tituloOpen);
+                        if(!$("#autor").val()) $("#autor").val(autorOpen);
+                        if(!$("#editora").val()) $("#editora").val(editoraOpen);
+                        
+                        if(livro.cover['large']) {
+                            $("#capa-livro").attr('src', livro.cover['large']);
+                            $("#capa-livro").css({display: 'block'});
+                            $(".span-file").addClass("d-none");
+                            $(".trash-file").removeClass("d-none");
+                        }
+                    }
+                })
+        });
 
         $("#btn-home").on("click", function() {
             window.location.href = urlAnterior;

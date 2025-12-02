@@ -24,8 +24,8 @@ public class FavoritoService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public void favoritarLivro(UUID idLivro, UUID idUsuario) {
-        Usuario usuario = usuarioRepository.findById(idUsuario)
+    public void favoritarLivro(UUID idLivro, Usuario usuarioLogado) {
+        Usuario usuario = usuarioRepository.findById(usuarioLogado.getId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         Livro livro = livroRepository.findById(idLivro)
@@ -46,8 +46,8 @@ public class FavoritoService {
 
     }
 
-    public void retirarFavorito(UUID idUsuario, UUID idLivro) {
-        Usuario usuario = usuarioRepository.findById(idUsuario)
+    public void retirarFavorito(UUID idLivro, Usuario usuarioLogado) {
+        Usuario usuario = usuarioRepository.findById(usuarioLogado.getId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         Livro livro = livroRepository.findById(idLivro)

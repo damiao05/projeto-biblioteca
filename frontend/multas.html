@@ -1,0 +1,209 @@
+<style>
+
+    html {
+        overflow-y: hidden;
+        overflow-x: hidden;
+        width: auto;
+        height: auto;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        font-family: 'Work Sans', sans-serif;
+        font-weight: 800;
+        background: -webkit-linear-gradient(
+        to right, #986c4a,
+                #9d5218);
+        background: linear-gradient(
+            to right, #b57747,
+                #5e3211);
+        margin-top: 60px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .container-multas {
+        width: 80%;
+        height: 80%;
+        background: #f7f5e9;
+        border-radius: 20px;
+        margin-top: -60px;
+    }
+
+    .cabecalho-lista {
+        margin: 3%;
+    }
+
+    .cabecalho-lista span {
+        display: inline-block;
+        text-align: center;
+    }
+
+    .nome-cliente {
+        width: 10%;
+    }
+
+    .titulo-livro {
+        width: 15%; 
+    }
+
+    .data-emprestimo {
+        width: 13%;
+    }
+
+    .data-prevista {
+        width: 13%;
+    }
+
+    .data-devolucao {
+        width: 13%;
+    }
+
+    .status-multa {
+        width: 10%;
+    }
+
+    .valor-multa {
+        width: 10%;
+    }
+
+    .conteudo-multas {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: 3%;
+        margin-right: 3%;
+    }
+
+    .conteudo-multas span {
+        display: inline-block;
+    }
+
+</style>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empréstimos</title>
+</head>
+<body>
+
+    <div id="header-container"></div>
+    <div id="navbar-container"></div>
+
+    <main>
+
+        <div class="container-multas">
+            <div class="cabecalho-lista">
+                <span class="nome-cliente">Cliente</span>
+                <span class="titulo-livro">Livro Emprestado</span>
+                <span class="data-emprestimo">Data Empréstimo</span>
+                <span class="data-prevista">Prevista de Devolução</span>
+                <span class="data-devolucao">Data Devolução</span>
+                <span class="status-multa">Status</span>
+                <span class="valor-multa">Valor da Multa</span>
+                <span></span>
+            </div>
+            <div class="conteudo-multas"></div>
+        </div>
+
+    </main>
+    
+
+    <script src="./js/jquery.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</body>
+</html>
+
+<script>
+
+    function formataData(data) {
+        data = data.split('-');
+        return `${data[2]}/${data[1]}/${data[0]}`;
+    }
+
+    $(document).ready(function() {
+        const token = localStorage.getItem('jwtToken');
+        const decodedPayload = jwt_decode(token);
+
+        const role = decodedPayload.role;
+
+        $("#navbar-container").load("template/navbar.html", function() {
+            atualizaRoleNavbar(role);
+        });
+        $("#header-container").load("template/header.html", function() {
+            atualizaRoleHeader(role);
+        });
+
+        fetch(`${API_URL}/multas`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+
+        }).then(async response => {
+            // Verificação de erro
+
+            const multas = await response.json();
+
+            console.log(multas);
+
+            multas.forEach(multa => {
+                let botaoMulta = "";
+                if(multa.statusPagamento !== "PAGAMENTO") {
+                    botaoMulta = `<button type="button" id="btn-pagamento-${multa.id}" class="btn-pagamento">Confirmar Pagamento</button>`;
+                }
+               $(".conteudo-multas").append(`  <div class="linha-emprestimo" id="${multa.id}">
+                                                        <span class="nome-cliente">${multa.emprestimo.usuario.nome}</span>
+                                                        <span class="titulo-livro">${multa.emprestimo.livro.titulo}</span>
+                                                        <span class="data-emprestimo">${formataData(multa.emprestimo.dtEmprestimo)}</span>
+                                                        <span class="data-prevista">${formataData(multa.emprestimo.dtPrevistaDevolucao)}</span>
+                                                        <span class="data-devolucao">${multa.emprestimo.dtDevolucaoReal ? formataData(multa.emprestimo.dtDevolucaoReal) : ''}</span>
+                                                        <span class="status-multa">${multa.statusPagamento}</span>
+                                                        <span class="valor-multa">${multa.valorMulta}</span>
+                                                        ${botaoMulta}
+                                                    </div>`);
+                
+            });
+
+        });
+
+        sessionStorage.setItem('urlAnterior', window.location.href);
+
+        $(document).on("click", ".btn-pagamento", function() {
+            const idMulta = this.id.split('btn-pagamento-')[1];
+
+            let dataHoje = new Date();
+            const dia = dataHoje.getDate().toString().padStart(2, '0');
+            const mes = (dataHoje.getMonth() + 1).toString().padStart(2, '0');
+            const ano = dataHoje.getFullYear();
+            dataHoje = `${ano}-${mes}-${dia}`;
+            
+            fetch(`${API_URL}/multas/${idMulta}?data=${dataHoje}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(() => {
+                window.location.href = 'multas.html';
+            });
+        });
+
+    });
+
+</script>

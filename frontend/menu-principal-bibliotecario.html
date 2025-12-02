@@ -842,7 +842,7 @@
                     'editora': livro.editora
                 }
 
-                $(".container-livros").append(`<div class="book-card" id="book-${livro.isbn}" data-id="${livro.id}"><div class="img-capa"><img class="capa-livro" data-id="${livro.id}" data-isbn="${livro.isbn}" src="" alt="Capa do Livro ${livro.titulo}"></div><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><span id="autor-livro" style="margin: 0">${livro.autor}</span></div></div>`);
+                $(".container-livros").append(`<div class="book-card" id="book-${livro.id}" data-id="${livro.id}"><div class="img-capa"><img class="capa-livro" data-id="${livro.id}" data-isbn="${livro.isbn}" src="" alt="Capa do Livro ${livro.titulo}"></div><div class="book-info"><h3 id="titulo-livro">${livro.titulo}</h3><span id="autor-livro" style="margin: 0">${livro.autor}</span></div></div>`);
             });
 
             return carregarCapas(token); 

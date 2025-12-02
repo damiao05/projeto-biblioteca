@@ -17,7 +17,7 @@ public interface OperacoesBibliotecario {
 
     void deletarUsuario(UUID id);
 
-    Livro cadastrarLivro(Livro livro, MultipartFile file) throws IOException;
+    Livro cadastrarLivro(Livro livro, MultipartFile file, String capaUrl) throws IOException;
 
     Livro editarLivro(UUID id, Livro livroAtualizado, MultipartFile file) throws IOException;
 
@@ -26,6 +26,8 @@ public interface OperacoesBibliotecario {
     Emprestimo registrarDevolucao(UUID id, LocalDate data);
 
     Multa registrarPagamento(UUID id, LocalDate dataPagamento);
+
+    List<Multa> listarMultas();
 
     void deletarLivro(UUID id);
 

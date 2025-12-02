@@ -60,7 +60,7 @@
 
     .container-infos {
         width: 85%;
-        height: 35%;
+        height: 80%;
         background: -webkit-linear-gradient(
         to right, #986c4a,
                 #9d5218);
@@ -126,13 +126,8 @@
 </head>
 <body>
 
-    <header>
-        <h2 class="lithub">LitHub</h2>
-
-        <div class="right-group">
-            <span class="menu-icon"><i class="fa fa-bars"></i></span>
-        </div>
-    </header>
+    <div id="header-container"></div>
+    <div id="navbar-container"></div>
 
     <main>
         <div class="container-reservas"></div>
@@ -143,6 +138,8 @@
 </body>
 </html>
 
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 <script>
 
     function formataData(data) {
@@ -153,6 +150,16 @@
     $(document).ready(function() {
 
         const token = localStorage.getItem('jwtToken');
+        const decodedPayload = jwt_decode(token);
+
+        const role = decodedPayload.role;
+
+        $("#navbar-container").load("template/navbar.html", function() {
+            atualizaRoleNavbar(role);
+        });
+        $("#header-container").load("template/header.html", function() {
+            atualizaRoleHeader(role);
+        });
 
         if (!token) {
             alert('Você não está logado! Redirecionando para o login.');
@@ -186,6 +193,7 @@
                                             <div class="infos-reserva">
                                                 <span id="date">Reserva para:</span>
                                                 <span id="data-reserva">${formataData(reserva.dtReserva)}</span>
+                                                <span id="status">${reserva.status}</span>
                                             </div>
                                         </div>`;
 
@@ -194,6 +202,12 @@
         });
 
         $(document).on("click", ".container-infos", function() {
+            // const decodedPayload = jwt_decode(token);
+
+            // const role = decodedPayload.role;
+            
+            // if(role == 'CLIENTE') return;
+
             const id = $(this).data('id');
         
             window.location.href = `/emprestimo.html?reserva=${encodeURIComponent(id)}`;
